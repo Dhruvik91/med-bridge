@@ -23,7 +23,8 @@ import {
   Stethoscope,
   Clock,
   CheckCheck,
-  AlertCircle
+  AlertCircle,
+  ArrowLeft
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -134,6 +135,7 @@ export function MessagesClient() {
   const [newMessage, setNewMessage] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [showSidebarOnMobile, setShowSidebarOnMobile] = useState(true)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -156,23 +158,27 @@ export function MessagesClient() {
     conv.participant.hospital.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  if (!user || !profile) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <Alert className="max-w-md">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Please sign in to access your messages.
-          </AlertDescription>
-        </Alert>
-      </div>
-    )
-  }
+  // if (!user || !profile) {
+  //   return (
+  //     <div className="h-full flex items-center justify-center">
+  //       <Alert className="max-w-md">
+  //         <AlertCircle className="h-4 w-4" />
+  //         <AlertDescription>
+  //           Please sign in to access your messages.
+  //         </AlertDescription>
+  //       </Alert>
+  //     </div>
+  //   )
+  // }
 
   return (
-    <div className="h-full flex">
+    <div className="flex h-full flex-col md:flex-row">
       {/* Conversations Sidebar */}
-      <div className="w-80 border-r border-border flex flex-col">
+      <div
+        className={`border-border w-full md:w-80 border-b md:border-b-0 md:border-r ${
+          showSidebarOnMobile ? 'flex flex-col' : 'hidden md:flex md:flex-col'
+        }`}
+      >
         {/* Header */}
         <div className="p-4 border-b border-border">
           <h2 className="text-xl font-semibold mb-3">Messages</h2>
@@ -196,7 +202,12 @@ export function MessagesClient() {
                 className={`p-3 rounded-lg cursor-pointer transition-colors hover:bg-accent ${
                   selectedConversation?.id === conversation.id ? 'bg-accent' : ''
                 }`}
-                onClick={() => setSelectedConversation(conversation)}
+                onClick={() => {
+                  setSelectedConversation(conversation)
+                  if (typeof window !== 'undefined' && window.innerWidth < 768) {
+                    setShowSidebarOnMobile(false)
+                  }
+                }}
               >
                 <div className="flex items-start space-x-3">
                   <div className="relative">
@@ -223,16 +234,16 @@ export function MessagesClient() {
                       </span>
                     </div>
                     
-                    <p className="text-sm text-muted-foreground truncate">
+                    <p className="text-sm text-muted-foreground">
                       {conversation.participant.hospital}
                     </p>
                     
-                    <div className="flex items-center justify-between mt-1">
-                      <p className="text-sm text-muted-foreground truncate flex-1">
+                    <div className="mt-1 flex items-start justify-between gap-2">
+                      <p className="flex-1 text-sm text-muted-foreground break-words">
                         {conversation.lastMessage.content}
                       </p>
                       {conversation.lastMessage.unread && (
-                        <div className="h-2 w-2 bg-primary rounded-full ml-2" />
+                        <div className="ml-2 h-2 w-2 rounded-full bg-primary" />
                       )}
                     </div>
                   </div>
@@ -244,12 +255,24 @@ export function MessagesClient() {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div
+        className={`flex-1 ${
+          showSidebarOnMobile ? 'hidden md:flex md:flex-col' : 'flex flex-col'
+        }`}
+      >
         {selectedConversation ? (
           <>
             {/* Chat Header */}
-            <div className="p-4 border-b border-border flex items-center justify-between">
-              <div className="flex items-center space-x-3">
+            <div className="border-b border-border p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-start space-x-3 md:items-center">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="mr-1 md:hidden"
+                  onClick={() => setShowSidebarOnMobile(true)}
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
                 <div className="relative">
                   <Avatar className="h-10 w-10">
                     <AvatarImage src={selectedConversation.participant.avatar} alt={selectedConversation.participant.name} />
@@ -268,7 +291,7 @@ export function MessagesClient() {
                 
                 <div>
                   <h3 className="font-semibold">{selectedConversation.participant.name}</h3>
-                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                  <div className="flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
                     <span>{selectedConversation.participant.role}</span>
                     <span>•</span>
                     <span>{selectedConversation.participant.hospital}</span>
@@ -282,7 +305,7 @@ export function MessagesClient() {
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2">
+              {/* <div className="flex flex-wrap items-center gap-2 md:justify-end">
                 <Button variant="ghost" size="sm">
                   <Phone className="h-4 w-4" />
                 </Button>
@@ -295,7 +318,7 @@ export function MessagesClient() {
                 <Button variant="ghost" size="sm">
                   <MoreVertical className="h-4 w-4" />
                 </Button>
-              </div>
+              </div> */}
             </div>
 
             {/* Messages */}
@@ -306,7 +329,11 @@ export function MessagesClient() {
                     key={message.id}
                     className={`flex ${message.senderId === 'current' ? 'justify-end' : 'justify-start'}`}
                   >
-                    <div className={`max-w-xs lg:max-w-md ${message.senderId === 'current' ? 'order-2' : 'order-1'}`}>
+                    <div
+                      className={`max-w-[80%] sm:max-w-xs md:max-w-sm lg:max-w-md ${
+                        message.senderId === 'current' ? 'order-2' : 'order-1'
+                      }`}
+                    >
                       {message.senderId !== 'current' && (
                         <div className="flex items-center space-x-2 mb-1">
                           <Avatar className="h-6 w-6">
