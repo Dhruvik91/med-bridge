@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /auth/
+Disallow: /profile/
+Disallow: /messages/
+
+# Host
+Host: https://medbridge.com
+
+# Sitemaps
+Sitemap: https://medbridge.com/sitemap.xml
