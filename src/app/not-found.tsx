@@ -30,12 +30,6 @@ export default function NotFound() {
           >
             Go back home
           </Link>
-          <Link
-            href="/country"
-            className="inline-flex items-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-          >
-            Explore visas
-          </Link>
         </div>
       </div>
     </main>
