@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/providers/auth-provider'
 import { Button } from '@/components/ui/button'
@@ -16,8 +15,6 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { 
   Stethoscope, 
-  Menu, 
-  X, 
   User, 
   Settings, 
   LogOut,
@@ -28,7 +25,6 @@ import {
 
 export function Navigation() {
   const { user, profile, signOut } = useAuth()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const handleSignOut = async () => {
     try {
@@ -143,105 +139,7 @@ export function Navigation() {
               </div>
             )}
           </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </Button>
-          </div>
         </div>
-
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border">
-            <div className="flex flex-col space-y-2">
-              <Link 
-                href="/jobs" 
-                className="px-3 py-2 text-foreground hover:text-primary transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Jobs
-              </Link>
-              <Link 
-                href="/doctors" 
-                className="px-3 py-2 text-foreground hover:text-primary transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Doctors
-              </Link>
-              <Link 
-                href="/hospitals" 
-                className="px-3 py-2 text-foreground hover:text-primary transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Hospitals
-              </Link>
-              
-              {user ? (
-                <div className="px-3 py-2 border-t border-border mt-2">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.user_metadata?.avatar_url} alt={profile?.name || ''} />
-                      <AvatarFallback>
-                        {profile?.name?.charAt(0) || user.email?.charAt(0) || 'U'}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-sm font-medium">{profile?.name || 'User'}</p>
-                      <Badge variant="secondary" className="text-xs">
-                        {profile?.role}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="flex flex-col space-y-2">
-                    <Link href="/profile" onClick={() => setMobileMenuOpen(false)}>
-                      <Button variant="ghost" className="w-full justify-start">
-                        <User className="mr-2 h-4 w-4" />
-                        Profile
-                      </Button>
-                    </Link>
-                    <Link href="/messages" onClick={() => setMobileMenuOpen(false)}>
-                      <Button variant="ghost" className="w-full justify-start">
-                        <MessageSquare className="mr-2 h-4 w-4" />
-                        Messages
-                      </Button>
-                    </Link>
-                    {profile?.role === 'hospital' && (
-                      <Link href="/post-job" onClick={() => setMobileMenuOpen(false)}>
-                        <Button variant="ghost" className="w-full justify-start">
-                          <Briefcase className="mr-2 h-4 w-4" />
-                          Post Job
-                        </Button>
-                      </Link>
-                    )}
-                    <Button 
-                      variant="ghost" 
-                      className="w-full justify-start" 
-                      onClick={handleSignOut}
-                    >
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Sign out
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="px-3 py-2 border-t border-border mt-2 space-y-2">
-                  <Link href="/auth/signin" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full">Sign In</Button>
-                  </Link>
-                  <Link href="/auth/signup" onClick={() => setMobileMenuOpen(false)}>
-                    <Button className="w-full">Get Started</Button>
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </div>
     </nav>
   )

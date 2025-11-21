@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Stethoscope, Briefcase, MessageSquare, User } from "lucide-react"
+import { Stethoscope, Briefcase, MessageSquare, User, Users, Home } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const items = [
@@ -15,6 +15,16 @@ const items = [
     href: "/jobs",
     label: "Jobs",
     icon: Briefcase,
+  },
+  {
+    href: "/doctors",
+    label: "Doctors",
+    icon: Users,
+  },
+  {
+    href: "/hospitals",
+    label: "Hospitals",
+    icon: Home,
   },
   {
     href: "/messages",
