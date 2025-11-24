@@ -40,15 +40,7 @@ export default function SignInPage() {
 
   const handleMagicLinkSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
-
-    try {
-      await signIn(formData.email)
-      setMagicLinkSent(true)
-      toast.success('Magic link sent! Check your email.')
-    } catch (error: any) {
-      setError(error.message || 'Failed to send magic link')
-    }
+    setError('Magic link sign-in is not supported. Please use password sign-in instead.')
   }
 
   const handleGoogleSignIn = async () => {

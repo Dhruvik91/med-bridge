@@ -218,7 +218,7 @@ export function ProfileClient() {
       <div className="flex justify-between items-start mb-8">
         <div className="flex items-center space-x-4">
           <Avatar className="h-20 w-20">
-            <AvatarImage src={user.user_metadata?.avatar_url} alt={profile.name || ''} />
+            <AvatarImage src={undefined} alt={profile.name || user.email || ''} />
             <AvatarFallback className="text-2xl">
               {profile.name?.charAt(0) || user.email?.charAt(0) || 'U'}
             </AvatarFallback>
@@ -227,7 +227,7 @@ export function ProfileClient() {
             <h1 className="text-3xl font-bold">{profile.name || 'User'}</h1>
             <div className="flex items-center space-x-2 mt-1">
               <Badge variant="secondary">{profile.role}</Badge>
-              {profile.is_verified ? (
+              {profile.isVerified ? (
                 <Badge variant="default" className="bg-green-100 text-green-800">
                   <CheckCircle className="h-3 w-3 mr-1" />
                   Verified
