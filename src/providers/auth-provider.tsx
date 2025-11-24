@@ -2,7 +2,8 @@
 
 import { createContext, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { api } from '@/lib/api-client'
+import { API_CONFIG, AUTH_TOKEN_KEY } from '@/constants/constants';
+import httpService from '@/lib/http-service';
 
 type UserRole = 'doctor' | 'hospital' | 'admin'
 
@@ -50,8 +51,6 @@ type AuthResponse = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-const AUTH_TOKEN_KEY = 'auth_token'
-
 function mapBackendUser(user: BackendUser): { authUser: AuthUser; profile: UserProfile } {
   const authUser: AuthUser = {
     id: user.id,
@@ -88,7 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const { data } = await api.get<BackendUser>('/user-auth/me')
+      const { data } = await httpService.get<BackendUser>(API_CONFIG.path.userAuth.me)
       const mapped = mapBackendUser(data)
       setUser(mapped.authUser)
       setProfile(mapped.profile)
@@ -129,7 +128,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = async (email: string, password: string) => {
     setLoading(true)
     try {
-      const { data } = await api.post<AuthResponse>('/user-auth/login', {
+      const { data } = await httpService.post<AuthResponse>(API_CONFIG.path.userAuth.login, {
         email,
         password,
       })
@@ -149,7 +148,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (email: string, password: string, role: 'doctor' | 'hospital') => {
     setLoading(true)
     try {
-      const { data } = await api.post<AuthResponse>('/user-auth/signup', {
+      const { data } = await httpService.post<AuthResponse>(API_CONFIG.path.userAuth.signup, {
         email,
         password,
         role,
@@ -178,8 +177,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = async () => {
     if (typeof window === 'undefined') return
 
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000'
-    window.location.href = `${baseUrl}/user-auth/google`
+    window.location.href = API_CONFIG.path.userAuth.googleLogin
   }
 
   const value = {
