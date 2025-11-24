@@ -45,7 +45,7 @@ export default function SignUpPage() {
     try {
       await signUp(formData.email, formData.password, formData.role)
       toast.success('Account created successfully! Please check your email to verify your account.')
-      router.push('/auth/verify-email')
+      router.push('/dashboard')
     } catch (error: any) {
       setError(error.message || 'Failed to create account')
     }

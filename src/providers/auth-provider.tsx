@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { API_CONFIG, AUTH_TOKEN_KEY } from '@/constants/constants';
 import httpService from '@/lib/http-service';
 
@@ -77,6 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const pathname = usePathname()
 
   const loadUserFromToken = async (token: string | null) => {
     if (!token) {
@@ -119,11 +120,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       const storedToken = window.localStorage.getItem(AUTH_TOKEN_KEY)
+
+      const publicRoutes = ['/auth/signin', '/auth/signup']
+      if (!storedToken && !publicRoutes.includes(pathname)) {
+        router.replace('/auth/signin')
+        setLoading(false)
+        return
+      }
       await loadUserFromToken(storedToken)
     }
 
     void init()
-  }, [router])
+  }, [router, pathname])
 
   const signIn = async (email: string, password: string) => {
     setLoading(true)
