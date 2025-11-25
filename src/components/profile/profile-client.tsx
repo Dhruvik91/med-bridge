@@ -213,9 +213,9 @@ export function ProfileClient() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-6 sm:py-8 max-w-4xl">
       {/* Header */}
-      <div className="flex justify-between items-start mb-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-6 sm:mb-8">
         <div className="flex items-center space-x-4">
           <Avatar className="h-20 w-20">
             <AvatarImage src={undefined} alt={profile.name || user.email || ''} />
@@ -224,8 +224,10 @@ export function ProfileClient() {
             </AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-3xl font-bold">{profile.name || 'User'}</h1>
-            <div className="flex items-center space-x-2 mt-1">
+            <h1 className="text-2xl sm:text-3xl font-bold break-words">
+              {profile.name || 'User'}
+            </h1>
+            <div className="flex flex-wrap items-center gap-2 mt-2">
               <Badge variant="secondary">{profile.role}</Badge>
               {profile.isVerified ? (
                 <Badge variant="default" className="bg-green-100 text-green-800">
@@ -241,19 +243,30 @@ export function ProfileClient() {
             </div>
           </div>
         </div>
-        <div className="flex space-x-2">
+        <div className="flex w-full justify-end gap-2 sm:w-auto flex-wrap">
           {isEditing ? (
             <>
-              <Button variant="outline" onClick={() => setIsEditing(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setIsEditing(false)}
+                className="w-full sm:w-auto"
+              >
                 Cancel
               </Button>
-              <Button onClick={handleSaveProfile} disabled={loading}>
+              <Button
+                onClick={handleSaveProfile}
+                disabled={loading}
+                className="w-full sm:w-auto"
+              >
                 <Save className="h-4 w-4 mr-2" />
                 {loading ? 'Saving...' : 'Save Changes'}
               </Button>
             </>
           ) : (
-            <Button onClick={() => setIsEditing(true)}>
+            <Button
+              onClick={() => setIsEditing(true)}
+              className="w-full sm:w-auto"
+            >
               <Edit className="h-4 w-4 mr-2" />
               Edit Profile
             </Button>
@@ -309,12 +322,14 @@ function DoctorProfileForm({
 }: any) {
   return (
     <Tabs defaultValue="personal" className="space-y-6">
-      <TabsList className="grid w-full grid-cols-4">
-        <TabsTrigger value="personal">Personal Info</TabsTrigger>
-        <TabsTrigger value="professional">Professional</TabsTrigger>
-        <TabsTrigger value="credentials">Credentials</TabsTrigger>
-        <TabsTrigger value="preferences">Preferences</TabsTrigger>
-      </TabsList>
+      <div className="w-full overflow-x-auto">
+        <TabsList className="inline-flex min-w-max w-full sm:grid sm:grid-cols-4 sm:min-w-0 gap-1 sm:gap-0">
+          <TabsTrigger value="personal" className="whitespace-nowrap text-xs sm:text-sm">Personal Info</TabsTrigger>
+          <TabsTrigger value="professional" className="whitespace-nowrap text-xs sm:text-sm">Professional</TabsTrigger>
+          <TabsTrigger value="credentials" className="whitespace-nowrap text-xs sm:text-sm">Credentials</TabsTrigger>
+          <TabsTrigger value="preferences" className="whitespace-nowrap text-xs sm:text-sm">Preferences</TabsTrigger>
+        </TabsList>
+      </div>
 
       <TabsContent value="personal">
         <Card>
@@ -575,10 +590,10 @@ function DoctorProfileForm({
 function HospitalProfileForm({ profile, setProfile, isEditing }: any) {
   return (
     <Tabs defaultValue="basic" className="space-y-6">
-      <TabsList className="grid w-full grid-cols-3">
-        <TabsTrigger value="basic">Basic Info</TabsTrigger>
-        <TabsTrigger value="details">Hospital Details</TabsTrigger>
-        <TabsTrigger value="branding">Branding</TabsTrigger>
+      <TabsList className="w-full overflow-x-auto inline-flex min-w-max sm:grid sm:grid-cols-3 sm:min-w-0 gap-1 sm:gap-0">
+        <TabsTrigger value="basic" className="whitespace-nowrap text-xs sm:text-sm">Basic Info</TabsTrigger>
+        <TabsTrigger value="details" className="whitespace-nowrap text-xs sm:text-sm">Hospital Details</TabsTrigger>
+        <TabsTrigger value="branding" className="whitespace-nowrap text-xs sm:text-sm">Branding</TabsTrigger>
       </TabsList>
 
       <TabsContent value="basic">
