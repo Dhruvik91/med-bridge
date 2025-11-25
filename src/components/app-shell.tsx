@@ -9,7 +9,15 @@ interface AppShellProps {
   children: ReactNode
 }
 
-const APP_ROUTES_PREFIXES = ['/dashboard', '/jobs', '/messages', '/profile', '/settings', '/post-job']
+// MVP app routes: dashboard, jobs, and profile
+const APP_ROUTES_PREFIXES = [
+  '/dashboard',
+  '/jobs',
+  '/profile',
+  // '/messages',
+  // '/settings',
+  // '/post-job',
+]
 
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname()

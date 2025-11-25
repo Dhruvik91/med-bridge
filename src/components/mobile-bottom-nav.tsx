@@ -6,37 +6,39 @@ import { Stethoscope, Briefcase, MessageSquare, User, Users, Home } from "lucide
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/providers/auth-provider"
 
+// MVP mobile nav: only Jobs and Profile
 const items = [
-  {
-    href: "/dashboard",
-    label: "Home",
-    icon: Stethoscope,
-  },
   {
     href: "/jobs",
     label: "Jobs",
     icon: Briefcase,
   },
   {
-    href: "/doctors",
-    label: "Doctors",
-    icon: Users,
-  },
-  {
-    href: "/hospitals",
-    label: "Hospitals",
-    icon: Home,
-  },
-  {
-    href: "/messages",
-    label: "Messages",
-    icon: MessageSquare,
-  },
-  {
     href: "/profile",
     label: "Profile",
     icon: User,
   },
+  // The following items are intentionally commented out for MVP scope:
+  // {
+  //   href: "/dashboard",
+  //   label: "Home",
+  //   icon: Stethoscope,
+  // },
+  // {
+  //   href: "/doctors",
+  //   label: "Doctors",
+  //   icon: Users,
+  // },
+  // {
+  //   href: "/hospitals",
+  //   label: "Hospitals",
+  //   icon: Home,
+  // },
+  // {
+  //   href: "/messages",
+  //   label: "Messages",
+  //   icon: MessageSquare,
+  // },
 ]
 
 export function MobileBottomNav() {

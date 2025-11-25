@@ -49,35 +49,41 @@ export function Navigation() {
           <div className="hidden md:flex items-center justify-between flex-1 ml-8">
             {user ? (
               <>
-                {/* Logged-in nav links */}
+                {/* Logged-in nav links (MVP: only Jobs) */}
                 <div className="flex items-center space-x-6">
                   <Link href="/jobs" className="text-foreground hover:text-primary transition-colors">
                     Jobs
                   </Link>
-                  <Link href="/doctors" className="text-foreground hover:text-primary transition-colors">
-                    Doctors
-                  </Link>
-                  <Link href="/hospitals" className="text-foreground hover:text-primary transition-colors">
-                    Hospitals
-                  </Link>
+                  {/**
+                   * MVP: hide Doctors and Hospitals navigation links for now
+                   *
+                   * <Link href="/doctors" className="text-foreground hover:text-primary transition-colors">
+                   *   Doctors
+                   * </Link>
+                   * <Link href="/hospitals" className="text-foreground hover:text-primary transition-colors">
+                   *   Hospitals
+                   * </Link>
+                   */}
                 </div>
 
-                {/* Logged-in actions */}
+                {/* Logged-in actions (MVP: only Profile + Sign out) */}
                 <div className="flex items-center space-x-4">
-                  {/* Notifications */}
-                  <Button variant="ghost" size="sm" className="relative">
-                    <Bell className="h-5 w-5" />
-                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                      3
-                    </Badge>
-                  </Button>
-
-                  {/* Messages */}
-                  <Link href="/messages">
-                    <Button variant="ghost" size="sm">
-                      <MessageSquare className="h-5 w-5" />
-                    </Button>
-                  </Link>
+                  {/**
+                   * MVP: hide Notifications and Messages for now
+                   *
+                   * <Button variant="ghost" size="sm" className="relative">
+                   *   <Bell className="h-5 w-5" />
+                   *   <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                   *     3
+                   *   </Badge>
+                   * </Button>
+                   *
+                   * <Link href="/messages">
+                   *   <Button variant="ghost" size="sm">
+                   *     <MessageSquare className="h-5 w-5" />
+                   *   </Button>
+                   * </Link>
+                   */}
 
                   {/* User Menu */}
                   <DropdownMenu>
@@ -106,26 +112,31 @@ export function Navigation() {
                         </div>
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
+                      {/* MVP: keep Profile entry */}
                       <DropdownMenuItem asChild>
                         <Link href="/profile" className="flex items-center">
                           <User className="mr-2 h-4 w-4" />
                           Profile
                         </Link>
                       </DropdownMenuItem>
-                      {profile?.role === 'hospital' && (
-                        <DropdownMenuItem asChild>
-                          <Link href="/post-job" className="flex items-center">
-                            <Briefcase className="mr-2 h-4 w-4" />
-                            Post Job
-                          </Link>
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuItem asChild>
-                        <Link href="/settings" className="flex items-center">
-                          <Settings className="mr-2 h-4 w-4" />
-                          Settings
-                        </Link>
-                      </DropdownMenuItem>
+                      {/**
+                       * MVP: hide Post Job and Settings options for now
+                       *
+                       * {profile?.role === 'hospital' && (
+                       *   <DropdownMenuItem asChild>
+                       *     <Link href="/post-job" className="flex items-center">
+                       *       <Briefcase className="mr-2 h-4 w-4" />
+                       *       Post Job
+                       *     </Link>
+                       *   </DropdownMenuItem>
+                       * )}
+                       * <DropdownMenuItem asChild>
+                       *   <Link href="/settings" className="flex items-center">
+                       *     <Settings className="mr-2 h-4 w-4" />
+                       *     Settings
+                       *   </Link>
+                       * </DropdownMenuItem>
+                       */}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleSignOut}>
                         <LogOut className="mr-2 h-4 w-4" />
