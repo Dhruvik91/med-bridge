@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Stethoscope, Briefcase, MessageSquare, User, Users, Home } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useAuth } from "@/providers/auth-provider"
 
 const items = [
   {
@@ -40,6 +41,11 @@ const items = [
 
 export function MobileBottomNav() {
   const pathname = usePathname()
+  const { user, loading } = useAuth()
+
+  if (loading || !user) {
+    return null
+  }
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:hidden">

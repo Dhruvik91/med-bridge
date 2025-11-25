@@ -5,7 +5,7 @@ import { ThemeProvider } from '@/providers/theme-provider'
 import { AuthProvider } from '@/providers/auth-provider'
 import { Toaster } from '@/components/ui/toaster'
 import { QueryProvider } from '@/providers/query-provider'
-import { MobileBottomNav } from '@/components/mobile-bottom-nav'
+import { AppShell } from '@/components/app-shell'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -95,13 +95,9 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange={false}
             >
-              <div className="min-h-screen pb-16 md:pb-0">
+              <AppShell>
                 {children}
-                <div className="p-8 border-t border-border text-center text-sm text-muted-foreground">
-                  <p>&copy; {new Date().getFullYear()} MedBridge. All rights reserved. Healthcare Job Marketplace.</p>
-                </div>
-              </div>
-              <MobileBottomNav />
+              </AppShell>
               <Toaster />
             </ThemeProvider>
           </AuthProvider>
