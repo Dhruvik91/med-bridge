@@ -10,73 +10,58 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Stethoscope, Mail, Lock, Loader2, UserCircle, Building2 } from 'lucide-react';
+import { Stethoscope, Mail, Lock, Loader2 } from 'lucide-react';
 import { authService } from '@/services/auth.service';
 import { AUTH_TOKEN_KEY } from '@/constants/constants';
 import { useToast } from '@/hooks/use-toast';
-import { UserRole } from '@/types';
 
-const signupSchema = z.object({
+const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
-  confirmPassword: z.string(),
-  role: z.enum(['candidate', 'employer']),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ['confirmPassword'],
 });
 
-type SignupForm = z.infer<typeof signupSchema>;
+type LoginForm = z.infer<typeof loginSchema>;
 
-export default function SignupPage() {
+export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<SignupForm>({
-    resolver: zodResolver(signupSchema),
-    defaultValues: {
-      role: 'candidate',
-    },
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema),
   });
 
-  const selectedRole = watch('role');
-
-  const onSubmit = async (data: SignupForm) => {
+  const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
     setError('');
     
     try {
-      const response = await authService.signup({
-        email: data.email,
-        password: data.password,
-        role: data.role as UserRole,
-      });
-      
+      const response = await authService.login(data);
       localStorage.setItem(AUTH_TOKEN_KEY, response.access_token);
       
       toast({
-        title: 'Account created successfully',
-        description: 'Welcome to MedBridge! Please complete your profile.',
+        title: 'Login successful',
+        description: 'Welcome back to MedBridge',
       });
       
-      // Redirect to profile completion
-      if (data.role === 'candidate') {
-        router.push('/profile/doctor/complete');
+      // Redirect based on role
+      if (response.user.role === 'candidate') {
+        router.push('/dashboard/candidate');
+      } else if (response.user.role === 'employer') {
+        router.push('/dashboard/employer');
       } else {
-        router.push('/profile/employer/complete');
+        router.push('/dashboard');
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to create account. Please try again.');
+      setError(err.message || 'Invalid email or password');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGoogleSignup = () => {
+  const handleGoogleLogin = () => {
     window.location.href = authService.googleAuth();
   };
 
@@ -93,9 +78,9 @@ export default function SignupPage() {
 
         <Card className="shadow-lg">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Create your account</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">Welcome back</CardTitle>
             <CardDescription className="text-center">
-              Join MedBridge to find your next opportunity
+              Sign in to your MedBridge account
             </CardDescription>
           </CardHeader>
           
@@ -107,44 +92,6 @@ export default function SignupPage() {
             )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-3">
-                <Label>I am a</Label>
-                <RadioGroup
-                  value={selectedRole}
-                  onValueChange={(value) => setValue('role', value as 'candidate' | 'employer')}
-                  className="grid grid-cols-2 gap-4"
-                >
-                  <div>
-                    <RadioGroupItem
-                      value="candidate"
-                      id="candidate"
-                      className="peer sr-only"
-                    />
-                    <Label
-                      htmlFor="candidate"
-                      className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
-                    >
-                      <UserCircle className="mb-3 h-6 w-6" aria-hidden="true" />
-                      <span className="text-sm font-medium">Doctor</span>
-                    </Label>
-                  </div>
-                  <div>
-                    <RadioGroupItem
-                      value="employer"
-                      id="employer"
-                      className="peer sr-only"
-                    />
-                    <Label
-                      htmlFor="employer"
-                      className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
-                    >
-                      <Building2 className="mb-3 h-6 w-6" aria-hidden="true" />
-                      <span className="text-sm font-medium">Employer</span>
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </div>
-
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
@@ -167,7 +114,12 @@ export default function SignupPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="password">Password</Label>
+                  <Link href="/auth/forgot-password" className="text-sm text-primary hover:underline">
+                    Forgot password?
+                  </Link>
+                </div>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
                   <Input
@@ -187,27 +139,6 @@ export default function SignupPage() {
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="••••••••"
-                    className="pl-10"
-                    {...register('confirmPassword')}
-                    aria-invalid={!!errors.confirmPassword}
-                    aria-describedby={errors.confirmPassword ? 'confirm-password-error' : undefined}
-                  />
-                </div>
-                {errors.confirmPassword && (
-                  <p id="confirm-password-error" className="text-sm text-destructive" role="alert">
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
-              </div>
-
               <Button
                 type="submit"
                 className="w-full"
@@ -217,10 +148,10 @@ export default function SignupPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-                    Creating account...
+                    Signing in...
                   </>
                 ) : (
-                  'Create account'
+                  'Sign in'
                 )}
               </Button>
             </form>
@@ -240,7 +171,7 @@ export default function SignupPage() {
               type="button"
               variant="outline"
               className="w-full"
-              onClick={handleGoogleSignup}
+              onClick={handleGoogleLogin}
             >
               <svg className="mr-2 h-4 w-4" aria-hidden="true" viewBox="0 0 24 24">
                 <path
@@ -262,24 +193,13 @@ export default function SignupPage() {
               </svg>
               Google
             </Button>
-
-            <p className="text-xs text-center text-muted-foreground">
-              By signing up, you agree to our{' '}
-              <Link href="/terms" className="underline hover:text-primary">
-                Terms of Service
-              </Link>{' '}
-              and{' '}
-              <Link href="/privacy" className="underline hover:text-primary">
-                Privacy Policy
-              </Link>
-            </p>
           </CardContent>
 
           <CardFooter>
             <p className="text-sm text-center w-full text-muted-foreground">
-              Already have an account?{' '}
-              <Link href="/auth/login" className="text-primary font-medium hover:underline">
-                Sign in
+              Don&apos;t have an account?{' '}
+              <Link href="/auth/signup" className="text-primary font-medium hover:underline">
+                Sign up
               </Link>
             </p>
           </CardFooter>

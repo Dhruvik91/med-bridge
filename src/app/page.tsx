@@ -1,18 +1,12 @@
-import { Metadata } from 'next'
+'use client';
 
-export const metadata: Metadata = {
-  title: 'MedBridge - Healthcare Job Marketplace for Doctors and Hospitals',
-  description: 'Connect qualified doctors with healthcare opportunities. Professional medical job marketplace with verified credentials and trusted employers.',
-  alternates: {
-    canonical: '/'
-  }
-}
-
-import { Navigation } from '@/components/navigation'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
+import { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { 
   Stethoscope, 
   Users, 
@@ -23,283 +17,300 @@ import {
   Clock,
   Star,
   ArrowRight,
-  CheckCircle
-} from 'lucide-react'
-import Link from 'next/link'
+  CheckCircle,
+  Building2,
+  Heart,
+  TrendingUp,
+  Award,
+  Globe
+} from 'lucide-react';
 
 export default function HomePage() {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [location, setLocation] = useState('');
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (searchQuery) params.set('q', searchQuery);
+    if (location) params.set('location', location);
+    router.push(`/jobs?${params.toString()}`);
+  };
+
   return (
-    <>
-      <Navigation />
-      <main className="relative min-h-screen bg-gradient-to-br from-background via-secondary/10 to-primary/5 pt-16">
-        {/* Hero Section */}
-        <section className="container mx-auto px-4 py-20">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-              Connecting Healthcare
-              <span className="text-primary block">Professionals</span>
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              The trusted marketplace where qualified doctors find their next opportunity 
-              and hospitals discover exceptional medical talent.
-            </p>
-            
-            {/* Search Bar */}
-            <div className="flex flex-col md:flex-row gap-4 max-w-2xl mx-auto mb-8">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input 
-                  placeholder="Search jobs, specialties, hospitals..." 
-                  className="pl-10 h-12"
-                />
-              </div>
-              <div className="relative flex-1">
-                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input 
-                  placeholder="Location" 
-                  className="pl-10 h-12"
-                />
-              </div>
-              <Button size="lg" className="h-12 px-8">
-                Search Jobs
-              </Button>
+    <div className="relative min-h-screen bg-gradient-to-br from-background via-secondary/10 to-primary/5">
+      {/* Hero Section */}
+      <section className="container mx-auto px-4 py-20 md:py-32">
+        <div className="text-center max-w-4xl mx-auto">
+          <Badge variant="secondary" className="mb-4" aria-label="Platform status">
+            <TrendingUp className="mr-1 h-3 w-3" aria-hidden="true" />
+            Trusted by 10,000+ Healthcare Professionals
+          </Badge>
+          
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
+            Connecting Healthcare
+            <span className="text-primary block mt-2">Professionals</span>
+          </h1>
+          
+          <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
+            The trusted marketplace where qualified doctors find their next opportunity 
+            and hospitals discover exceptional medical talent.
+          </p>
+          
+          {/* Search Bar */}
+          <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4 max-w-3xl mx-auto mb-12">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" aria-hidden="true" />
+              <Input
+                type="text"
+                placeholder="Job title, specialty, or keyword"
+                className="pl-12 h-14 text-base"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label="Search jobs by title, specialty, or keyword"
+              />
             </div>
+            <div className="relative flex-1">
+              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" aria-hidden="true" />
+              <Input
+                type="text"
+                placeholder="City, state, or zip code"
+                className="pl-12 h-14 text-base"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                aria-label="Location"
+              />
+            </div>
+            <Button type="submit" size="lg" className="h-14 px-8 text-base">
+              Search Jobs
+            </Button>
+          </form>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/auth/signup?role=doctor">
-                <Button size="lg" className="w-full sm:w-auto">
-                  <Stethoscope className="mr-2 h-5 w-5" />
-                  I'm a Doctor
-                </Button>
+          {/* Quick Links */}
+          <div className="flex flex-wrap justify-center gap-3 text-sm">
+            <span className="text-muted-foreground">Popular:</span>
+            {['Cardiology', 'Emergency Medicine', 'Pediatrics', 'Surgery'].map((specialty) => (
+              <Link
+                key={specialty}
+                href={`/jobs?specialty=${encodeURIComponent(specialty)}`}
+                className="text-primary hover:underline font-medium"
+              >
+                {specialty}
               </Link>
-              <Link href="/auth/signup?role=hospital">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                  <Briefcase className="mr-2 h-5 w-5" />
-                  I'm a Hospital
-                </Button>
-              </Link>
-            </div>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Stats Section */}
-        <section className="bg-background/50 py-16">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              <div>
-                <div className="text-3xl font-bold text-primary mb-2">5,000+</div>
-                <div className="text-muted-foreground">Active Doctors</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-primary mb-2">1,200+</div>
-                <div className="text-muted-foreground">Healthcare Facilities</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-primary mb-2">15,000+</div>
-                <div className="text-muted-foreground">Jobs Posted</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-primary mb-2">98%</div>
-                <div className="text-muted-foreground">Success Rate</div>
-              </div>
+      {/* Stats Section */}
+      <section className="container mx-auto px-4 py-16" aria-labelledby="stats-heading">
+        <h2 id="stats-heading" className="sr-only">Platform Statistics</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+          {[
+            { number: '10,000+', label: 'Active Doctors', icon: Users },
+            { number: '5,000+', label: 'Healthcare Jobs', icon: Briefcase },
+            { number: '500+', label: 'Verified Hospitals', icon: Building2 },
+            { number: '95%', label: 'Success Rate', icon: Award },
+          ].map((stat) => (
+            <div key={stat.label} className="text-center">
+              <stat.icon className="h-8 w-8 text-primary mx-auto mb-3" aria-hidden="true" />
+              <div className="text-3xl md:text-4xl font-bold mb-2">{stat.number}</div>
+              <div className="text-sm text-muted-foreground">{stat.label}</div>
             </div>
-          </div>
-        </section>
+          ))}
+        </div>
+      </section>
 
-        {/* Features Section */}
-        <section className="py-20">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Why Choose MedBridge?
-              </h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                We're built specifically for healthcare professionals with features 
-                that matter most to doctors and hospitals.
-              </p>
-            </div>
+      {/* Features Section */}
+      <section className="container mx-auto px-4 py-20" aria-labelledby="features-heading">
+        <div className="text-center mb-16">
+          <h2 id="features-heading" className="text-3xl md:text-4xl font-bold mb-4">
+            Why Choose MedBridge?
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            We provide the most comprehensive platform for medical professionals and healthcare employers
+          </p>
+        </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
-              <Card>
-                <CardHeader>
-                  <Shield className="h-12 w-12 text-primary mb-4" />
-                  <CardTitle>Verified Credentials</CardTitle>
-                  <CardDescription>
-                    All medical licenses and certifications are verified through 
-                    our rigorous authentication process.
-                  </CardDescription>
-                </CardHeader>
-              </Card>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {[
+            {
+              icon: Shield,
+              title: 'Verified Credentials',
+              description: 'All doctor profiles are verified with proper medical licenses and certifications',
+            },
+            {
+              icon: Globe,
+              title: 'Nationwide Network',
+              description: 'Access opportunities across the country from top healthcare facilities',
+            },
+            {
+              icon: Heart,
+              title: 'Personalized Matches',
+              description: 'Smart algorithm matches you with the most relevant opportunities',
+            },
+            {
+              icon: Clock,
+              title: 'Quick Applications',
+              description: 'Apply to multiple positions with your profile in just a few clicks',
+            },
+            {
+              icon: Star,
+              title: 'Quality Employers',
+              description: 'Work with verified hospitals and healthcare facilities you can trust',
+            },
+            {
+              icon: TrendingUp,
+              title: 'Career Growth',
+              description: 'Find opportunities that align with your career goals and aspirations',
+            },
+          ].map((feature) => (
+            <Card key={feature.title} className="border-2 hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <feature.icon className="h-12 w-12 text-primary mb-4" aria-hidden="true" />
+                <CardTitle className="text-xl">{feature.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-base">
+                  {feature.description}
+                </CardDescription>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
 
-              <Card>
-                <CardHeader>
-                  <Users className="h-12 w-12 text-primary mb-4" />
-                  <CardTitle>Trusted Network</CardTitle>
-                  <CardDescription>
-                    Connect with reputable healthcare facilities and qualified 
-                    medical professionals across the country.
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <Briefcase className="h-12 w-12 text-primary mb-4" />
-                  <CardTitle>Smart Matching</CardTitle>
-                  <CardDescription>
-                    Our AI-powered system matches doctors with opportunities 
-                    based on specialties, experience, and preferences.
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </div>
-          </div>
-        </section>
-
-        {/* Featured Jobs Section */}
-        <section className="bg-secondary/20 py-20">
-          <div className="container mx-auto px-4">
-            <div className="flex justify-between items-center mb-12">
-              <div>
-                <h2 className="text-3xl font-bold mb-2">Featured Opportunities</h2>
-                <p className="text-muted-foreground">Latest job openings from top healthcare facilities</p>
-              </div>
-              <Link href="/jobs">
-                <Button variant="outline">
-                  View All Jobs
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Sample Job Cards */}
-              {[1, 2, 3].map((i) => (
-                <Card key={i} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex justify-between items-start mb-2">
-                      <Badge variant="secondary">Full-time</Badge>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Clock className="h-4 w-4 mr-1" />
-                        2 days ago
-                      </div>
-                    </div>
-                    <CardTitle className="text-lg">Emergency Medicine Physician</CardTitle>
-                    <CardDescription className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      City General Hospital, New York
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex justify-between items-center mb-4">
-                      <div className="text-2xl font-bold text-primary">$280K - $320K</div>
-                      <div className="flex items-center">
-                        <Star className="h-4 w-4 text-yellow-500 mr-1" />
-                        <span className="text-sm">4.8</span>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      <Badge variant="outline">Emergency Medicine</Badge>
-                      <Badge variant="outline">Board Certified</Badge>
-                    </div>
-                    <Button className="w-full">
-                      Apply Now
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* How It Works Section */}
-        <section className="py-20">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                How MedBridge Works
-              </h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Simple steps to connect healthcare professionals with opportunities
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-16">
-              {/* For Doctors */}
-              <div>
-                <h3 className="text-2xl font-bold mb-8 text-center">For Doctors</h3>
-                <div className="space-y-6">
-                  {[
-                    { step: 1, title: "Create Your Profile", desc: "Upload credentials, experience, and preferences" },
-                    { step: 2, title: "Get Verified", desc: "Our team verifies your medical licenses and certifications" },
-                    { step: 3, title: "Browse & Apply", desc: "Find opportunities that match your specialty and location" },
-                    { step: 4, title: "Connect & Interview", desc: "Message hospitals directly and schedule interviews" }
-                  ].map((item) => (
-                    <div key={item.step} className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold">
-                        {item.step}
-                      </div>
-                      <div>
-                        <h4 className="font-semibold mb-1">{item.title}</h4>
-                        <p className="text-muted-foreground">{item.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* For Hospitals */}
-              <div>
-                <h3 className="text-2xl font-bold mb-8 text-center">For Hospitals</h3>
-                <div className="space-y-6">
-                  {[
-                    { step: 1, title: "Setup Hospital Profile", desc: "Add facility information, specialties, and culture" },
-                    { step: 2, title: "Post Job Openings", desc: "Create detailed job descriptions with requirements" },
-                    { step: 3, title: "Review Applications", desc: "Browse qualified candidates with verified credentials" },
-                    { step: 4, title: "Hire Top Talent", desc: "Connect with doctors and make offers seamlessly" }
-                  ].map((item) => (
-                    <div key={item.step} className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold">
-                        {item.step}
-                      </div>
-                      <div>
-                        <h4 className="font-semibold mb-1">{item.title}</h4>
-                        <p className="text-muted-foreground">{item.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="bg-primary text-primary-foreground py-20">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Ready to Find Your Next Opportunity?
+      {/* How It Works Section */}
+      <section className="bg-secondary/30 py-20" aria-labelledby="how-it-works-heading">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 id="how-it-works-heading" className="text-3xl md:text-4xl font-bold mb-4">
+              How It Works
             </h2>
-            <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-              Join thousands of healthcare professionals who trust MedBridge 
-              to advance their careers and find the perfect match.
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Get started in three simple steps
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/auth/signup">
-                <Button size="lg" variant="secondary" className="w-full sm:w-auto">
-                  Get Started Today
-                </Button>
-              </Link>
-              <Link href="/jobs">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
-                  Browse Jobs
-                </Button>
-              </Link>
-            </div>
           </div>
-        </section>
-      </main>
-    </>
-  )
+
+          <div className="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+            {[
+              {
+                step: '1',
+                title: 'Create Your Profile',
+                description: 'Sign up and complete your professional profile with credentials, experience, and preferences',
+              },
+              {
+                step: '2',
+                title: 'Browse & Apply',
+                description: 'Search through thousands of verified job opportunities and apply with one click',
+              },
+              {
+                step: '3',
+                title: 'Get Hired',
+                description: 'Connect with employers, schedule interviews, and land your dream healthcare position',
+              },
+            ].map((step) => (
+              <div key={step.step} className="text-center relative">
+                <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+                  {step.step}
+                </div>
+                <h3 className="text-xl font-semibold mb-4">{step.title}</h3>
+                <p className="text-muted-foreground">{step.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Sections */}
+      <section className="container mx-auto px-4 py-20">
+        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          {/* For Doctors */}
+          <Card className="border-2 border-primary/20 hover:shadow-xl transition-shadow">
+            <CardHeader>
+              <Stethoscope className="h-12 w-12 text-primary mb-4" aria-hidden="true" />
+              <CardTitle className="text-2xl">For Healthcare Professionals</CardTitle>
+              <CardDescription className="text-base">
+                Find your next opportunity in seconds. Access exclusive healthcare positions.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {[
+                'Browse thousands of verified positions',
+                'Get matched with relevant opportunities',
+                'Apply with your professional profile',
+                'Track all your applications in one place',
+              ].map((feature) => (
+                <div key={feature} className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden="true" />
+                  <span className="text-sm">{feature}</span>
+                </div>
+              ))}
+            </CardContent>
+            <CardFooter>
+              <Button asChild size="lg" className="w-full">
+                <Link href="/auth/signup">
+                  Join as a Doctor
+                  <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                </Link>
+              </Button>
+            </CardFooter>
+          </Card>
+
+          {/* For Employers */}
+          <Card className="border-2 border-primary/20 hover:shadow-xl transition-shadow">
+            <CardHeader>
+              <Building2 className="h-12 w-12 text-primary mb-4" aria-hidden="true" />
+              <CardTitle className="text-2xl">For Healthcare Employers</CardTitle>
+              <CardDescription className="text-base">
+                Connect with qualified medical professionals. Post jobs and manage applications.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {[
+                'Post unlimited job openings',
+                'Access verified doctor profiles',
+                'Advanced filtering and search',
+                'Streamlined application management',
+              ].map((feature) => (
+                <div key={feature} className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden="true" />
+                  <span className="text-sm">{feature}</span>
+                </div>
+              ))}
+            </CardContent>
+            <CardFooter>
+              <Button asChild size="lg" variant="outline" className="w-full">
+                <Link href="/auth/signup">
+                  Join as an Employer
+                  <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                </Link>
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="bg-primary text-primary-foreground py-20">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            Ready to Take the Next Step in Your Career?
+          </h2>
+          <p className="text-lg mb-8 max-w-2xl mx-auto opacity-90">
+            Join thousands of healthcare professionals who have found their perfect match on MedBridge
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg" variant="secondary" className="text-base">
+              <Link href="/auth/signup">Get Started Free</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="text-base border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
+              <Link href="/jobs">Browse Jobs</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 }
