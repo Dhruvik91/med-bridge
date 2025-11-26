@@ -133,13 +133,22 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
 
       const storedToken = window.localStorage.getItem( AUTH_TOKEN_KEY );
 
-      const publicRoutes = [ '/auth/signin', '/auth/signup' ];
+      const publicRoutes = [ '/', '/auth/signin', '/auth/signup' ];
+
       if ( !storedToken && !publicRoutes.includes( pathname ) )
       {
         router.replace( '/auth/signin' );
         setLoading( false );
         return;
       }
+
+      if ( storedToken && publicRoutes.includes( pathname ) )
+      {
+        await loadUserFromToken( storedToken );
+        router.replace( '/dashboard' );
+        return;
+      }
+
       await loadUserFromToken( storedToken );
     };
 
@@ -209,7 +218,7 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
   {
     if ( typeof window === 'undefined' ) return;
 
-    window.location.href = API_CONFIG.path.userAuth.googleLogin;
+    window.location.href = `${API_CONFIG.baseUrl}${API_CONFIG.path.userAuth.googleLogin}`;
   };
 
   const value = {
