@@ -74,11 +74,11 @@ export default function EmployerProfileCompletePage() {
 
     const profileData: CreateEmployerProfileDto = {
       userId: user.id,
-      companyName: data.companyName,
-      contactPersonName: data.contactPersonName,
+      name: data.companyName,
+      contactPerson: data.contactPersonName,
       phone: data.phone,
-      companyWebsite: data.companyWebsite || undefined,
-      companyDescription: data.companyDescription,
+      website: data.companyWebsite || undefined,
+      description: data.companyDescription,
       address: data.address,
       city: data.city,
       state: data.state,

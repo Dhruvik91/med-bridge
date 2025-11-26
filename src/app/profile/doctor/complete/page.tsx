@@ -78,19 +78,16 @@ export default function DoctorProfileCompletePage() {
 
     const profileData: CreateDoctorProfileDto = {
       userId: user.id,
-      firstName: data.firstName,
-      lastName: data.lastName,
+      fullName: `${data.firstName} ${data.lastName}`,
       phone: data.phone,
-      dateOfBirth: data.dateOfBirth,
+      dob: data.dateOfBirth,
       gender: data.gender,
-      bio: data.bio,
-      licenseNumber: data.licenseNumber,
-      yearsOfExperience: data.yearsOfExperience,
+      summary: data.bio,
+      licenseNumbers: data.licenseNumber ? [data.licenseNumber] : undefined,
+      experienceYears: data.yearsOfExperience,
       address: data.address,
       city: data.city,
-      state: data.state,
       country: data.country,
-      postalCode: data.postalCode,
     };
 
     createProfileMutation.mutate(profileData);

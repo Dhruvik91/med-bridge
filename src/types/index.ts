@@ -246,40 +246,40 @@ export interface UpdateUserDto {
 
 export interface CreateDoctorProfileDto {
   userId: string;
-  firstName?: string;
-  lastName?: string;
-  phone?: string;
-  dateOfBirth?: string;
+  fullName: string;
+  displayName?: string;
+  dob?: string;
   gender?: Gender;
-  bio?: string;
-  licenseNumber?: string;
-  yearsOfExperience?: number;
-  profilePictureUrl?: string;
-  resumeUrl?: string;
-  linkedInUrl?: string;
-  address?: string;
-  city?: string;
-  state?: string;
+  phone?: string;
+  summary?: string;
+  experienceYears?: number;
+  qualifications?: string[];
+  specialties?: string[];
+  licenseNumbers?: string[];
   country?: string;
-  postalCode?: string;
-  specialtyIds?: string[];
+  city?: string;
+  address?: string;
+  avatarUrl?: string;
+  resumeUrl?: string;
+  socialLinks?: Record<string, any>;
 }
 
 export interface UpdateDoctorProfileDto extends Partial<CreateDoctorProfileDto> {}
 
 export interface CreateEmployerProfileDto {
   userId: string;
-  companyName?: string;
-  contactPersonName?: string;
+  name: string;
+  contactPerson?: string;
   phone?: string;
-  companyLogoUrl?: string;
-  companyWebsite?: string;
-  companyDescription?: string;
+  email?: string;
+  website?: string;
+  description?: string;
   address?: string;
   city?: string;
   state?: string;
   country?: string;
   postalCode?: string;
+  logoUrl?: string;
 }
 
 export interface UpdateEmployerProfileDto extends Partial<CreateEmployerProfileDto> {}
