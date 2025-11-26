@@ -147,13 +147,13 @@ export default function EmployerDashboardPage() {
       </div>
 
       {/* Profile Completion Alert */}
-      {profile && !profile.isProfileComplete && (
+      {profile && (!profile.name || !profile.phone) && (
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="flex items-center justify-between">
-            <span>Complete your company profile to attract more candidates</span>
+            <span>Complete your company profile to start posting jobs</span>
             <Button asChild variant="link" size="sm">
-              <Link href="/profile/employer/complete">
+              <Link href="/profile">
                 Complete Profile
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -350,9 +350,9 @@ export default function EmployerDashboardPage() {
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold truncate mb-1">
-                          {application.candidate?.firstName} {application.candidate?.lastName}
-                        </h4>
+                        <p className="font-medium truncate">
+                          {application.candidate?.displayName || application.candidate?.fullName || 'Candidate'}
+                        </p>
                         <p className="text-sm text-muted-foreground mb-2">
                           Applied for: {job?.title || 'Job'}
                         </p>

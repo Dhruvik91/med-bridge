@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -47,6 +47,7 @@ const steps = [
 export default function DoctorProfileCompletePage() {
   const router = useRouter();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState(0);
   const [error, setError] = useState('');
 
@@ -62,6 +63,9 @@ export default function DoctorProfileCompletePage() {
   const createProfileMutation = useMutation({
     mutationFn: (data: CreateDoctorProfileDto) => doctorProfileService.create(data),
     onSuccess: () => {
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+      queryClient.invalidateQueries({ queryKey: ['doctorProfile'] });
       toast({
         title: 'Profile created successfully',
         description: 'Your profile is now complete',

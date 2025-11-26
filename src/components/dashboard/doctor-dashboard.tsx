@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Stethoscope, Briefcase, Users, MessageSquare } from 'lucide-react'
+import { Stethoscope, Briefcase, Users } from 'lucide-react'
 
 interface DoctorDashboardProps {
   name: string | null
@@ -73,12 +73,6 @@ export function DoctorDashboard({ name, email }: DoctorDashboardProps) {
                 <Button variant="outline" size="sm">
                   <Users className="mr-2 h-4 w-4" />
                   Update Profile
-                </Button>
-              </Link>
-              <Link href="/messages">
-                <Button variant="outline" size="sm">
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  View Messages
                 </Button>
               </Link>
             </div>

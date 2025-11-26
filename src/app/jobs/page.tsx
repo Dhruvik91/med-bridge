@@ -195,7 +195,7 @@ export default function JobsPage() {
                     <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Building2 className="h-4 w-4" aria-hidden="true" />
-                        {job.organization?.name || job.employerProfile?.companyName || 'Healthcare Facility'}
+                        {job.organization?.name || job.employerProfile?.name || 'Healthcare Facility'}
                       </span>
                       {job.location && (
                         <span className="flex items-center gap-1">

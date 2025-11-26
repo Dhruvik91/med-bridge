@@ -128,13 +128,13 @@ export default function JobDetailPage() {
       return;
     }
 
-    if (!profile || !profile.isProfileComplete) {
+    if (!profile || !profile.fullName || !profile.phone) {
       toast({
         title: 'Complete your profile',
         description: 'Please complete your profile before applying',
         variant: 'destructive',
       });
-      router.push('/profile/doctor/complete');
+      router.push('/profile');
       return;
     }
 
@@ -223,7 +223,7 @@ export default function JobDetailPage() {
                   <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
                     <span className="flex items-center gap-2">
                       <Building2 className="h-5 w-5" aria-hidden="true" />
-                      {job.organization?.name || job.employerProfile?.companyName || 'Healthcare Facility'}
+                      {job.organization?.name || job.employerProfile?.name || 'Healthcare Facility'}
                     </span>
                     {job.location && (
                       <span className="flex items-center gap-2">
@@ -434,18 +434,18 @@ export default function JobDetailPage() {
               <CardContent className="space-y-4">
                 <div>
                   <h4 className="font-semibold mb-1">
-                    {job.organization?.name || job.employerProfile?.companyName}
+                    {job.organization?.name || job.employerProfile?.name}
                   </h4>
-                  {(job.organization?.description || job.employerProfile?.companyDescription) && (
+                  {(job.organization?.description || job.employerProfile?.description) && (
                     <p className="text-sm text-muted-foreground line-clamp-4">
-                      {job.organization?.description || job.employerProfile?.companyDescription}
+                      {job.organization?.description || job.employerProfile?.description}
                     </p>
                   )}
                 </div>
-                {(job.organization?.website || job.employerProfile?.companyWebsite) && (
+                {(job.organization?.website || job.employerProfile?.website) && (
                   <Button asChild variant="outline" className="w-full" size="sm">
                     <a
-                      href={job.organization?.website || job.employerProfile?.companyWebsite}
+                      href={(job.organization?.website || job.employerProfile?.website) || ''}
                       target="_blank"
                       rel="noopener noreferrer"
                     >

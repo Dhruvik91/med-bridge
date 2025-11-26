@@ -141,7 +141,7 @@ export default function CandidateDashboardPage() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold">
-            Welcome back{profile?.firstName ? `, ${profile.firstName}` : ''}!
+            Welcome back{profile?.displayName ? `, ${profile.displayName}` : profile?.fullName ? `, ${profile.fullName.split(' ')[0]}` : ''}!
           </h1>
           <p className="text-muted-foreground mt-1">
             Here's your job search overview
@@ -163,13 +163,13 @@ export default function CandidateDashboardPage() {
       </div>
 
       {/* Profile Completion Alert */}
-      {profile && !profile.isProfileComplete && (
+      {profile && (!profile.fullName || !profile.phone || !profile.city || !profile.country) && (
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="flex items-center justify-between">
             <span>Complete your profile to increase your chances of getting hired</span>
             <Button asChild variant="link" size="sm">
-              <Link href="/profile/doctor/complete">
+              <Link href="/profile">
                 Complete Profile
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -277,7 +277,7 @@ export default function CandidateDashboardPage() {
                         {application.job?.title || 'Job Title'}
                       </h4>
                       <p className="text-sm text-muted-foreground mb-2">
-                        {application.job?.organization?.name || application.job?.employerProfile?.companyName || 'Company Name'}
+                        {application.job?.organization?.name || application.job?.employerProfile?.name || 'Company Name'}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Applied {new Date(application.appliedAt).toLocaleDateString()}
@@ -345,7 +345,7 @@ export default function CandidateDashboardPage() {
                         {savedJob.job?.title || 'Job Title'}
                       </h4>
                       <p className="text-sm text-muted-foreground mb-2">
-                        {savedJob.job?.organization?.name || savedJob.job?.employerProfile?.companyName || 'Company Name'}
+                        {savedJob.job?.organization?.name || savedJob.job?.employerProfile?.name || 'Company Name'}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Saved {new Date(savedJob.savedAt).toLocaleDateString()}

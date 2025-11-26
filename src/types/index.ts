@@ -53,45 +53,42 @@ export interface User {
 export interface DoctorProfile {
   id: string;
   userId: string;
-  firstName?: string;
-  lastName?: string;
-  phone?: string;
-  dateOfBirth?: string;
-  gender?: Gender;
-  bio?: string;
-  licenseNumber?: string;
-  yearsOfExperience?: number;
-  profilePictureUrl?: string;
-  resumeUrl?: string;
-  linkedInUrl?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-  postalCode?: string;
-  isProfileComplete: boolean;
+  fullName: string;
+  displayName?: string | null;
+  dob?: string | null;
+  gender?: Gender | null;
+  phone?: string | null;
+  summary?: string | null;
+  experienceYears?: number | null;
+  qualifications: string[];
+  specialties: string[];
+  licenseNumbers: string[];
+  country?: string | null;
+  city?: string | null;
+  address?: string | null;
+  avatarUrl?: string | null;
+  resumeUrl?: string | null;
+  socialLinks: Record<string, any>;
   createdAt: string;
   updatedAt: string;
   user?: User;
-  specialties?: Specialty[];
 }
 
 export interface EmployerProfile {
   id: string;
   userId: string;
-  companyName?: string;
-  contactPersonName?: string;
-  phone?: string;
-  companyLogoUrl?: string;
-  companyWebsite?: string;
-  companyDescription?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-  postalCode?: string;
-  isVerified: boolean;
-  isProfileComplete: boolean;
+  name: string;
+  contactPerson?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  website?: string | null;
+  description?: string | null;
+  address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  country?: string | null;
+  postalCode?: string | null;
+  logoUrl?: string | null;
   createdAt: string;
   updatedAt: string;
   user?: User;
@@ -177,18 +174,6 @@ export interface SavedJob {
   savedAt: string;
   user?: User;
   job?: Job;
-}
-
-export interface Message {
-  id: string;
-  senderId: string;
-  receiverId: string;
-  subject?: string;
-  body: string;
-  isRead: boolean;
-  sentAt: string;
-  sender?: User;
-  receiver?: User;
 }
 
 export interface JobNote {
@@ -316,13 +301,6 @@ export interface UpdateApplicationDto {
 export interface CreateSavedJobDto {
   userId: string;
   jobId: string;
-}
-
-export interface CreateMessageDto {
-  senderId: string;
-  receiverId: string;
-  subject?: string;
-  body: string;
 }
 
 export interface CreateJobNoteDto {
