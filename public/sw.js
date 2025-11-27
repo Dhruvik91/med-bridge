@@ -4,7 +4,7 @@ const urlsToCache = [
   '/jobs',
   '/profile',
   '/messages',
-  '/auth/signin',
+  '/auth/login',
   '/auth/signup',
   '/manifest.json',
   '/icons/icon-192x192.png',

@@ -22,10 +22,11 @@ import {
   MessageSquare,
   Bell
 } from 'lucide-react'
+import { getDashboardRoute } from '@/lib/dashboard-routes'
 
 export function Navigation() {
   const { user, profile, signOut } = useAuth()
-  const logoHref = user ? '/dashboard' : '/'
+  const logoHref = user ? getDashboardRoute(profile?.role || null) : '/'
 
   const handleSignOut = async () => {
     try {
@@ -160,7 +161,7 @@ export function Navigation() {
 
                 {/* Auth actions */}
                 <div className="flex items-center space-x-2">
-                  <Link href="/auth/signin">
+                  <Link href="/auth/login">
                     <Button variant="ghost">Sign In</Button>
                   </Link>
                   <Link href="/auth/signup">

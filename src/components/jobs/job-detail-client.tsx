@@ -355,7 +355,7 @@ export function JobDetailClient({ jobId }: JobDetailClientProps) {
                       </Button>
                       <p className="text-sm text-muted-foreground text-center">
                         Already have an account?{' '}
-                        <Link href="/auth/signin" className="text-primary hover:underline">
+                        <Link href="/auth/login" className="text-primary hover:underline">
                           Sign in
                         </Link>
                       </p>

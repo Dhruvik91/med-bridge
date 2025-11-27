@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { API_CONFIG, AUTH_TOKEN_KEY } from '@/constants/constants';
 import httpService from '@/lib/http-service';
+import { getDashboardRoute } from '@/lib/dashboard-routes';
 
 type UserRole = 'doctor' | 'hospital' | 'admin';
 
@@ -89,7 +90,7 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
       setUser( null );
       setProfile( null );
       setLoading( false );
-      return;
+      return null;
     }
 
     try
@@ -98,6 +99,7 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
       const mapped = mapBackendUser( data );
       setUser( mapped.authUser );
       setProfile( mapped.profile );
+      return mapped.authUser;
     } catch
     {
       if ( typeof window !== 'undefined' )
@@ -106,6 +108,7 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
       }
       setUser( null );
       setProfile( null );
+      return null;
     } finally
     {
       setLoading( false );
@@ -126,26 +129,28 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
         window.localStorage.setItem( AUTH_TOKEN_KEY, urlToken );
         url.searchParams.delete( 'token' );
         window.history.replaceState( {}, '', url.toString() );
-        await loadUserFromToken( urlToken );
-        router.replace( '/dashboard' );
+        const userData = await loadUserFromToken( urlToken );
+        const dashboardRoute = getDashboardRoute( userData?.role || null );
+        router.replace( dashboardRoute );
         return;
       }
 
       const storedToken = window.localStorage.getItem( AUTH_TOKEN_KEY );
 
-      const publicRoutes = [ '/', '/auth/signin', '/auth/signup' ];
+      const publicRoutes = [ '/', '/auth/login', '/auth/signup' ];
 
       if ( !storedToken && !publicRoutes.includes( pathname ) )
       {
-        router.replace( '/auth/signin' );
+        router.replace( '/auth/login' );
         setLoading( false );
         return;
       }
 
       if ( storedToken && publicRoutes.includes( pathname ) )
       {
-        await loadUserFromToken( storedToken );
-        router.replace( '/dashboard' );
+        const userData = await loadUserFromToken( storedToken );
+        const dashboardRoute = getDashboardRoute( userData?.role || null );
+        router.replace( dashboardRoute );
         return;
       }
 
