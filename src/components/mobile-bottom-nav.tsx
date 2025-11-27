@@ -6,8 +6,13 @@ import { Stethoscope, Briefcase, MessageSquare, User, Users, Home } from "lucide
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/providers/auth-provider"
 
-// MVP mobile nav: only Jobs and Profile
+// MVP mobile nav: Home, Jobs and Profile
 const items = [
+  {
+    href: "/dashboard/candidate",
+    label: "Home",
+    icon: Home,
+  },
   {
     href: "/jobs",
     label: "Jobs",

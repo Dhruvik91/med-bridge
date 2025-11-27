@@ -6,6 +6,7 @@ import { useAuth } from '@/providers/auth-provider'
 import { MobileBottomNav } from '@/components/mobile-bottom-nav'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
+import { Navigation } from '@/components/navigation'
 
 interface AppShellProps {
   children: ReactNode
@@ -43,7 +44,7 @@ export function AppShell({ children }: AppShellProps) {
     return (
       <div className="min-h-screen pb-16 md:pb-0">
         {/* Global Back Button */}
-        {!isDashboardHome && (
+        {/* {!isDashboardHome && (
           <div className="fixed top-4 left-4 z-40">
             <Button
               variant="outline"
@@ -55,8 +56,11 @@ export function AppShell({ children }: AppShellProps) {
               Back
             </Button>
           </div>
-        )}
-        {children}
+        )} */}
+        <Navigation />
+        <main className="pt-16">
+          {children}
+        </main>
         <MobileBottomNav />
       </div>
     )
@@ -64,7 +68,10 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <div className="min-h-screen">
-      {children}
+      <Navigation />
+      <main className="pt-16">
+        {children}
+      </main>
       <div className="p-8 border-t border-border text-center text-sm text-muted-foreground">
         <p>&copy; {new Date().getFullYear()} MedBridge. All rights reserved. Healthcare Job Marketplace.</p>
       </div>
