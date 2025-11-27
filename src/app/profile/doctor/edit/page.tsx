@@ -178,12 +178,6 @@ export default function DoctorProfileEditPage() {
       <div className="container mx-auto max-w-2xl">
         {/* Header */}
         <div className="mb-8">
-          <Button variant="ghost" asChild className="mb-4">
-            <Link href="/dashboard/candidate">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Dashboard
-            </Link>
-          </Button>
           <h1 className="text-3xl font-bold">Edit Your Profile</h1>
           <p className="text-muted-foreground mt-1">
             Update your professional information
