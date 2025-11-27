@@ -147,19 +147,6 @@ export default function CandidateDashboardPage() {
             Here's your job search overview
           </p>
         </div>
-        <div className="flex gap-3">
-          <Button asChild variant="outline">
-            <Link href="/profile/doctor/edit">
-              Edit Profile
-            </Link>
-          </Button>
-          <Button asChild>
-            <Link href="/jobs">
-              <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
-              Find Jobs
-            </Link>
-          </Button>
-        </div>
       </div>
 
       {/* Profile Completion Alert */}

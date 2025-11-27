@@ -96,7 +96,6 @@ export default function SavedJobsPage() {
   if (userLoading || savedJobsLoading) {
     return (
       <>
-        <Navigation />
         <main className="pt-16 min-h-screen bg-background">
           <div className="container mx-auto px-4 py-8">
             <Skeleton className="h-12 w-64 mb-8" />
@@ -114,7 +113,6 @@ export default function SavedJobsPage() {
   if (!user) {
     return (
       <>
-        <Navigation />
         <main className="pt-16 min-h-screen bg-background">
           <div className="container mx-auto px-4 py-8">
             <Alert>
@@ -133,8 +131,6 @@ export default function SavedJobsPage() {
 
   return (
     <>
-      <Navigation />
-      <main className="pt-16 min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
           {/* Header */}
           <div className="mb-8">
@@ -267,7 +263,6 @@ export default function SavedJobsPage() {
             </div>
           )}
         </div>
-      </main>
     </>
   );
 }

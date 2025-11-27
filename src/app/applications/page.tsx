@@ -137,7 +137,6 @@ export default function ApplicationsPage() {
   if (userLoading || profileLoading) {
     return (
       <>
-        <Navigation />
         <main className="pt-16 min-h-screen bg-background">
           <div className="container mx-auto px-4 py-8">
             <Skeleton className="h-12 w-64 mb-8" />
@@ -160,7 +159,6 @@ export default function ApplicationsPage() {
   if (!user || user.role !== 'candidate') {
     return (
       <>
-        <Navigation />
         <main className="pt-16 min-h-screen bg-background">
           <div className="container mx-auto px-4 py-8">
             <Alert variant="destructive">
@@ -176,8 +174,6 @@ export default function ApplicationsPage() {
 
   return (
     <>
-      <Navigation />
-      <main className="pt-16 min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
           {/* Header */}
           <div className="mb-8">
@@ -377,7 +373,6 @@ export default function ApplicationsPage() {
             </div>
           )}
         </div>
-      </main>
     </>
   );
 }
