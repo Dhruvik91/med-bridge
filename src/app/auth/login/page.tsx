@@ -13,7 +13,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Stethoscope, Mail, Lock, Loader2 } from 'lucide-react';
 import { authService } from '@/services/auth.service';
-import { AUTH_TOKEN_KEY } from '@/constants/constants';
+import { AUTH_TOKEN_KEY, FRONTEND_ROUTES } from '@/constants/constants';
 import { useToast } from '@/hooks/use-toast';
 
 const loginSchema = z.object({
@@ -48,11 +48,11 @@ export default function LoginPage() {
       
       // Redirect based on role
       if (response.user.role === 'candidate') {
-        router.push('/dashboard/candidate');
+        router.push(FRONTEND_ROUTES.DASHBOARD.CANDIDATE);
       } else if (response.user.role === 'employer') {
-        router.push('/dashboard/employer');
+        router.push(FRONTEND_ROUTES.DASHBOARD.EMPLOYER);
       } else {
-        router.push('/dashboard');
+        router.push(FRONTEND_ROUTES.DASHBOARD.BASE);
       }
     } catch (err: any) {
       setError(err.message || 'Invalid email or password');

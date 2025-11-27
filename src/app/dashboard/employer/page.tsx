@@ -22,6 +22,7 @@ import {
   MapPin
 } from 'lucide-react';
 import { authService } from '@/services/auth.service';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 import { jobService } from '@/services/job.service';
 import { employerProfileService } from '@/services/employer-profile.service';
 import { applicationService } from '@/services/application.service';
@@ -43,7 +44,7 @@ export default function EmployerDashboardPage() {
       // Check if user has completed profile
       employerProfileService.findByUser(user.id).catch(() => {
         // If profile doesn't exist, redirect to complete profile
-        router.push('/profile/employer/complete');
+        router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.COMPLETE);
       });
     }
   }, [user, router]);

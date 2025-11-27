@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { API_CONFIG, AUTH_TOKEN_KEY } from '@/constants/constants';
+import { API_CONFIG, AUTH_TOKEN_KEY, FRONTEND_ROUTES } from '@/constants/constants';
 import httpService from '@/lib/http-service';
 import { getDashboardRoute } from '@/lib/dashboard-routes';
 
@@ -137,11 +137,11 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
 
       const storedToken = window.localStorage.getItem( AUTH_TOKEN_KEY );
 
-      const publicRoutes = [ '/', '/auth/login', '/auth/signup' ];
+      const publicRoutes = [ FRONTEND_ROUTES.HOME, FRONTEND_ROUTES.AUTH.LOGIN, FRONTEND_ROUTES.AUTH.SIGNUP ];
 
       if ( !storedToken && !publicRoutes.includes( pathname ) )
       {
-        router.replace( '/auth/login' );
+        router.replace( FRONTEND_ROUTES.AUTH.LOGIN );
         setLoading( false );
         return;
       }

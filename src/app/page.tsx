@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -35,7 +36,7 @@ export default function HomePage() {
     const params = new URLSearchParams();
     if (searchQuery) params.set('q', searchQuery);
     if (location) params.set('location', location);
-    router.push(`/jobs?${params.toString()}`);
+    router.push(`${FRONTEND_ROUTES.JOBS}?${params.toString()}`);
   };
 
   return (

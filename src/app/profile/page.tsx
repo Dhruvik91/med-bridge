@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -51,7 +52,7 @@ export default function ProfilePage() {
   }
 
   if (!user) {
-    router.push('/auth/login');
+    router.push(FRONTEND_ROUTES.AUTH.LOGIN);
     return null;
   }
 
@@ -67,7 +68,7 @@ export default function ProfilePage() {
           </Alert>
           <Button 
             className="mt-4"
-            onClick={() => router.push('/profile/doctor/complete')}
+            onClick={() => router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE)}
           >
             Complete Profile
           </Button>
@@ -87,7 +88,7 @@ export default function ProfilePage() {
               Healthcare Professional
             </p>
           </div>
-          <Button onClick={() => router.push('/profile/doctor/edit')}>
+          <Button onClick={() => router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.EDIT)}>
             <Edit className="h-4 w-4 mr-2" />
             Edit Profile
           </Button>
@@ -231,7 +232,7 @@ export default function ProfilePage() {
                 </p>
                 <Button 
                   variant="outline"
-                  onClick={() => router.push('/profile/doctor/edit')}
+                  onClick={() => router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.EDIT)}
                 >
                   <Edit className="h-4 w-4 mr-2" />
                   Add Bio
@@ -256,7 +257,7 @@ export default function ProfilePage() {
           </Alert>
           <Button 
             className="mt-4"
-            onClick={() => router.push('/profile/employer/complete')}
+            onClick={() => router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.COMPLETE)}
           >
             Complete Profile
           </Button>
@@ -276,7 +277,7 @@ export default function ProfilePage() {
               Healthcare Employer
             </p>
           </div>
-          <Button onClick={() => router.push('/profile/employer/edit')}>
+          <Button onClick={() => router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.EDIT)}>
             <Edit className="h-4 w-4 mr-2" />
             Edit Profile
           </Button>
@@ -422,7 +423,7 @@ export default function ProfilePage() {
                 </p>
                 <Button 
                   variant="outline"
-                  onClick={() => router.push('/profile/employer/edit')}
+                  onClick={() => router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.EDIT)}
                 >
                   <Edit className="h-4 w-4 mr-2" />
                   Add Description

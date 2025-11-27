@@ -23,6 +23,7 @@ import {
   Plus
 } from 'lucide-react';
 import { authService } from '@/services/auth.service';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 import { applicationService } from '@/services/application.service';
 import { savedJobService } from '@/services/saved-job.service';
 import { doctorProfileService } from '@/services/doctor-profile.service';
@@ -44,7 +45,7 @@ export default function CandidateDashboardPage() {
       // Check if user has completed profile
       doctorProfileService.findByUser(user.id).catch(() => {
         // If profile doesn't exist, redirect to complete profile
-        router.push('/profile/doctor/complete');
+        router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE);
       });
     }
   }, [user, router]);

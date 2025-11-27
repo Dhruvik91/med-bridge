@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
-import { AUTH_TOKEN_KEY, API_CONFIG } from '@/constants/constants';
+import { AUTH_TOKEN_KEY, API_CONFIG, FRONTEND_ROUTES } from '@/constants/constants';
 import { useToast } from '@/hooks/use-toast';
 import httpService from '@/lib/http-service';
 import { getDashboardRoute } from '@/lib/dashboard-routes';
@@ -38,7 +38,7 @@ export default function AuthCallbackPage() {
             description: 'Failed to fetch user information',
             variant: 'destructive',
           });
-          router.push('/auth/login');
+          router.push(FRONTEND_ROUTES.AUTH.LOGIN);
         }
       } else {
         toast({
@@ -47,7 +47,7 @@ export default function AuthCallbackPage() {
           variant: 'destructive',
         });
         
-        router.push('/auth/login');
+        router.push(FRONTEND_ROUTES.AUTH.LOGIN);
       }
     };
     

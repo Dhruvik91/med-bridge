@@ -31,6 +31,7 @@ import { savedJobService } from '@/services/saved-job.service';
 import { authService } from '@/services/auth.service';
 import { doctorProfileService } from '@/services/doctor-profile.service';
 import { useToast } from '@/hooks/use-toast';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 import { JobType } from '@/types';
 
 export default function JobDetailPage() {
@@ -94,7 +95,7 @@ export default function JobDetailPage() {
         title: 'Application submitted',
         description: 'Your application has been sent to the employer',
       });
-      router.push('/dashboard/candidate');
+      router.push(FRONTEND_ROUTES.DASHBOARD.CANDIDATE);
     },
     onError: (err: any) => {
       toast({
@@ -124,7 +125,7 @@ export default function JobDetailPage() {
 
   const handleApply = () => {
     if (!user) {
-      router.push(`/auth/login?redirect=/jobs/${jobId}`);
+      router.push(`${FRONTEND_ROUTES.AUTH.LOGIN}?redirect=/jobs/${jobId}`);
       return;
     }
 
@@ -134,7 +135,7 @@ export default function JobDetailPage() {
         description: 'Please complete your profile before applying',
         variant: 'destructive',
       });
-      router.push('/profile');
+      router.push(FRONTEND_ROUTES.PROFILE.BASE);
       return;
     }
 
@@ -143,7 +144,7 @@ export default function JobDetailPage() {
 
   const handleSaveJob = () => {
     if (!user) {
-      router.push(`/auth/login?redirect=/jobs/${jobId}`);
+      router.push(`${FRONTEND_ROUTES.AUTH.LOGIN}?redirect=/jobs/${jobId}`);
       return;
     }
 
@@ -403,7 +404,7 @@ export default function JobDetailPage() {
                 <Button
                   onClick={() => {
                     if (!user) {
-                      router.push(`/auth/login?redirect=/jobs/${jobId}`);
+                      router.push(`${FRONTEND_ROUTES.AUTH.LOGIN}?redirect=/jobs/${jobId}`);
                     } else {
                       document.getElementById('apply')?.scrollIntoView({ behavior: 'smooth' });
                     }

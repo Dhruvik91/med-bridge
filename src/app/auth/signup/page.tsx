@@ -14,7 +14,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Stethoscope, Mail, Lock, Loader2, UserCircle, Building2 } from 'lucide-react';
 import { authService } from '@/services/auth.service';
-import { AUTH_TOKEN_KEY } from '@/constants/constants';
+import { AUTH_TOKEN_KEY, FRONTEND_ROUTES } from '@/constants/constants';
 import { useToast } from '@/hooks/use-toast';
 import { UserRole } from '@/types';
 
@@ -65,9 +65,9 @@ export default function SignupPage() {
       
       // Redirect to profile completion
       if (data.role === 'candidate') {
-        router.push('/profile/doctor/complete');
+        router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE);
       } else {
-        router.push('/profile/employer/complete');
+        router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.COMPLETE);
       }
     } catch (err: any) {
       setError(err.message || 'Failed to create account. Please try again.');

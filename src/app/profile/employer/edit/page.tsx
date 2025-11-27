@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -83,7 +84,7 @@ export default function EmployerProfileEditPage() {
         title: 'Profile updated successfully',
         description: 'Your changes have been saved',
       });
-      router.push('/dashboard/employer');
+      router.push(FRONTEND_ROUTES.DASHBOARD.EMPLOYER);
     },
     onError: (err: any) => {
       setError(err.message || 'Failed to update profile');
