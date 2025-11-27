@@ -22,7 +22,7 @@ const signupSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   confirmPassword: z.string(),
-  role: z.enum(['candidate', 'employer']),
+  role: z.enum([UserRole.candidate, UserRole.employer]),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ['confirmPassword'],
@@ -39,7 +39,7 @@ export default function SignupPage() {
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<SignupForm>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      role: 'candidate',
+      role: UserRole.candidate,
     },
   });
 
@@ -64,7 +64,7 @@ export default function SignupPage() {
       });
       
       // Redirect to profile completion
-      if (data.role === 'candidate') {
+      if (data.role === UserRole.candidate) {
         router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE);
       } else {
         router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.COMPLETE);
@@ -111,7 +111,7 @@ export default function SignupPage() {
                 <Label>I am a</Label>
                 <RadioGroup
                   value={selectedRole}
-                  onValueChange={(value) => setValue('role', value as 'candidate' | 'employer')}
+                  onValueChange={(value) => setValue('role', value as UserRole.candidate | UserRole.employer)}
                   className="grid grid-cols-2 gap-4"
                 >
                   <div>

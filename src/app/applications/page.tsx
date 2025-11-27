@@ -28,7 +28,7 @@ import {
 import { authService } from '@/services/auth.service';
 import { applicationService } from '@/services/application.service';
 import { doctorProfileService } from '@/services/doctor-profile.service';
-import { ApplicationStatus } from '@/types';
+import { ApplicationStatus, UserRole } from '@/types';
 
 export default function ApplicationsPage() {
   const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'all'>('all');
@@ -156,7 +156,7 @@ export default function ApplicationsPage() {
     );
   }
 
-  if (!user || user.role !== 'candidate') {
+  if (!user || user.role !== UserRole.candidate) {
     return (
       <>
         <main className="pt-16 min-h-screen bg-background">

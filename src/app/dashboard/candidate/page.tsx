@@ -27,7 +27,7 @@ import { FRONTEND_ROUTES } from '@/constants/constants';
 import { applicationService } from '@/services/application.service';
 import { savedJobService } from '@/services/saved-job.service';
 import { doctorProfileService } from '@/services/doctor-profile.service';
-import { ApplicationStatus } from '@/types';
+import { ApplicationStatus, UserRole } from '@/types';
 
 export default function CandidateDashboardPage() {
   const router = useRouter();
@@ -126,7 +126,7 @@ export default function CandidateDashboardPage() {
     );
   }
 
-  if (!user || user.role !== 'candidate') {
+  if (!user || user.role !== UserRole.candidate) {
     return (
       <Alert variant="destructive" className="container mx-auto my-8">
         <AlertDescription>

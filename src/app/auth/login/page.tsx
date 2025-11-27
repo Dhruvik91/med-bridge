@@ -15,6 +15,7 @@ import { Stethoscope, Mail, Lock, Loader2 } from 'lucide-react';
 import { authService } from '@/services/auth.service';
 import { AUTH_TOKEN_KEY, FRONTEND_ROUTES } from '@/constants/constants';
 import { useToast } from '@/hooks/use-toast';
+import { UserRole } from '@/types';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -47,9 +48,9 @@ export default function LoginPage() {
       });
       
       // Redirect based on role
-      if (response.user.role === 'candidate') {
+      if (response.user.role === UserRole.candidate) {
         router.push(FRONTEND_ROUTES.DASHBOARD.CANDIDATE);
-      } else if (response.user.role === 'employer') {
+      } else if (response.user.role === UserRole.employer) {
         router.push(FRONTEND_ROUTES.DASHBOARD.EMPLOYER);
       } else {
         router.push(FRONTEND_ROUTES.DASHBOARD.BASE);

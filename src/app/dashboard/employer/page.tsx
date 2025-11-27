@@ -26,7 +26,7 @@ import { FRONTEND_ROUTES } from '@/constants/constants';
 import { jobService } from '@/services/job.service';
 import { employerProfileService } from '@/services/employer-profile.service';
 import { applicationService } from '@/services/application.service';
-import { JobStatus, ApplicationStatus } from '@/types';
+import { JobStatus, ApplicationStatus, UserRole } from '@/types';
 
 export default function EmployerDashboardPage() {
   const router = useRouter();
@@ -110,7 +110,7 @@ export default function EmployerDashboardPage() {
     );
   }
 
-  if (!user || user.role !== 'employer') {
+  if (!user || user.role !== UserRole.employer) {
     return (
       <Alert variant="destructive" className="container mx-auto my-8">
         <AlertDescription>
