@@ -34,9 +34,9 @@ type BackendUser = {
   role: UserRole;
   isActive: boolean;
   isVerified: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date | null;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
   metadata: Record<string, any>;
 };
 
@@ -75,9 +75,9 @@ function mapBackendUser ( user: BackendUser ): { authUser: AuthUser; profile: Us
     role: user.role,
     isActive: user.isActive,
     isVerified: user.isVerified,
-    createdAt: user.createdAt.toISOString(),
-    updatedAt: user.updatedAt.toISOString(),
-    deletedAt: user.deletedAt?.toISOString() || null,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+    deletedAt: user.deletedAt,
     metadata: user.metadata,
   };
 
@@ -187,6 +187,10 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
       const mapped = mapBackendUser( data.user );
       setUser( mapped.authUser );
       setProfile( mapped.profile );
+
+      // Redirect to appropriate dashboard after successful login
+      const dashboardRoute = getDashboardRoute( mapped.authUser.role );
+      router.push( dashboardRoute );
     } finally
     {
       setLoading( false );
@@ -212,6 +216,13 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
       const mapped = mapBackendUser( data.user );
       setUser( mapped.authUser );
       setProfile( mapped.profile );
+
+      // Redirect to profile completion after successful signup
+      if ( role === UserRole.candidate ) {
+        router.push( FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE );
+      } else {
+        router.push( FRONTEND_ROUTES.PROFILE.EMPLOYER.COMPLETE );
+      }
     } finally
     {
       setLoading( false );

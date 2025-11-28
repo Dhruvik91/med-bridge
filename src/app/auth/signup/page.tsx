@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -12,9 +13,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Stethoscope, Mail, Lock, Loader2, UserCircle, Building2 } from 'lucide-react';
-import { authService } from '@/services/auth.service';
+import { useAuth } from '@/providers/auth-provider';
+import { useToast } from '@/hooks/use-toast';
 import { FRONTEND_ROUTES } from '@/constants/constants';
-import { useSignup } from '@/hooks/post/useSignup';
 import { UserRole } from '@/types';
 
 const signupSchema = z.object({
@@ -31,7 +32,10 @@ type SignupForm = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
   const [error, setError] = useState('');
-  const signupMutation = useSignup();
+  const [isLoading, setIsLoading] = useState(false);
+  const { signUp, signInWithGoogle } = useAuth();
+  const { toast } = useToast();
+  const router = useRouter();
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<SignupForm>({
     resolver: zodResolver(signupSchema),
@@ -44,20 +48,45 @@ export default function SignupPage() {
 
   const onSubmit = async (data: SignupForm) => {
     setError('');
+    setIsLoading(true);
     
     try {
-      await signupMutation.mutateAsync({
-        email: data.email,
-        password: data.password,
-        role: data.role as UserRole,
+      await signUp(data.email, data.password, data.role);
+      
+      toast({
+        title: 'Account created successfully',
+        description: 'Welcome to MedBridge! Please complete your profile.',
       });
+      
+      // Redirect to profile completion based on role
+      if (data.role === UserRole.candidate) {
+        router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE);
+      } else {
+        router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.COMPLETE);
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to create account. Please try again.');
+      toast({
+        title: 'Signup failed',
+        description: err.message || 'Failed to create account',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleGoogleSignup = () => {
-    window.location.href = authService.googleAuth();
+  const handleGoogleSignup = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (err: any) {
+      setError(err.message || 'Failed to sign up with Google. Please try again.');
+      toast({
+        title: 'Google signup failed',
+        description: err.message || 'Failed to sign up with Google',
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
@@ -191,10 +220,10 @@ export default function SignupPage() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={signupMutation.isPending}
-                aria-busy={signupMutation.isPending}
+                disabled={isLoading}
+                aria-busy={isLoading}
               >
-                {signupMutation.isPending ? (
+                {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
                     Creating account...

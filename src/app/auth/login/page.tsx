@@ -5,14 +5,16 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Stethoscope, Mail, Lock, Loader2 } from 'lucide-react';
-import { useLogin } from '@/hooks/post/useLogin';
-import { useGoogleAuth } from '@/hooks/post/useGoogleAuth';
+import { useAuth } from '@/providers/auth-provider';
+import { useToast } from '@/hooks/use-toast';
+import { getDashboardRoute } from '@/lib/dashboard-routes';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 
 const loginSchema = z.object({
@@ -24,8 +26,10 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const [error, setError] = useState('');
-  const loginMutation = useLogin();
-  const { handleGoogleLogin } = useGoogleAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn, signInWithGoogle, user } = useAuth();
+  const { toast } = useToast();
+  const router = useRouter();
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -33,11 +37,27 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginForm) => {
     setError('');
+    setIsLoading(true);
     
     try {
-      await loginMutation.mutateAsync(data);
+      await signIn(data.email, data.password);
+      
+      toast({
+        title: 'Login successful',
+        description: 'Welcome back to MedBridge',
+      });
     } catch (err: any) {
       setError(err.message || 'Invalid email or password');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (err: any) {
+      setError(err.message || 'Google login failed');
     }
   };
 
@@ -118,10 +138,10 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={loginMutation.isPending}
-                aria-busy={loginMutation.isPending}
+                disabled={isLoading}
+                aria-busy={isLoading}
               >
-                {loginMutation.isPending ? (
+                {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
                     Signing in...
