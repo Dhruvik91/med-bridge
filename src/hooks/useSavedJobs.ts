@@ -1,19 +1,26 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { authService } from '@/services/auth.service';
+import { useAuth } from '@/providers/auth-provider';
 import { savedJobService } from '@/services/saved-job.service';
 import { useToast } from '@/hooks/use-toast';
+import { User } from '@/types';
 
 export const useSavedJobs = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [deletingJobId, setDeletingJobId] = useState<string | null>(null);
+  const { user: authUser, profile, loading } = useAuth();
 
-  // Fetch current user
-  const { data: user, isLoading: userLoading } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: authService.getMe,
-  });
+  // Map UserProfile to User type to maintain compatibility
+  const user: User | undefined = profile ? {
+    id: profile.id,
+    email: profile.email,
+    role: profile.role,
+    isEmailVerified: profile.isVerified,
+    isGoogleSignup: false,
+    createdAt: profile.createdAt,
+    updatedAt: profile.updatedAt,
+  } : undefined;
 
   // Fetch saved jobs
   const { data: savedJobs = [], isLoading: savedJobsLoading } = useQuery({
@@ -50,7 +57,7 @@ export const useSavedJobs = () => {
 
   return {
     user,
-    userLoading,
+    userLoading: loading,
     savedJobs,
     savedJobsLoading,
     deletingJobId,

@@ -12,27 +12,32 @@ type AuthUser = {
   id: string;
   email: string;
   role: UserRole;
-  name: string | null;
+  isActive: boolean;
+  isVerified: boolean;
 };
 
 type UserProfile = {
   id: string;
   email: string;
   role: UserRole;
-  name: string | null;
-  createdAt: string;
-  profileId: string | null;
+  isActive: boolean;
   isVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  metadata: Record<string, any>;
 };
 
 type BackendUser = {
   id: string;
   email: string;
   role: UserRole;
-  name: string | null;
-  createdAt: string;
-  profileId: string | null;
+  isActive: boolean;
   isVerified: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+  metadata: Record<string, any>;
 };
 
 interface AuthContextType
@@ -44,6 +49,7 @@ interface AuthContextType
   signUp: ( email: string, password: string, role: UserRole.candidate | UserRole.employer ) => Promise<void>;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 type AuthResponse = {
@@ -59,17 +65,20 @@ function mapBackendUser ( user: BackendUser ): { authUser: AuthUser; profile: Us
     id: user.id,
     email: user.email,
     role: user.role,
-    name: user.name,
+    isActive: user.isActive,
+    isVerified: user.isVerified,
   };
 
   const profile: UserProfile = {
     id: user.id,
     email: user.email,
     role: user.role,
-    name: user.name,
-    createdAt: user.createdAt,
-    profileId: user.profileId,
+    isActive: user.isActive,
     isVerified: user.isVerified,
+    createdAt: user.createdAt.toISOString(),
+    updatedAt: user.updatedAt.toISOString(),
+    deletedAt: user.deletedAt?.toISOString() || null,
+    metadata: user.metadata,
   };
 
   return { authUser, profile };
@@ -226,6 +235,14 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
     window.location.href = `${API_CONFIG.baseUrl}${API_CONFIG.path.userAuth.googleLogin}`;
   };
 
+  const refreshUser = async () =>
+  {
+    if ( typeof window === 'undefined' ) return;
+    
+    const storedToken = window.localStorage.getItem( AUTH_TOKEN_KEY );
+    await loadUserFromToken( storedToken );
+  };
+
   const value = {
     user,
     profile,
@@ -234,6 +251,7 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
     signUp,
     signOut,
     signInWithGoogle,
+    refreshUser,
   };
 
   return <AuthContext.Provider value={ value }>{ children }</AuthContext.Provider>;
