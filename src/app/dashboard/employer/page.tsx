@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -21,53 +20,34 @@ import {
   Building2,
   MapPin
 } from 'lucide-react';
-import { authService } from '@/services/auth.service';
 import { FRONTEND_ROUTES } from '@/constants/constants';
-import { jobService } from '@/services/job.service';
-import { employerProfileService } from '@/services/employer-profile.service';
-import { applicationService } from '@/services/application.service';
+import { useGetMe } from '@/hooks/get/useGetMe';
+import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
+import { useGetJobsByEmployer } from '@/hooks/get/useGetJobsByEmployer';
+import { useGetApplications } from '@/hooks/get/useGetApplications';
 import { JobStatus, ApplicationStatus, UserRole } from '@/types';
 
 export default function EmployerDashboardPage() {
   const router = useRouter();
-  const [userId, setUserId] = useState<string | null>(null);
 
   // Fetch current user
-  const { data: user, isLoading: userLoading } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: authService.getMe,
-  });
-
-  useEffect(() => {
-    if (user) {
-      setUserId(user.id);
-      // Check if user has completed profile
-      employerProfileService.findByUser(user.id).catch(() => {
-        // If profile doesn't exist, redirect to complete profile
-        router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.COMPLETE);
-      });
-    }
-  }, [user, router]);
+  const { data: user, isLoading: userLoading } = useGetMe();
 
   // Fetch employer profile
-  const { data: profile } = useQuery({
-    queryKey: ['employerProfile', userId],
-    queryFn: () => employerProfileService.findByUser(userId!),
-    enabled: !!userId,
-  });
+  const { data: profile } = useGetEmployerProfile(user);
 
   // Fetch jobs
-  const { data: jobs = [], isLoading: jobsLoading } = useQuery({
-    queryKey: ['employerJobs', profile?.id],
-    queryFn: () => jobService.findByEmployer(profile!.id),
-    enabled: !!profile?.id,
-  });
+  const { data: jobs = [], isLoading: jobsLoading } = useGetJobsByEmployer(profile?.id || '');
 
   // Fetch all applications for this employer
-  const { data: allApplications = [] } = useQuery({
-    queryKey: ['allApplications'],
-    queryFn: applicationService.findAll,
-  });
+  const { data: allApplications = [] } = useGetApplications();
+
+  useEffect(() => {
+    if (user && !profile) {
+      // If profile doesn't exist, redirect to complete profile
+      router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.COMPLETE);
+    }
+  }, [user, profile, router]);
 
   // Filter applications for this employer's jobs
   const applications = allApplications.filter(app => 

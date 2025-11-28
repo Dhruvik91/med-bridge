@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,54 +21,34 @@ import {
   ArrowRight,
   Plus
 } from 'lucide-react';
-import { authService } from '@/services/auth.service';
 import { FRONTEND_ROUTES } from '@/constants/constants';
-import { applicationService } from '@/services/application.service';
-import { savedJobService } from '@/services/saved-job.service';
-import { doctorProfileService } from '@/services/doctor-profile.service';
+import { useGetMe } from '@/hooks/get/useGetMe';
+import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
+import { useGetApplicationsByCandidate } from '@/hooks/get/useGetApplications';
+import { useGetSavedJobs } from '@/hooks/get/useGetSavedJobs';
 import { ApplicationStatus, UserRole } from '@/types';
 
 export default function CandidateDashboardPage() {
   const router = useRouter();
-  const [userId, setUserId] = useState<string | null>(null);
 
   // Fetch current user
-  const { data: user, isLoading: userLoading } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: authService.getMe,
-  });
-
-  useEffect(() => {
-    if (user) {
-      setUserId(user.id);
-      // Check if user has completed profile
-      doctorProfileService.findByUser(user.id).catch(() => {
-        // If profile doesn't exist, redirect to complete profile
-        router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE);
-      });
-    }
-  }, [user, router]);
+  const { data: user, isLoading: userLoading } = useGetMe();
 
   // Fetch doctor profile
-  const { data: profile } = useQuery({
-    queryKey: ['doctorProfile', userId],
-    queryFn: () => doctorProfileService.findByUser(userId!),
-    enabled: !!userId,
-  });
+  const { data: profile } = useGetDoctorProfile(user?.id || '');
 
   // Fetch applications
-  const { data: applications = [], isLoading: applicationsLoading } = useQuery({
-    queryKey: ['candidateApplications', profile?.id],
-    queryFn: () => applicationService.findByCandidate(profile!.id),
-    enabled: !!profile?.id,
-  });
+  const { data: applications = [], isLoading: applicationsLoading } = useGetApplicationsByCandidate(profile?.id || '');
 
   // Fetch saved jobs
-  const { data: savedJobs = [], isLoading: savedJobsLoading } = useQuery({
-    queryKey: ['savedJobs', userId],
-    queryFn: () => savedJobService.findByUser(userId!),
-    enabled: !!userId,
-  });
+  const { data: savedJobs = [], isLoading: savedJobsLoading } = useGetSavedJobs(user?.id || '');
+
+  useEffect(() => {
+    if (user && !profile) {
+      // If profile doesn't exist, redirect to complete profile
+      router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE);
+    }
+  }, [user, profile, router]);
 
   // Calculate statistics
   const stats = {

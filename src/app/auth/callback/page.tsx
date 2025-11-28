@@ -3,56 +3,56 @@
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
-import { AUTH_TOKEN_KEY, API_CONFIG, FRONTEND_ROUTES } from '@/constants/constants';
+import { AUTH_TOKEN_KEY, FRONTEND_ROUTES } from '@/constants/constants';
 import { useToast } from '@/hooks/use-toast';
-import httpService from '@/lib/http-service';
+import { useGetMe } from '@/hooks/get/useGetMe';
 import { getDashboardRoute } from '@/lib/dashboard-routes';
 
 export default function AuthCallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
+  
+  // Get user data after token is set
+  const { data: user, isError, isSuccess } = useGetMe();
 
   useEffect(() => {
-    const handleCallback = async () => {
-      const token = searchParams.get('token');
-      
-      if (token) {
-        localStorage.setItem(AUTH_TOKEN_KEY, token);
-        
-        try {
-          // Fetch user info to determine role-based redirect
-          const { data: user } = await httpService.get<{ role: string }>(API_CONFIG.path.userAuth.me);
-          
-          toast({
-            title: 'Login successful',
-            description: 'Welcome to MedBridge',
-          });
-          
-          // Redirect to role-specific dashboard
-          const dashboardRoute = getDashboardRoute(user.role);
-          router.push(dashboardRoute);
-        } catch (error) {
-          toast({
-            title: 'Authentication failed',
-            description: 'Failed to fetch user information',
-            variant: 'destructive',
-          });
-          router.push(FRONTEND_ROUTES.AUTH.LOGIN);
-        }
-      } else {
-        toast({
-          title: 'Authentication failed',
-          description: 'No token received from authentication provider',
-          variant: 'destructive',
-        });
-        
-        router.push(FRONTEND_ROUTES.AUTH.LOGIN);
-      }
-    };
+    const token = searchParams.get('token');
     
-    handleCallback();
+    if (token) {
+      localStorage.setItem(AUTH_TOKEN_KEY, token);
+      // The useGetMe hook will automatically fetch user data
+    } else {
+      toast({
+        title: 'Authentication failed',
+        description: 'No token received from authentication provider',
+        variant: 'destructive',
+      });
+      router.push(FRONTEND_ROUTES.AUTH.LOGIN);
+    }
   }, [searchParams, router, toast]);
+
+  useEffect(() => {
+    if (isSuccess && user) {
+      toast({
+        title: 'Login successful',
+        description: 'Welcome to MedBridge',
+      });
+      
+      // Redirect to role-specific dashboard
+      const dashboardRoute = getDashboardRoute(user.role);
+      router.push(dashboardRoute);
+    }
+    
+    if (isError) {
+      toast({
+        title: 'Authentication failed',
+        description: 'Failed to fetch user information',
+        variant: 'destructive',
+      });
+      router.push(FRONTEND_ROUTES.AUTH.LOGIN);
+    }
+  }, [isSuccess, isError, user, router, toast]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-secondary/10 to-primary/5">

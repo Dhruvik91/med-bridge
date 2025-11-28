@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,10 +11,9 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Stethoscope, Mail, Lock, Loader2 } from 'lucide-react';
-import { authService } from '@/services/auth.service';
-import { AUTH_TOKEN_KEY, FRONTEND_ROUTES } from '@/constants/constants';
-import { useToast } from '@/hooks/use-toast';
-import { UserRole } from '@/types';
+import { useLogin } from '@/hooks/post/useLogin';
+import { useGoogleAuth } from '@/hooks/post/useGoogleAuth';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -25,45 +23,22 @@ const loginSchema = z.object({
 type LoginForm = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-  const router = useRouter();
-  const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const loginMutation = useLogin();
+  const { handleGoogleLogin } = useGoogleAuth();
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
   });
 
   const onSubmit = async (data: LoginForm) => {
-    setIsLoading(true);
     setError('');
     
     try {
-      const response = await authService.login(data);
-      localStorage.setItem(AUTH_TOKEN_KEY, response.access_token);
-      
-      toast({
-        title: 'Login successful',
-        description: 'Welcome back to MedBridge',
-      });
-      
-      // Redirect based on role
-      if (response.user.role === UserRole.candidate) {
-        router.push(FRONTEND_ROUTES.DASHBOARD.CANDIDATE);
-      } else if (response.user.role === UserRole.employer) {
-        router.push(FRONTEND_ROUTES.DASHBOARD.EMPLOYER);
-      } else {
-        router.push(FRONTEND_ROUTES.DASHBOARD.BASE);
-      }
+      await loginMutation.mutateAsync(data);
     } catch (err: any) {
       setError(err.message || 'Invalid email or password');
-    } finally {
-      setIsLoading(false);
     }
-  };
-
-  const handleGoogleLogin = () => {
-    window.location.href = authService.googleAuth();
   };
 
   return (
@@ -143,10 +118,10 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={isLoading}
-                aria-busy={isLoading}
+                disabled={loginMutation.isPending}
+                aria-busy={loginMutation.isPending}
               >
-                {isLoading ? (
+                {loginMutation.isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
                     Signing in...

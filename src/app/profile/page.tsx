@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 import { FRONTEND_ROUTES } from '@/constants/constants';
-import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,29 +11,16 @@ import {
   User, Phone, Mail, MapPin, Calendar, Award, 
   Building2, Globe, Edit, Briefcase, FileText 
 } from 'lucide-react';
-import { authService } from '@/services/auth.service';
-import { doctorProfileService } from '@/services/doctor-profile.service';
-import { employerProfileService } from '@/services/employer-profile.service';
+import { useGetMe } from '@/hooks/get/useGetMe';
+import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
+import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
 
 export default function ProfilePage() {
   const router = useRouter();
   
-  const { data: user, isLoading: userLoading } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: authService.getMe,
-  });
-
-  const { data: doctorProfile, isLoading: doctorProfileLoading } = useQuery({
-    queryKey: ['doctorProfile', user?.id],
-    queryFn: () => doctorProfileService.findByUser(user!.id),
-    enabled: !!user?.id && user.role === 'candidate',
-  });
-
-  const { data: employerProfile, isLoading: employerProfileLoading } = useQuery({
-    queryKey: ['employerProfile', user?.id],
-    queryFn: () => employerProfileService.findByUser(user!.id),
-    enabled: !!user?.id && user.role === 'employer',
-  });
+  const { data: user, isLoading: userLoading } = useGetMe();
+  const { data: doctorProfile, isLoading: doctorProfileLoading } = useGetDoctorProfile(user?.id || '');
+  const { data: employerProfile, isLoading: employerProfileLoading } = useGetEmployerProfile(user);
 
   const isLoading = userLoading || doctorProfileLoading || employerProfileLoading;
 

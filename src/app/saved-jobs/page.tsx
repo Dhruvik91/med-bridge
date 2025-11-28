@@ -1,9 +1,6 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Navigation } from '@/components/navigation';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,87 +8,27 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   BookmarkPlus,
-  BookmarkX,
   MapPin, 
-  Briefcase, 
   DollarSign, 
   Clock,
   Building2,
   ArrowRight,
   Trash2
 } from 'lucide-react';
-import { authService } from '@/services/auth.service';
-import { savedJobService } from '@/services/saved-job.service';
-import { useToast } from '@/hooks/use-toast';
-import { JobType } from '@/types';
+import { useSavedJobs } from '@/hooks/useSavedJobs';
+import { useJobFormatters } from '@/hooks/useJobFormatters';
 
 export default function SavedJobsPage() {
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const [deletingJobId, setDeletingJobId] = useState<string | null>(null);
+  const {
+    user,
+    userLoading,
+    savedJobs,
+    savedJobsLoading,
+    deletingJobId,
+    handleUnsaveJob,
+  } = useSavedJobs();
 
-  // Fetch current user
-  const { data: user, isLoading: userLoading } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: authService.getMe,
-  });
-
-  // Fetch saved jobs
-  const { data: savedJobs = [], isLoading: savedJobsLoading } = useQuery({
-    queryKey: ['savedJobs', user?.id],
-    queryFn: () => savedJobService.findByUser(user!.id),
-    enabled: !!user?.id,
-  });
-
-  // Unsave job mutation
-  const unsaveJobMutation = useMutation({
-    mutationFn: ({ jobId }: { jobId: string }) => savedJobService.unsave(user!.id, jobId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['savedJobs'] });
-      toast({
-        title: 'Job removed',
-        description: 'Job has been removed from your saved jobs',
-      });
-      setDeletingJobId(null);
-    },
-    onError: (error: any) => {
-      toast({
-        title: 'Error',
-        description: error.message || 'Failed to remove saved job',
-        variant: 'destructive',
-      });
-      setDeletingJobId(null);
-    },
-  });
-
-  const handleUnsaveJob = (jobId: string) => {
-    setDeletingJobId(jobId);
-    unsaveJobMutation.mutate({ jobId });
-  };
-
-  const formatSalary = (min?: number, max?: number) => {
-    if (!min && !max) return 'Competitive';
-    if (min && max) return `$${(min / 1000).toFixed(0)}k - $${(max / 1000).toFixed(0)}k`;
-    if (min) return `From $${(min / 1000).toFixed(0)}k`;
-    return `Up to $${(max! / 1000).toFixed(0)}k`;
-  };
-
-  const getJobTypeLabel = (type: JobType) => {
-    return type.replace('_', ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-    return date.toLocaleDateString();
-  };
+  const { formatSalary, getJobTypeLabel, formatDate } = useJobFormatters();
 
   if (userLoading || savedJobsLoading) {
     return (
@@ -130,8 +67,8 @@ export default function SavedJobsPage() {
   }
 
   return (
-    <>
-        <div className="container mx-auto px-4 py-8">
+    <main className="pt-16 min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8">
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold mb-2">Saved Jobs</h1>
@@ -262,7 +199,7 @@ export default function SavedJobsPage() {
               </Button>
             </div>
           )}
-        </div>
-    </>
+      </div>
+    </main>
   );
 }

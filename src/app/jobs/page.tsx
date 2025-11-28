@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,7 +19,7 @@ import {
   Filter,
   X
 } from 'lucide-react';
-import { jobService } from '@/services/job.service';
+import { useGetJobs } from '@/hooks/get/useGetJobs';
 import { Job, JobType, JobStatus } from '@/types';
 
 export default function JobsPage() {
@@ -30,10 +29,7 @@ export default function JobsPage() {
   const [jobType, setJobType] = useState<JobType | 'all'>('all');
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
 
-  const { data: jobs = [], isLoading } = useQuery({
-    queryKey: ['jobs'],
-    queryFn: jobService.findAll,
-  });
+  const { data: jobs = [], isLoading } = useGetJobs();
 
   useEffect(() => {
     let filtered = jobs.filter(job => job.status === JobStatus.published);

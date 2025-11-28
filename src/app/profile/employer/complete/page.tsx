@@ -1,11 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,9 +12,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Loader2, CheckCircle2 } from 'lucide-react';
-import { authService } from '@/services/auth.service';
-import { employerProfileService } from '@/services/employer-profile.service';
-import { useToast } from '@/hooks/use-toast';
+import { useGetMe } from '@/hooks/get/useGetMe';
+import { useCreateEmployerProfile } from '@/hooks/post/useCreateEmployerProfile';
 import { CreateEmployerProfileDto } from '@/types';
 
 const profileSchema = z.object({
@@ -41,36 +38,14 @@ const steps = [
 ];
 
 export default function EmployerProfileCompletePage() {
-  const router = useRouter();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState(0);
   const [error, setError] = useState('');
 
-  const { data: user } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: authService.getMe,
-  });
+  const { data: user } = useGetMe();
+  const createProfileMutation = useCreateEmployerProfile();
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
-  });
-
-  const createProfileMutation = useMutation({
-    mutationFn: (data: CreateEmployerProfileDto) => employerProfileService.create(data),
-    onSuccess: () => {
-      // Invalidate queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
-      queryClient.invalidateQueries({ queryKey: ['employerProfile'] });
-      toast({
-        title: 'Profile created successfully',
-        description: 'Your company profile is now complete',
-      });
-      router.push('/dashboard/employer');
-    },
-    onError: (err: any) => {
-      setError(err.message || 'Failed to create profile');
-    },
   });
 
   const onSubmit = (data: ProfileForm) => {

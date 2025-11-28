@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
 import { Navigation } from '@/components/navigation';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,9 +24,9 @@ import {
   ArrowRight,
   Filter
 } from 'lucide-react';
-import { authService } from '@/services/auth.service';
-import { applicationService } from '@/services/application.service';
-import { doctorProfileService } from '@/services/doctor-profile.service';
+import { useGetMe } from '@/hooks/get/useGetMe';
+import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
+import { useGetApplicationsByCandidate } from '@/hooks/get/useGetApplications';
 import { ApplicationStatus, UserRole } from '@/types';
 
 export default function ApplicationsPage() {
@@ -35,24 +34,13 @@ export default function ApplicationsPage() {
   const [sortBy, setSortBy] = useState<'recent' | 'oldest'>('recent');
 
   // Fetch current user
-  const { data: user, isLoading: userLoading } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: authService.getMe,
-  });
+  const { data: user, isLoading: userLoading } = useGetMe();
 
   // Fetch doctor profile
-  const { data: profile, isLoading: profileLoading } = useQuery({
-    queryKey: ['doctorProfile', user?.id],
-    queryFn: () => doctorProfileService.findByUser(user!.id),
-    enabled: !!user?.id,
-  });
+  const { data: profile, isLoading: profileLoading } = useGetDoctorProfile(user?.id || '');
 
   // Fetch applications
-  const { data: applications = [], isLoading: applicationsLoading } = useQuery({
-    queryKey: ['candidateApplications', profile?.id],
-    queryFn: () => applicationService.findByCandidate(profile!.id),
-    enabled: !!profile?.id,
-  });
+  const { data: applications = [], isLoading: applicationsLoading } = useGetApplicationsByCandidate(profile?.id || '');
 
   // Filter and sort applications
   const filteredApplications = useMemo(() => {

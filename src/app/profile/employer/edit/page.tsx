@@ -6,7 +6,6 @@ import { FRONTEND_ROUTES } from '@/constants/constants';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,10 +15,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Save, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { authService } from '@/services/auth.service';
-import { employerProfileService } from '@/services/employer-profile.service';
-import { useToast } from '@/hooks/use-toast';
-import { UpdateEmployerProfileDto } from '@/types';
+import { useGetMe } from '@/hooks/get/useGetMe';
+import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
+import { useUpdateEmployerProfile } from '@/hooks/update/useUpdateEmployerProfile';
+import { UpdateEmployerProfileDto, UserRole } from '@/types';
 
 const profileSchema = z.object({
   companyName: z.string().min(2, 'Company name must be at least 2 characters'),
@@ -38,20 +37,11 @@ type ProfileForm = z.infer<typeof profileSchema>;
 
 export default function EmployerProfileEditPage() {
   const router = useRouter();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [error, setError] = useState('');
 
-  const { data: user, isLoading: userLoading } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: authService.getMe,
-  });
-
-  const { data: profile, isLoading: profileLoading } = useQuery({
-    queryKey: ['employerProfile', user?.id],
-    queryFn: () => employerProfileService.findByUser(user!.id),
-    enabled: !!user?.id,
-  });
+  const { data: user, isLoading: userLoading } = useGetMe();
+  const { data: profile, isLoading: profileLoading } = useGetEmployerProfile(user);
+  const updateProfileMutation = useUpdateEmployerProfile(profile?.id || '');
 
   const { register, handleSubmit, watch, formState: { errors }, reset } = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
@@ -74,27 +64,6 @@ export default function EmployerProfileEditPage() {
       });
     }
   }, [profile, reset]);
-
-  const updateProfileMutation = useMutation({
-    mutationFn: (data: UpdateEmployerProfileDto) => employerProfileService.update(profile!.id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
-      queryClient.invalidateQueries({ queryKey: ['employerProfile'] });
-      toast({
-        title: 'Profile updated successfully',
-        description: 'Your changes have been saved',
-      });
-      router.push(FRONTEND_ROUTES.DASHBOARD.EMPLOYER);
-    },
-    onError: (err: any) => {
-      setError(err.message || 'Failed to update profile');
-      toast({
-        title: 'Update failed',
-        description: err.message || 'Failed to update profile',
-        variant: 'destructive',
-      });
-    },
-  });
 
   const onSubmit = (data: ProfileForm) => {
     if (!profile) return;
@@ -135,7 +104,7 @@ export default function EmployerProfileEditPage() {
     );
   }
 
-  if (!user || user.role !== 'employer') {
+  if (!user || user.role !== UserRole.employer) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-primary/5 py-12 px-4">
         <div className="container mx-auto max-w-2xl">

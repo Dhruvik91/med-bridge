@@ -6,7 +6,6 @@ import { FRONTEND_ROUTES } from '@/constants/constants';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,9 +16,9 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Loader2, Save, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { authService } from '@/services/auth.service';
-import { doctorProfileService } from '@/services/doctor-profile.service';
-import { useToast } from '@/hooks/use-toast';
+import { useGetMe } from '@/hooks/get/useGetMe';
+import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
+import { useUpdateDoctorProfile } from '@/hooks/update/useUpdateDoctorProfile';
 import { Gender, UpdateDoctorProfileDto } from '@/types';
 
 const profileSchema = z.object({
@@ -42,20 +41,11 @@ type ProfileForm = z.infer<typeof profileSchema>;
 
 export default function DoctorProfileEditPage() {
   const router = useRouter();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [error, setError] = useState('');
 
-  const { data: user, isLoading: userLoading } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: authService.getMe,
-  });
-
-  const { data: profile, isLoading: profileLoading } = useQuery({
-    queryKey: ['doctorProfile', user?.id],
-    queryFn: () => doctorProfileService.findByUser(user!.id),
-    enabled: !!user?.id,
-  });
+  const { data: user, isLoading: userLoading } = useGetMe();
+  const { data: profile, isLoading: profileLoading } = useGetDoctorProfile(user?.id || '');
+  const updateProfileMutation = useUpdateDoctorProfile(profile?.id || '');
 
   const { register, handleSubmit, watch, setValue, formState: { errors }, reset } = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
@@ -81,27 +71,6 @@ export default function DoctorProfileEditPage() {
       });
     }
   }, [profile, reset]);
-
-  const updateProfileMutation = useMutation({
-    mutationFn: (data: UpdateDoctorProfileDto) => doctorProfileService.update(profile!.id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
-      queryClient.invalidateQueries({ queryKey: ['doctorProfile'] });
-      toast({
-        title: 'Profile updated successfully',
-        description: 'Your changes have been saved',
-      });
-      router.push(FRONTEND_ROUTES.DASHBOARD.CANDIDATE);
-    },
-    onError: (err: any) => {
-      setError(err.message || 'Failed to update profile');
-      toast({
-        title: 'Update failed',
-        description: err.message || 'Failed to update profile',
-        variant: 'destructive',
-      });
-    },
-  });
 
   const onSubmit = (data: ProfileForm) => {
     if (!profile) return;

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,8 +13,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Stethoscope, Mail, Lock, Loader2, UserCircle, Building2 } from 'lucide-react';
 import { authService } from '@/services/auth.service';
-import { AUTH_TOKEN_KEY, FRONTEND_ROUTES } from '@/constants/constants';
-import { useToast } from '@/hooks/use-toast';
+import { FRONTEND_ROUTES } from '@/constants/constants';
+import { useSignup } from '@/hooks/post/useSignup';
 import { UserRole } from '@/types';
 
 const signupSchema = z.object({
@@ -31,10 +30,8 @@ const signupSchema = z.object({
 type SignupForm = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
-  const router = useRouter();
-  const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const signupMutation = useSignup();
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<SignupForm>({
     resolver: zodResolver(signupSchema),
@@ -46,33 +43,16 @@ export default function SignupPage() {
   const selectedRole = watch('role');
 
   const onSubmit = async (data: SignupForm) => {
-    setIsLoading(true);
     setError('');
     
     try {
-      const response = await authService.signup({
+      await signupMutation.mutateAsync({
         email: data.email,
         password: data.password,
         role: data.role as UserRole,
       });
-      
-      localStorage.setItem(AUTH_TOKEN_KEY, response.access_token);
-      
-      toast({
-        title: 'Account created successfully',
-        description: 'Welcome to MedBridge! Please complete your profile.',
-      });
-      
-      // Redirect to profile completion
-      if (data.role === UserRole.candidate) {
-        router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE);
-      } else {
-        router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.COMPLETE);
-      }
     } catch (err: any) {
       setError(err.message || 'Failed to create account. Please try again.');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -211,10 +191,10 @@ export default function SignupPage() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={isLoading}
-                aria-busy={isLoading}
+                disabled={signupMutation.isPending}
+                aria-busy={signupMutation.isPending}
               >
-                {isLoading ? (
+                {signupMutation.isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
                     Creating account...

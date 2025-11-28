@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -46,91 +45,43 @@ import {
   X,
   Users,
 } from 'lucide-react';
-import { jobService } from '@/services/job.service';
-import { authService } from '@/services/auth.service';
-import { employerProfileService } from '@/services/employer-profile.service';
-import { useToast } from '@/hooks/use-toast';
+import { useGetMe } from '@/hooks/get/useGetMe';
+import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
+import { useGetJobsByEmployer } from '@/hooks/get/useGetJobsByEmployer';
+import { useDeleteJob } from '@/hooks/delete/useDeleteJob';
+import { useUpdateJob } from '@/hooks/update/useUpdateJob';
 import { Job, JobType, JobStatus, UserRole } from '@/types';
 
 export default function ManageJobsPage() {
   const router = useRouter();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<JobStatus | 'all'>('all');
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
   const [jobToDelete, setJobToDelete] = useState<string | null>(null);
 
   // Get current user
-  const { data: user } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: authService.getMe,
-  });
+  const { data: user } = useGetMe();
 
   // Get employer profile
-  const { data: employerProfile } = useQuery({
-    queryKey: ['employerProfile', user?.id],
-    queryFn: () => {
-      if (!user?.id) {
-        throw new Error('User not found');
-      }
-      return employerProfileService.findByUser(user.id);
-    },
-    enabled: !!user?.id && user?.role === UserRole.employer,
-  });
+  const { data: employerProfile } = useGetEmployerProfile(user);
 
   // Get employer's jobs
-  const { data: jobs = [], isLoading } = useQuery({
-    queryKey: ['employerJobs', employerProfile?.id],
-    queryFn: () => {
-      if (!employerProfile?.id) {
-        throw new Error('Employer profile not found');
-      }
-      return jobService.findByEmployer(employerProfile.id);
-    },
-    enabled: !!employerProfile?.id,
-  });
+  const { data: jobs = [], isLoading } = useGetJobsByEmployer(employerProfile?.id || '');
 
-  // Delete job mutation
-  const deleteJobMutation = useMutation({
-    mutationFn: (jobId: string) => jobService.remove(jobId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['employerJobs'] });
-      toast({
-        title: 'Job deleted',
-        description: 'The job posting has been successfully deleted.',
-      });
-      setJobToDelete(null);
-    },
-    onError: () => {
-      toast({
-        title: 'Error',
-        description: 'Failed to delete job posting.',
-        variant: 'destructive',
-      });
-    },
-  });
+  // Delete hook
+  const deleteJobMutation = useDeleteJob();
 
-  // Update job status mutation
-  const updateJobStatusMutation = useMutation({
-    mutationFn: ({ jobId, status }: { jobId: string; status: JobStatus }) =>
-      jobService.update(jobId, { status }),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['employerJobs'] });
-      const statusText = variables.status.charAt(0).toUpperCase() + variables.status.slice(1);
-      toast({
-        title: 'Job status updated',
-        description: `Job has been marked as ${statusText}.`,
-      });
-    },
-    onError: () => {
-      toast({
-        title: 'Error',
-        description: 'Failed to update job status.',
-        variant: 'destructive',
-      });
-    },
-  });
+  // Handle job deletion
+  const handleDeleteJob = (jobId: string) => {
+    deleteJobMutation.mutate(jobId);
+    setJobToDelete(null);
+  };
+
+  // Handle status update
+  const handleStatusUpdate = (jobId: string, status: JobStatus) => {
+    const updateJobMutation = useUpdateJob(jobId);
+    updateJobMutation.mutate({ status });
+  };
 
   // Filter jobs
   useEffect(() => {
@@ -394,12 +345,7 @@ export default function ManageJobsPage() {
                       <DropdownMenuSeparator />
                       {job.status !== JobStatus.published && (
                         <DropdownMenuItem
-                          onClick={() =>
-                            updateJobStatusMutation.mutate({
-                              jobId: job.id,
-                              status: JobStatus.published,
-                            })
-                          }
+                          onClick={() => handleStatusUpdate(job.id, JobStatus.published)}
                         >
                           <CheckCircle className="mr-2 h-4 w-4" />
                           Publish Job
@@ -407,12 +353,7 @@ export default function ManageJobsPage() {
                       )}
                       {job.status === JobStatus.published && (
                         <DropdownMenuItem
-                          onClick={() =>
-                            updateJobStatusMutation.mutate({
-                              jobId: job.id,
-                              status: JobStatus.closed,
-                            })
-                          }
+                          onClick={() => handleStatusUpdate(job.id, JobStatus.closed)}
                         >
                           <XCircle className="mr-2 h-4 w-4" />
                           Close Job
@@ -420,12 +361,7 @@ export default function ManageJobsPage() {
                       )}
                       {job.status !== JobStatus.archived && (
                         <DropdownMenuItem
-                          onClick={() =>
-                            updateJobStatusMutation.mutate({
-                              jobId: job.id,
-                              status: JobStatus.archived,
-                            })
-                          }
+                          onClick={() => handleStatusUpdate(job.id, JobStatus.archived)}
                         >
                           <Archive className="mr-2 h-4 w-4" />
                           Archive Job
@@ -508,7 +444,7 @@ export default function ManageJobsPage() {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => jobToDelete && deleteJobMutation.mutate(jobToDelete)}
+              onClick={() => jobToDelete && handleDeleteJob(jobToDelete)}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete

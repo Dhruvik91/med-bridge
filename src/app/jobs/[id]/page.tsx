@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useQuery, useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -25,11 +24,13 @@ import {
   ArrowLeft,
   Send
 } from 'lucide-react';
-import { jobService } from '@/services/job.service';
-import { applicationService } from '@/services/application.service';
-import { savedJobService } from '@/services/saved-job.service';
-import { authService } from '@/services/auth.service';
-import { doctorProfileService } from '@/services/doctor-profile.service';
+import { useGetMe } from '@/hooks/get/useGetMe';
+import { useGetJob } from '@/hooks/get/useGetJob';
+import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
+import { useGetSavedJobs } from '@/hooks/get/useGetSavedJobs';
+import { useGetApplicationsByCandidate } from '@/hooks/get/useGetApplications';
+import { useApplyToJob } from '@/hooks/post/useApplyToJob';
+import { useSaveJob, useUnsaveJob } from '@/hooks/post/useSaveJob';
 import { useToast } from '@/hooks/use-toast';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 import { JobType } from '@/types';
@@ -43,85 +44,23 @@ export default function JobDetailPage() {
   const [coverLetter, setCoverLetter] = useState('');
   const [isSaved, setIsSaved] = useState(false);
 
-  const { data: user } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: authService.getMe,
-  });
+  // Fetch data using hooks
+  const { data: user } = useGetMe();
+  const { data: profile } = useGetDoctorProfile(user?.id || '');
+  const { data: job, isLoading } = useGetJob(jobId);
+  const { data: savedJobs = [] } = useGetSavedJobs(user?.id || '');
+  const { data: applications = [] } = useGetApplicationsByCandidate(profile?.id || '');
 
-  const { data: profile } = useQuery({
-    queryKey: ['doctorProfile', user?.id],
-    queryFn: () => doctorProfileService.findByUser(user!.id),
-    enabled: !!user && user.role === 'candidate',
-  });
-
-  const { data: job, isLoading } = useQuery({
-    queryKey: ['job', jobId],
-    queryFn: () => jobService.findOne(jobId),
-  });
-
-  const { data: savedJobs = [] } = useQuery({
-    queryKey: ['savedJobs', user?.id],
-    queryFn: () => savedJobService.findByUser(user!.id),
-    enabled: !!user && user.role === 'candidate',
-  });
-
-  const { data: applications = [] } = useQuery({
-    queryKey: ['candidateApplications', profile?.id],
-    queryFn: () => applicationService.findByCandidate(profile!.id),
-    enabled: !!profile,
-  });
-
-  useEffect(() => {
-    if (jobId) {
-      // Increment view count
-      jobService.incrementViews(jobId).catch(() => {});
-    }
-  }, [jobId]);
+  // Mutation hooks
+  const applyMutation = useApplyToJob();
+  const saveJobMutation = useSaveJob();
+  const unsaveJobMutation = useUnsaveJob();
 
   useEffect(() => {
     if (savedJobs && jobId) {
-      setIsSaved(savedJobs.some(sj => sj.jobId === jobId));
+      setIsSaved(savedJobs.some((sj: any) => sj.jobId === jobId));
     }
   }, [savedJobs, jobId]);
-
-  const applyMutation = useMutation({
-    mutationFn: () => applicationService.create({
-      jobId,
-      candidateId: profile!.id,
-      coverLetter,
-    }),
-    onSuccess: () => {
-      toast({
-        title: 'Application submitted',
-        description: 'Your application has been sent to the employer',
-      });
-      router.push(FRONTEND_ROUTES.DASHBOARD.CANDIDATE);
-    },
-    onError: (err: any) => {
-      toast({
-        title: 'Application failed',
-        description: err.message || 'Failed to submit application',
-        variant: 'destructive',
-      });
-    },
-  });
-
-  const saveJobMutation = useMutation({
-    mutationFn: async () => {
-      if (isSaved) {
-        await savedJobService.unsave(user!.id, jobId);
-      } else {
-        await savedJobService.save({ userId: user!.id, jobId });
-      }
-    },
-    onSuccess: () => {
-      setIsSaved(!isSaved);
-      toast({
-        title: isSaved ? 'Job removed' : 'Job saved',
-        description: isSaved ? 'Job removed from saved jobs' : 'Job added to saved jobs',
-      });
-    },
-  });
 
   const handleApply = () => {
     if (!user) {
@@ -139,7 +78,11 @@ export default function JobDetailPage() {
       return;
     }
 
-    applyMutation.mutate();
+    applyMutation.mutate({
+      jobId,
+      candidateId: profile!.id,
+      coverLetter,
+    });
   };
 
   const handleSaveJob = () => {
@@ -148,7 +91,13 @@ export default function JobDetailPage() {
       return;
     }
 
-    saveJobMutation.mutate();
+    if (isSaved) {
+      unsaveJobMutation.mutate({ userId: user.id, jobId });
+      setIsSaved(false);
+    } else {
+      saveJobMutation.mutate({ userId: user.id, jobId });
+      setIsSaved(true);
+    }
   };
 
   const handleShare = () => {

@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -29,69 +28,60 @@ import {
   MapPin,
   Award
 } from 'lucide-react';
-import { authService } from '@/services/auth.service';
+import { useGetMe } from '@/hooks/get/useGetMe';
+import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
+import { useGetJobsByEmployer } from '@/hooks/get/useGetJobsByEmployer';
+import { useGetApplications } from '@/hooks/get/useGetApplications';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { applicationService } from '@/services/application.service';
-import { jobService } from '@/services/job.service';
-import { employerProfileService } from '@/services/employer-profile.service';
-import { ApplicationStatus, UserRole } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { ApplicationStatus, UserRole } from '@/types';
 
 export default function ManageApplicationsPage() {
   const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'all'>('all');
   const [jobFilter, setJobFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'recent' | 'oldest'>('recent');
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
 
   // Fetch current user
-  const { data: user, isLoading: userLoading } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: authService.getMe,
-  });
+  const { data: user, isLoading: userLoading } = useGetMe();
 
   // Fetch employer profile
-  const { data: profile, isLoading: profileLoading } = useQuery({
-    queryKey: ['employerProfile', user?.id],
-    queryFn: () => employerProfileService.findByUser(user!.id),
-    enabled: !!user?.id,
-  });
+  const { data: profile, isLoading: profileLoading } = useGetEmployerProfile(user);
 
   // Fetch employer's jobs
-  const { data: jobs = [], isLoading: jobsLoading } = useQuery({
-    queryKey: ['employerJobs', profile?.id],
-    queryFn: () => jobService.findByEmployer(profile!.id),
-    enabled: !!profile?.id,
-  });
+  const { data: jobs = [], isLoading: jobsLoading } = useGetJobsByEmployer(profile?.id || '');
 
   // Fetch all applications
-  const { data: allApplications = [] } = useQuery({
-    queryKey: ['allApplications'],
-    queryFn: applicationService.findAll,
-  });
+  const { data: allApplications = [] } = useGetApplications();
 
   // Filter applications for this employer's jobs
   const applications = useMemo(() => {
-    return allApplications.filter(app => 
-      jobs.some(job => job.id === app.jobId)
+    return allApplications.filter((app: any) => 
+      jobs.some((job: any) => job.id === app.jobId)
     );
   }, [allApplications, jobs]);
 
-  // Update application status mutation
-  const updateStatusMutation = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: ApplicationStatus }) =>
-      applicationService.update(id, { status }),
+  // Update application mutation
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
+  const updateApplicationMutation = useMutation({
+    mutationFn: ({ applicationId, status }: { applicationId: string; status: ApplicationStatus }) => 
+      applicationService.update(applicationId, { status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['allApplications'] });
+      queryClient.invalidateQueries({ queryKey: ['candidateApplications'] });
+      queryClient.invalidateQueries({ queryKey: ['employerApplications'] });
       toast({
-        title: 'Status Updated',
-        description: 'Application status has been updated successfully.',
+        title: 'Application updated successfully',
+        description: 'The application status has been updated.',
       });
     },
-    onError: () => {
+    onError: (error: any) => {
       toast({
-        title: 'Error',
-        description: 'Failed to update application status.',
+        title: 'Update failed',
+        description: error.response?.data?.message || 'Failed to update application',
         variant: 'destructive',
       });
     },
@@ -195,7 +185,7 @@ export default function ManageApplicationsPage() {
   };
 
   const handleStatusChange = (applicationId: string, newStatus: ApplicationStatus) => {
-    updateStatusMutation.mutate({ id: applicationId, status: newStatus });
+    updateApplicationMutation.mutate({ applicationId, status: newStatus });
   };
 
   if (userLoading || profileLoading) {
@@ -516,7 +506,6 @@ export default function ManageApplicationsPage() {
                       <Select
                         value={application.status}
                         onValueChange={(value) => handleStatusChange(application.id, value as ApplicationStatus)}
-                        disabled={updateStatusMutation.isPending}
                       >
                         <SelectTrigger className="w-full md:w-[200px]">
                           <SelectValue />
