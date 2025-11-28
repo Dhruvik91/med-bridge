@@ -1,16 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import {
   Select,
   SelectContent,
@@ -39,56 +35,82 @@ import {
   Plus,
   X,
 } from 'lucide-react';
-import { jobService } from '@/services/job.service';
-import { authService } from '@/services/auth.service';
-import { employerProfileService } from '@/services/employer-profile.service';
-import { organizationService } from '@/services/organization.service';
-import { locationService } from '@/services/location.service';
-import { specialtyService } from '@/services/specialty.service';
 import { useToast } from '@/hooks/use-toast';
+import { useGetMe } from '@/hooks/get/useGetMe';
+import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
+import { useGetOrganizations } from '@/hooks/get/useGetOrganizations';
+import { useGetLocations } from '@/hooks/get/useGetLocations';
+import { useGetSpecialties } from '@/hooks/get/useGetSpecialties';
+import { useCreateJob } from '@/hooks/post/useCreateJob';
+import { useCreateOrganization } from '@/hooks/post/useCreateOrganization';
+import { useCreateLocation } from '@/hooks/post/useCreateLocation';
+import { useSpecialtySelection } from '@/hooks/useSpecialtySelection';
+import { useCreateJobDialogs } from '@/hooks/useCreateJobDialogs';
+import { useJobForm, JobFormData } from '@/hooks/useJobForm';
+import { useEmployerRoleCheck } from '@/hooks/useEmployerRoleCheck';
 import { 
   JobType, 
   JobStatus, 
   UserRole,
-  CreateJobDto,
-  Organization,
-  Location,
-  Specialty,
-  CreateOrganizationDto,
-  CreateLocationDto,
 } from '@/types';
-
-interface JobFormData {
-  title: string;
-  description: string;
-  requirements: string;
-  benefits: string;
-  salaryMin: string;
-  salaryMax: string;
-  jobType: JobType;
-  status: JobStatus;
-  closingDate: string;
-  organizationId: string;
-  locationId: string;
-  specialtyIds: string[];
-}
 
 export default function CreateJobPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+
+  // Get current user and check role
+  const { data: user } = useGetMe();
+  const { isEmployer } = useEmployerRoleCheck(user);
+
+  // Get employer profile
+  const { data: employerProfile } = useGetEmployerProfile(user);
+
+  // Get all data needed for form
+  const { data: organizations = [] } = useGetOrganizations(employerProfile?.id);
+  const { data: locations = [] } = useGetLocations();
+  const { data: specialties = [] } = useGetSpecialties();
+
+  // Specialty selection hook
+  const { selectedSpecialties, addSpecialty, removeSpecialty } = useSpecialtySelection();
+
+  // Dialog management hook
+  const {
+    showOrgDialog,
+    newOrg,
+    setNewOrg,
+    openOrgDialog,
+    closeOrgDialog,
+    resetOrgForm,
+    showLocationDialog,
+    newLocation,
+    setNewLocation,
+    openLocationDialog,
+    closeLocationDialog,
+    resetLocationForm,
+  } = useCreateJobDialogs();
+
+  // Create mutations
+  const createJobMutation = useCreateJob();
   
-  const [selectedSpecialties, setSelectedSpecialties] = useState<Specialty[]>([]);
-  const [showOrgDialog, setShowOrgDialog] = useState(false);
-  const [showLocationDialog, setShowLocationDialog] = useState(false);
-  const [newOrg, setNewOrg] = useState({ name: '', description: '', website: '' });
-  const [newLocation, setNewLocation] = useState({
-    name: '',
-    address: '',
-    city: '',
-    state: '',
-    country: '',
-    postalCode: '',
+  const createOrgMutation = useCreateOrganization({
+    onSuccess: (organizationId) => {
+      form.setValue('organizationId', organizationId);
+    },
+    onDialogClose: closeOrgDialog,
+  });
+
+  const createLocationMutation = useCreateLocation({
+    onSuccess: (locationId) => {
+      form.setValue('locationId', locationId);
+    },
+    onDialogClose: closeLocationDialog,
+  });
+
+  // Form hook
+  const { form, handleFormSubmit } = useJobForm({
+    employerProfileId: employerProfile?.id,
+    selectedSpecialties,
+    onSubmit: (jobData) => createJobMutation.mutate(jobData),
   });
 
   const {
@@ -97,177 +119,21 @@ export default function CreateJobPage() {
     setValue,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<JobFormData>({
-    defaultValues: {
-      status: JobStatus.draft,
-      jobType: JobType.full_time,
-      specialtyIds: [],
-    },
-  });
+  } = form;
 
-  // Get current user
-  const { data: user } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: authService.getMe,
-  });
-
-  // Get employer profile
-  const { data: employerProfile } = useQuery({
-    queryKey: ['employerProfile', user?.id],
-    queryFn: () => {
-      if (!user?.id) throw new Error('User not found');
-      return employerProfileService.findByUser(user.id);
-    },
-    enabled: !!user?.id && user?.role === UserRole.employer,
-  });
-
-  // Get organizations
-  const { data: organizations = [] } = useQuery({
-    queryKey: ['organizations', employerProfile?.id],
-    queryFn: () => {
-      if (!employerProfile?.id) throw new Error('Employer profile not found');
-      return organizationService.findByEmployer(employerProfile.id);
-    },
-    enabled: !!employerProfile?.id,
-  });
-
-  // Get locations
-  const { data: locations = [] } = useQuery({
-    queryKey: ['locations'],
-    queryFn: () => locationService.findAll(),
-  });
-
-  // Get specialties
-  const { data: specialties = [] } = useQuery({
-    queryKey: ['specialties'],
-    queryFn: () => specialtyService.findAll(),
-  });
-
-  // Create organization mutation
-  const createOrgMutation = useMutation({
-    mutationFn: (data: CreateOrganizationDto) => organizationService.create(data),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['organizations'] });
-      setValue('organizationId', data.id);
-      setShowOrgDialog(false);
-      setNewOrg({ name: '', description: '', website: '' });
-      toast({
-        title: 'Organization created',
-        description: 'Your organization has been created successfully.',
-      });
-    },
-    onError: () => {
-      toast({
-        title: 'Error',
-        description: 'Failed to create organization.',
-        variant: 'destructive',
-      });
-    },
-  });
-
-  // Create location mutation
-  const createLocationMutation = useMutation({
-    mutationFn: (data: CreateLocationDto) => locationService.create(data),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['locations'] });
-      setValue('locationId', data.id);
-      setShowLocationDialog(false);
-      setNewLocation({
-        name: '',
-        address: '',
-        city: '',
-        state: '',
-        country: '',
-        postalCode: '',
-      });
-      toast({
-        title: 'Location created',
-        description: 'Your location has been created successfully.',
-      });
-    },
-    onError: () => {
-      toast({
-        title: 'Error',
-        description: 'Failed to create location.',
-        variant: 'destructive',
-      });
-    },
-  });
-
-  // Create job mutation
-  const createJobMutation = useMutation({
-    mutationFn: (data: CreateJobDto) => jobService.create(data),
-    onSuccess: () => {
-      toast({
-        title: 'Job created',
-        description: 'Your job posting has been created successfully.',
-      });
-      router.push('/jobs/manage');
-    },
-    onError: () => {
-      toast({
-        title: 'Error',
-        description: 'Failed to create job posting.',
-        variant: 'destructive',
-      });
-    },
-  });
-
-  // Check if user is employer
-  useEffect(() => {
-    if (user && user.role !== UserRole.employer) {
-      router.push('/jobs');
-    }
-  }, [user, router]);
-
-  const onSubmit = (data: JobFormData) => {
-    if (!employerProfile?.id) {
-      toast({
-        title: 'Error',
-        description: 'Employer profile not found.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    // Convert textarea strings to arrays by splitting on newlines
-    const requirementsArray = data.requirements
-      ? data.requirements.split('\n').filter((line) => line.trim())
-      : undefined;
-    const perksArray = data.benefits
-      ? data.benefits.split('\n').filter((line) => line.trim())
-      : undefined;
-
-    const jobData: CreateJobDto = {
-      employerProfileId: employerProfile.id,
-      title: data.title,
-      description: data.description,
-      requirements: requirementsArray,
-      perks: perksArray,
-      salaryMin: data.salaryMin || undefined,
-      salaryMax: data.salaryMax || undefined,
-      jobType: data.jobType,
-      status: data.status,
-      applicationDeadline: data.closingDate || undefined,
-      organizationId: data.organizationId || undefined,
-      locationId: data.locationId || undefined,
-      specialtyIds: selectedSpecialties.map((s) => s.id),
-    };
-
-    createJobMutation.mutate(jobData);
-  };
-
+  // Handlers for specialty selection
   const handleAddSpecialty = (specialtyId: string) => {
     const specialty = specialties.find((s) => s.id === specialtyId);
-    if (specialty && !selectedSpecialties.find((s) => s.id === specialtyId)) {
-      setSelectedSpecialties([...selectedSpecialties, specialty]);
+    if (specialty) {
+      addSpecialty(specialty);
     }
   };
 
   const handleRemoveSpecialty = (specialtyId: string) => {
-    setSelectedSpecialties(selectedSpecialties.filter((s) => s.id !== specialtyId));
+    removeSpecialty(specialtyId);
   };
 
+  // Handlers for creating organization and location
   const handleCreateOrganization = () => {
     if (!employerProfile?.id || !newOrg.name) {
       toast({
@@ -306,7 +172,7 @@ export default function CreateJobPage() {
     });
   };
 
-  if (!user || user.role !== UserRole.employer) {
+  if (!user || !isEmployer) {
     return null;
   }
 
@@ -328,7 +194,7 @@ export default function CreateJobPage() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
         {/* Basic Information */}
         <Card className="mb-6">
           <CardHeader>
@@ -511,7 +377,7 @@ export default function CreateJobPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setShowOrgDialog(true)}
+                  onClick={openOrgDialog}
                   className="shrink-0"
                 >
                   <Plus className="h-4 w-4" />
@@ -555,7 +421,7 @@ export default function CreateJobPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setShowLocationDialog(true)}
+                  onClick={openLocationDialog}
                   className="shrink-0"
                 >
                   <Plus className="h-4 w-4" />
@@ -653,7 +519,7 @@ export default function CreateJobPage() {
       </form>
 
       {/* Create Organization Dialog */}
-      <Dialog open={showOrgDialog} onOpenChange={setShowOrgDialog}>
+      <Dialog open={showOrgDialog} onOpenChange={closeOrgDialog}>
         <DialogContent className="max-w-[95vw] sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Create New Organization</DialogTitle>
@@ -691,7 +557,7 @@ export default function CreateJobPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowOrgDialog(false)}>
+            <Button variant="outline" onClick={closeOrgDialog}>
               Cancel
             </Button>
             <Button onClick={handleCreateOrganization} disabled={createOrgMutation.isPending}>
@@ -702,7 +568,7 @@ export default function CreateJobPage() {
       </Dialog>
 
       {/* Create Location Dialog */}
-      <Dialog open={showLocationDialog} onOpenChange={setShowLocationDialog}>
+      <Dialog open={showLocationDialog} onOpenChange={closeLocationDialog}>
         <DialogContent className="max-w-[95vw] sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Create New Location</DialogTitle>
@@ -771,7 +637,7 @@ export default function CreateJobPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowLocationDialog(false)}>
+            <Button variant="outline" onClick={closeLocationDialog}>
               Cancel
             </Button>
             <Button onClick={handleCreateLocation} disabled={createLocationMutation.isPending}>
