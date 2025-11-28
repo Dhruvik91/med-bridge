@@ -56,11 +56,6 @@ const getEmployerNavItems = (): NavItem[] => [
     icon: PlusCircle,
   },
   {
-    href: FRONTEND_ROUTES.APPLICATIONS.BASE,
-    label: "Applications",
-    icon: Users,
-  },
-  {
     href: FRONTEND_ROUTES.PROFILE.BASE,
     label: "Profile",
     icon: Building2,

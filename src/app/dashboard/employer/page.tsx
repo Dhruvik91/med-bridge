@@ -79,11 +79,11 @@ export default function EmployerDashboardPage() {
 
   if (userLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 space-y-8">
-        <Skeleton className="h-12 w-64" />
-        <div className="grid gap-6 md:grid-cols-4">
+      <div className="container mx-auto px-4 py-4 md:py-8 space-y-4 md:space-y-8">
+        <Skeleton className="h-8 md:h-12 w-48 md:w-64" />
+        <div className="grid gap-3 grid-cols-2 md:gap-6 lg:grid-cols-4">
           {[1, 2, 3, 4].map(i => (
-            <Skeleton key={i} className="h-32" />
+            <Skeleton key={i} className="h-24 md:h-32" />
           ))}
         </div>
       </div>
@@ -101,29 +101,16 @@ export default function EmployerDashboardPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-8">
+    <div className="container mx-auto px-4 py-4 md:py-8 space-y-4 md:space-y-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">
             Employer Dashboard
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-muted-foreground mt-1 text-sm md:text-base">
             Manage your job postings and applications
           </p>
-        </div>
-        <div className="flex gap-3">
-          <Button asChild variant="outline">
-            <Link href="/profile/employer/edit">
-              Edit Profile
-            </Link>
-          </Button>
-          <Button asChild>
-            <Link href="/jobs/create">
-              <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
-              Post a Job
-            </Link>
-          </Button>
         </div>
       </div>
 
@@ -144,61 +131,61 @@ export default function EmployerDashboardPage() {
       )}
 
       {/* Stats Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 grid-cols-2 md:gap-6 lg:grid-cols-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 px-3 md:px-6 pt-3 md:pt-6">
+            <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
               Active Jobs
             </CardTitle>
-            <Briefcase className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <Briefcase className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" aria-hidden="true" />
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{stats.activeJobs}</div>
+          <CardContent className="px-3 md:px-6 pb-3 md:pb-6">
+            <div className="text-xl md:text-3xl font-bold">{stats.activeJobs}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              {jobs.length} total jobs
+              {jobs.length} total
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Applications
+          <CardHeader className="flex flex-row items-center justify-between pb-2 px-3 md:px-6 pt-3 md:pt-6">
+            <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
+              Applications
             </CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <FileText className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" aria-hidden="true" />
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{stats.totalApplications}</div>
+          <CardContent className="px-3 md:px-6 pb-3 md:pb-6">
+            <div className="text-xl md:text-3xl font-bold">{stats.totalApplications}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              Across all jobs
+              All jobs
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              New Applications
+          <CardHeader className="flex flex-row items-center justify-between pb-2 px-3 md:px-6 pt-3 md:pt-6">
+            <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
+              New Apps
             </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <Users className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" aria-hidden="true" />
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{stats.newApplications}</div>
+          <CardContent className="px-3 md:px-6 pb-3 md:pb-6">
+            <div className="text-xl md:text-3xl font-bold">{stats.newApplications}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              Pending review
+              Pending
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 px-3 md:px-6 pt-3 md:pt-6">
+            <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
               Total Views
             </CardTitle>
-            <Eye className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <Eye className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" aria-hidden="true" />
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{stats.totalViews}</div>
+          <CardContent className="px-3 md:px-6 pb-3 md:pb-6">
+            <div className="text-xl md:text-3xl font-bold">{stats.totalViews}</div>
             <p className="text-xs text-muted-foreground mt-1">
               All time
             </p>
@@ -208,16 +195,16 @@ export default function EmployerDashboardPage() {
 
       {/* Active Jobs */}
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
+        <CardHeader className="pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <CardTitle>Active Job Postings</CardTitle>
-              <CardDescription>Manage your published job listings</CardDescription>
+              <CardTitle className="text-xl md:text-2xl font-bold text-foreground">Active Job Postings</CardTitle>
+              <CardDescription className="text-sm md:text-base text-muted-foreground mt-1">Manage your published job listings</CardDescription>
             </div>
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/jobs/manage">
-                View All
-                <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+            <Button asChild variant="outline" size="sm" className="self-start sm:self-center hover:bg-primary hover:text-primary-foreground transition-colors shadow-sm">
+              <Link href="/jobs/manage" className="flex items-center gap-2">
+                <span className="font-medium">View All</span>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             </Button>
           </div>
@@ -230,15 +217,17 @@ export default function EmployerDashboardPage() {
               ))}
             </div>
           ) : jobs.length === 0 ? (
-            <div className="text-center py-12">
-              <Briefcase className="h-12 w-12 text-muted-foreground mx-auto mb-4" aria-hidden="true" />
-              <h3 className="text-lg font-semibold mb-2">No jobs posted yet</h3>
-              <p className="text-muted-foreground mb-6">
-                Create your first job posting to start receiving applications
+            <div className="text-center py-12 bg-gradient-to-br from-muted/30 to-muted/10 rounded-xl border-2 border-dashed border-muted">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Briefcase className="h-8 w-8 text-primary" aria-hidden="true" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2 text-foreground">No jobs posted yet</h3>
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                Create your first job posting to start receiving applications from qualified candidates
               </p>
-              <Button asChild>
+              <Button asChild size="lg" className="shadow-md hover:shadow-lg transition-shadow">
                 <Link href="/jobs/create">
-                  <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
+                  <Plus className="mr-2 h-5 w-5" aria-hidden="true" />
                   Post Your First Job
                 </Link>
               </Button>
@@ -251,38 +240,44 @@ export default function EmployerDashboardPage() {
                   <Link
                     key={job.id}
                     href={`/jobs/${job.id}/manage`}
-                    className="block p-4 border rounded-lg hover:border-primary transition-colors"
+                    className="group block p-4 md:p-5 border rounded-xl hover:border-primary hover:shadow-md transition-all duration-200 bg-gradient-to-r from-background to-muted/20 hover:from-primary/5 hover:to-primary/10"
                   >
-                    <div className="flex items-start justify-between gap-4 flex-wrap">
+                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-start gap-3 mb-2">
-                          <h4 className="font-semibold">{job.title}</h4>
-                          <Badge className={getJobStatusColor(job.status)}>
+                        <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3 mb-3">
+                          <h4 className="font-semibold text-base md:text-lg text-foreground group-hover:text-primary transition-colors">{job.title}</h4>
+                          <Badge variant="secondary" className={`${getJobStatusColor(job.status)} font-medium`}>
                             {job.status}
                           </Badge>
                         </div>
                         {job.location && (
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                            <MapPin className="h-4 w-4" aria-hidden="true" />
-                            {job.location.city}, {job.location.country}
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3 bg-muted/30 rounded-md px-2 py-1 w-fit">
+                            <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
+                            <span className="font-medium">{job.location.city}, {job.location.country}</span>
                           </div>
                         )}
-                        <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1">
+                        <div className="flex flex-wrap gap-4 text-sm">
+                          <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 px-3 py-1.5 rounded-full">
                             <FileText className="h-4 w-4" aria-hidden="true" />
-                            {jobApplications.length} applications
-                          </span>
-                          <span className="flex items-center gap-1">
+                            <span className="font-medium">{jobApplications.length}</span>
+                            <span className="text-xs">apps</span>
+                          </div>
+                          <div className="flex items-center gap-2 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-300 px-3 py-1.5 rounded-full">
                             <Eye className="h-4 w-4" aria-hidden="true" />
-                            {job.viewCount} views
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <TrendingUp className="h-4 w-4" aria-hidden="true" />
-                            {jobApplications.filter(a => a.status === ApplicationStatus.applied).length} new
-                          </span>
+                            <span className="font-medium">{job.viewCount}</span>
+                            <span className="text-xs">views</span>
+                          </div>
+                          {jobApplications.filter(a => a.status === ApplicationStatus.applied).length > 0 && (
+                            <div className="flex items-center gap-2 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-300 px-3 py-1.5 rounded-full animate-pulse">
+                              <TrendingUp className="h-4 w-4" aria-hidden="true" />
+                              <span className="font-medium">{jobApplications.filter(a => a.status === ApplicationStatus.applied).length}</span>
+                              <span className="text-xs">new</span>
+                            </div>
+                          )}
                         </div>
                       </div>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" className="self-start md:self-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                        <Building2 className="h-4 w-4 mr-2" />
                         Manage
                       </Button>
                     </div>
@@ -296,27 +291,29 @@ export default function EmployerDashboardPage() {
 
       {/* Recent Applications */}
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
+        <CardHeader className="pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <CardTitle>Recent Applications</CardTitle>
-              <CardDescription>Latest candidates who applied to your jobs</CardDescription>
+              <CardTitle className="text-xl md:text-2xl font-bold text-foreground">Recent Applications</CardTitle>
+              <CardDescription className="text-sm md:text-base text-muted-foreground mt-1">Latest candidates who applied to your jobs</CardDescription>
             </div>
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/applications/manage">
-                View All
-                <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+            <Button asChild variant="outline" size="sm" className="self-start sm:self-center hover:bg-primary hover:text-primary-foreground transition-colors shadow-sm">
+              <Link href="/applications/manage" className="flex items-center gap-2">
+                <span className="font-medium">View All</span>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             </Button>
           </div>
         </CardHeader>
         <CardContent>
           {applications.length === 0 ? (
-            <div className="text-center py-12">
-              <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" aria-hidden="true" />
-              <h3 className="text-lg font-semibold mb-2">No applications yet</h3>
-              <p className="text-muted-foreground">
-                Applications will appear here once candidates start applying
+            <div className="text-center py-12 bg-gradient-to-br from-muted/30 to-muted/10 rounded-xl border-2 border-dashed border-muted">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="h-8 w-8 text-primary" aria-hidden="true" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2 text-foreground">No applications yet</h3>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                Applications will appear here once candidates start applying to your job postings
               </p>
             </div>
           ) : (
@@ -327,21 +324,31 @@ export default function EmployerDashboardPage() {
                   <Link
                     key={application.id}
                     href={`/applications/${application.id}`}
-                    className="block p-4 border rounded-lg hover:border-primary transition-colors"
+                    className="group block p-4 md:p-5 border rounded-xl hover:border-primary hover:shadow-md transition-all duration-200 bg-gradient-to-r from-background to-muted/20 hover:from-primary/5 hover:to-primary/10"
                   >
-                    <div className="flex items-start justify-between gap-4">
+                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate">
-                          {application.candidate?.displayName || application.candidate?.fullName || 'Candidate'}
-                        </p>
-                        <p className="text-sm text-muted-foreground mb-2">
-                          Applied for: {job?.title || 'Job'}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(application.appliedAt).toLocaleDateString()}
-                        </p>
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center">
+                            <Users className="h-5 w-5 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-semibold text-base md:text-lg text-foreground group-hover:text-primary transition-colors truncate">
+                              {application.candidate?.displayName || application.candidate?.fullName || 'Candidate'}
+                            </p>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                              <Briefcase className="h-4 w-4 text-primary" />
+                              <span className="font-medium">{job?.title || 'Job'}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 rounded-md px-2 py-1 w-fit">
+                          <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                          <span>Applied {new Date(application.appliedAt).toLocaleDateString()}</span>
+                        </div>
                       </div>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" className="self-start md:self-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                        <Eye className="h-4 w-4 mr-2" />
                         Review
                       </Button>
                     </div>

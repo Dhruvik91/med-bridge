@@ -19,7 +19,8 @@ import {
   AlertCircle,
   Eye,
   ArrowRight,
-  Plus
+  Plus,
+  Building2
 } from 'lucide-react';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 import { useGetMe } from '@/hooks/get/useGetMe';
@@ -94,11 +95,11 @@ export default function CandidateDashboardPage() {
 
   if (userLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 space-y-8">
-        <Skeleton className="h-12 w-64" />
-        <div className="grid gap-6 md:grid-cols-4">
+      <div className="container mx-auto px-4 py-4 md:py-8 space-y-4 md:space-y-8">
+        <Skeleton className="h-8 md:h-12 w-48 md:w-64" />
+        <div className="grid gap-3 grid-cols-2 md:gap-6 lg:grid-cols-4">
           {[1, 2, 3, 4].map(i => (
-            <Skeleton key={i} className="h-32" />
+            <Skeleton key={i} className="h-24 md:h-32" />
           ))}
         </div>
       </div>
@@ -116,14 +117,14 @@ export default function CandidateDashboardPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-8">
+    <div className="container mx-auto px-4 py-4 md:py-8 space-y-4 md:space-y-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">
             Welcome back{profile?.displayName ? `, ${profile.displayName}` : profile?.fullName ? `, ${profile.fullName.split(' ')[0]}` : ''}!
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-muted-foreground mt-1 text-sm md:text-base">
             Here's your job search overview
           </p>
         </div>
@@ -146,68 +147,80 @@ export default function CandidateDashboardPage() {
       )}
 
       {/* Stats Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 grid-cols-2 md:gap-6 lg:grid-cols-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 px-3 md:px-6 pt-3 md:pt-6">
+            <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
               Total Applications
             </CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <FileText className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" aria-hidden="true" />
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{stats.total}</div>
+          <CardContent className="px-3 md:px-6 pb-3 md:pb-6">
+            <div className="text-xl md:text-3xl font-bold">{stats.total}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              All time
+            </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 px-3 md:px-6 pt-3 md:pt-6">
+            <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
               Pending Review
             </CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <Clock className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" aria-hidden="true" />
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{stats.pending}</div>
+          <CardContent className="px-3 md:px-6 pb-3 md:pb-6">
+            <div className="text-xl md:text-3xl font-bold">{stats.pending}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Awaiting
+            </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 px-3 md:px-6 pt-3 md:pt-6">
+            <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
               Interviews
             </CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <TrendingUp className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" aria-hidden="true" />
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{stats.interview}</div>
+          <CardContent className="px-3 md:px-6 pb-3 md:pb-6">
+            <div className="text-xl md:text-3xl font-bold">{stats.interview}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Scheduled
+            </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 px-3 md:px-6 pt-3 md:pt-6">
+            <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
               Saved Jobs
             </CardTitle>
-            <BookmarkPlus className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <BookmarkPlus className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" aria-hidden="true" />
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{savedJobs.length}</div>
+          <CardContent className="px-3 md:px-6 pb-3 md:pb-6">
+            <div className="text-xl md:text-3xl font-bold">{savedJobs.length}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Bookmarked
+            </p>
           </CardContent>
         </Card>
       </div>
 
       {/* Recent Applications */}
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
+        <CardHeader className="pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <CardTitle>Recent Applications</CardTitle>
-              <CardDescription>Track the status of your job applications</CardDescription>
+              <CardTitle className="text-xl md:text-2xl font-bold text-foreground">Recent Applications</CardTitle>
+              <CardDescription className="text-sm md:text-base text-muted-foreground mt-1">Track the status of your job applications</CardDescription>
             </div>
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/applications">
-                View All
-                <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+            <Button asChild variant="outline" size="sm" className="self-start sm:self-center hover:bg-primary hover:text-primary-foreground transition-colors shadow-sm">
+              <Link href="/applications" className="flex items-center gap-2">
+                <span className="font-medium">View All</span>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             </Button>
           </div>
@@ -220,14 +233,19 @@ export default function CandidateDashboardPage() {
               ))}
             </div>
           ) : applications.length === 0 ? (
-            <div className="text-center py-12">
-              <Briefcase className="h-12 w-12 text-muted-foreground mx-auto mb-4" aria-hidden="true" />
-              <h3 className="text-lg font-semibold mb-2">No applications yet</h3>
-              <p className="text-muted-foreground mb-6">
-                Start applying to jobs to see them here
+            <div className="text-center py-12 bg-gradient-to-br from-muted/30 to-muted/10 rounded-xl border-2 border-dashed border-muted">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Briefcase className="h-8 w-8 text-primary" aria-hidden="true" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2 text-foreground">No applications yet</h3>
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                Start applying to jobs to see them here and track your application progress
               </p>
-              <Button asChild>
-                <Link href="/jobs">Browse Jobs</Link>
+              <Button asChild size="lg" className="shadow-md hover:shadow-lg transition-shadow">
+                <Link href="/jobs">
+                  <Plus className="mr-2 h-5 w-5" aria-hidden="true" />
+                  Browse Jobs
+                </Link>
               </Button>
             </div>
           ) : (
@@ -236,26 +254,32 @@ export default function CandidateDashboardPage() {
                 <Link
                   key={application.id}
                   href={`/applications/${application.id}`}
-                  className="block p-4 border rounded-lg hover:border-primary transition-colors"
+                  className="group block p-4 md:p-5 border rounded-xl hover:border-primary hover:shadow-md transition-all duration-200 bg-gradient-to-r from-background to-muted/20 hover:from-primary/5 hover:to-primary/10"
                 >
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold truncate mb-1">
-                        {application.job?.title || 'Job Title'}
-                      </h4>
-                      <p className="text-sm text-muted-foreground mb-2">
+                      <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3 mb-3">
+                        <h4 className="font-semibold text-base md:text-lg text-foreground group-hover:text-primary transition-colors">{application.job?.title || 'Job Title'}</h4>
+                        <Badge className={`${getStatusColor(application.status)} font-medium`}>
+                          <span className="flex items-center gap-1">
+                            {getStatusIcon(application.status)}
+                            {application.status.replace('_', ' ')}
+                          </span>
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-3 bg-muted/30 rounded-md px-2 py-1 w-fit">
+                        <Building2 className="h-4 w-4 text-primary inline mr-2" aria-hidden="true" />
                         {application.job?.organization?.name || application.job?.employerProfile?.name || 'Company Name'}
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        Applied {new Date(application.appliedAt).toLocaleDateString()}
-                      </p>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 rounded-md px-2 py-1 w-fit">
+                        <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                        <span>Applied {new Date(application.appliedAt).toLocaleDateString()}</span>
+                      </div>
                     </div>
-                    <Badge className={getStatusColor(application.status)}>
-                      <span className="flex items-center gap-1">
-                        {getStatusIcon(application.status)}
-                        {application.status.replace('_', ' ')}
-                      </span>
-                    </Badge>
+                    <Button variant="outline" size="sm" className="self-start md:self-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                      <Eye className="h-4 w-4 mr-2" />
+                      View
+                    </Button>
                   </div>
                 </Link>
               ))}
@@ -266,16 +290,16 @@ export default function CandidateDashboardPage() {
 
       {/* Saved Jobs */}
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
+        <CardHeader className="pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <CardTitle>Saved Jobs</CardTitle>
-              <CardDescription>Jobs you've bookmarked for later</CardDescription>
+              <CardTitle className="text-xl md:text-2xl font-bold text-foreground">Saved Jobs</CardTitle>
+              <CardDescription className="text-sm md:text-base text-muted-foreground mt-1">Jobs you've bookmarked for later</CardDescription>
             </div>
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/saved-jobs">
-                View All
-                <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+            <Button asChild variant="outline" size="sm" className="self-start sm:self-center hover:bg-primary hover:text-primary-foreground transition-colors shadow-sm">
+              <Link href="/saved-jobs" className="flex items-center gap-2">
+                <span className="font-medium">View All</span>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             </Button>
           </div>
@@ -288,14 +312,19 @@ export default function CandidateDashboardPage() {
               ))}
             </div>
           ) : savedJobs.length === 0 ? (
-            <div className="text-center py-12">
-              <BookmarkPlus className="h-12 w-12 text-muted-foreground mx-auto mb-4" aria-hidden="true" />
-              <h3 className="text-lg font-semibold mb-2">No saved jobs</h3>
-              <p className="text-muted-foreground mb-6">
-                Save interesting jobs to review them later
+            <div className="text-center py-12 bg-gradient-to-br from-muted/30 to-muted/10 rounded-xl border-2 border-dashed border-muted">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <BookmarkPlus className="h-8 w-8 text-primary" aria-hidden="true" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2 text-foreground">No saved jobs</h3>
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                Save interesting jobs to review them later and apply when you're ready
               </p>
-              <Button asChild>
-                <Link href="/jobs">Browse Jobs</Link>
+              <Button asChild size="lg" className="shadow-md hover:shadow-lg transition-shadow">
+                <Link href="/jobs">
+                  <Plus className="mr-2 h-5 w-5" aria-hidden="true" />
+                  Browse Jobs
+                </Link>
               </Button>
             </div>
           ) : (
@@ -304,20 +333,33 @@ export default function CandidateDashboardPage() {
                 <Link
                   key={savedJob.id}
                   href={`/jobs/${savedJob.jobId}`}
-                  className="block p-4 border rounded-lg hover:border-primary transition-colors"
+                  className="group block p-4 md:p-5 border rounded-xl hover:border-primary hover:shadow-md transition-all duration-200 bg-gradient-to-r from-background to-muted/20 hover:from-primary/5 hover:to-primary/10"
                 >
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold truncate mb-1">
-                        {savedJob.job?.title || 'Job Title'}
-                      </h4>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {savedJob.job?.organization?.name || savedJob.job?.employerProfile?.name || 'Company Name'}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Saved {new Date(savedJob.savedAt).toLocaleDateString()}
-                      </p>
+                      <div className="flex items-start gap-3 mb-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center">
+                          <BookmarkPlus className="h-5 w-5 text-primary" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-base md:text-lg text-foreground group-hover:text-primary transition-colors truncate">
+                            {savedJob.job?.title || 'Job Title'}
+                          </h4>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                            <Building2 className="h-4 w-4 text-primary" />
+                            <span className="font-medium">{savedJob.job?.organization?.name || savedJob.job?.employerProfile?.name || 'Company Name'}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 rounded-md px-2 py-1 w-fit">
+                        <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                        <span>Saved {new Date(savedJob.savedAt).toLocaleDateString()}</span>
+                      </div>
                     </div>
+                    <Button variant="outline" size="sm" className="self-start md:self-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                      <Eye className="h-4 w-4 mr-2" />
+                      View Job
+                    </Button>
                   </div>
                 </Link>
               ))}

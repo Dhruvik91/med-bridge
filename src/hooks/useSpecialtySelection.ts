@@ -20,6 +20,7 @@ export const useSpecialtySelection = () => {
 
   return {
     selectedSpecialties,
+    setSelectedSpecialties,
     addSpecialty,
     removeSpecialty,
     clearSpecialties,

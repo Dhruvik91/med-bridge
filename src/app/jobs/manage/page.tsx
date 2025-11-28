@@ -173,64 +173,67 @@ export default function ManageJobsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-6 md:py-8 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">Manage Job Postings</h1>
-            <p className="text-muted-foreground">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div className="space-y-1">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight">Manage Job Postings</h1>
+            <p className="text-base text-muted-foreground">
               View and manage all your job listings
             </p>
           </div>
-          <Button asChild size="lg">
+          <Button asChild size="lg" className="w-full md:w-auto">
             <Link href="/jobs/create">
-              <Plus className="mr-2 h-5 w-5" />
+              <Plus className="mr-2 h-4 w-4" />
               Post New Job
             </Link>
           </Button>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold">{stats.total}</div>
-              <p className="text-sm text-muted-foreground">Total Jobs</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <Card className="hover:shadow-md transition-shadow">
+            <CardContent className="pt-6 pb-6">
+              <div className="text-2xl md:text-3xl font-bold">{stats.total}</div>
+              <p className="text-sm font-medium text-muted-foreground mt-1">Total Jobs</p>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-green-600">{stats.published}</div>
-              <p className="text-sm text-muted-foreground">Published</p>
+          <Card className="hover:shadow-md transition-shadow">
+            <CardContent className="pt-6 pb-6">
+              <div className="text-2xl md:text-3xl font-bold text-green-600">{stats.published}</div>
+              <p className="text-sm font-medium text-muted-foreground mt-1">Published</p>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-yellow-600">{stats.draft}</div>
-              <p className="text-sm text-muted-foreground">Drafts</p>
+          <Card className="hover:shadow-md transition-shadow">
+            <CardContent className="pt-6 pb-6">
+              <div className="text-2xl md:text-3xl font-bold text-yellow-600">{stats.draft}</div>
+              <p className="text-sm font-medium text-muted-foreground mt-1">Drafts</p>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-red-600">{stats.closed}</div>
-              <p className="text-sm text-muted-foreground">Closed</p>
+          <Card className="hover:shadow-md transition-shadow">
+            <CardContent className="pt-6 pb-6">
+              <div className="text-2xl md:text-3xl font-bold text-red-600">{stats.closed}</div>
+              <p className="text-sm font-medium text-muted-foreground mt-1">Closed</p>
             </CardContent>
           </Card>
         </div>
       </div>
 
       {/* Search and Filters */}
-      <Card className="mb-8">
-        <CardContent className="pt-6">
+      <Card className="mb-8 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-semibold">Search & Filter</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
           <div className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
                   type="text"
-                  placeholder="Search job title, description, or specialty"
-                  className="pl-12"
+                  placeholder="Search job title, description, or specialty..."
+                  className="pl-10 h-11 text-sm"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -239,7 +242,7 @@ export default function ManageJobsPage() {
                 value={statusFilter}
                 onValueChange={(value) => setStatusFilter(value as JobStatus | 'all')}
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-11">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -253,10 +256,12 @@ export default function ManageJobsPage() {
             </div>
 
             {(searchQuery || statusFilter !== 'all') && (
-              <Button type="button" variant="ghost" size="sm" onClick={clearFilters}>
-                <X className="mr-2 h-4 w-4" />
-                Clear Filters
-              </Button>
+              <div className="flex justify-start">
+                <Button type="button" variant="ghost" size="sm" onClick={clearFilters} className="text-sm">
+                  <X className="mr-2 h-4 w-4" />
+                  Clear Filters
+                </Button>
+              </div>
             )}
           </div>
         </CardContent>
@@ -270,28 +275,28 @@ export default function ManageJobsPage() {
           ))}
         </div>
       ) : filteredJobs.length === 0 ? (
-        <Card className="text-center py-16">
-          <CardHeader>
+        <Card className="text-center py-16 shadow-sm">
+          <CardHeader className="pb-6">
             <Briefcase className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <CardTitle>
+            <CardTitle className="text-xl font-semibold">
               {jobs.length === 0 ? 'No jobs posted yet' : 'No jobs found'}
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-base mt-2 max-w-md mx-auto">
               {jobs.length === 0
-                ? 'Get started by creating your first job posting'
-                : 'Try adjusting your search criteria or clearing filters'}
+                ? 'Get started by creating your first job posting to attract top medical talent'
+                : 'Try adjusting your search criteria or clearing filters to see more results'}
             </CardDescription>
           </CardHeader>
-          <CardFooter className="justify-center">
+          <CardFooter className="justify-center pt-4">
             {jobs.length === 0 ? (
-              <Button asChild>
+              <Button asChild size="lg">
                 <Link href="/jobs/create">
                   <Plus className="mr-2 h-4 w-4" />
                   Post Your First Job
                 </Link>
               </Button>
             ) : (
-              <Button onClick={clearFilters} variant="outline">
+              <Button onClick={clearFilters} variant="outline" size="lg">
                 Clear Filters
               </Button>
             )}
@@ -300,25 +305,25 @@ export default function ManageJobsPage() {
       ) : (
         <div className="space-y-6">
           {filteredJobs.map((job) => (
-            <Card key={job.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
+            <Card key={job.id} className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-transparent hover:border-l-primary">
+              <CardHeader className="pb-4">
                 <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      <CardTitle className="text-xl">{job.title}</CardTitle>
-                      <Badge className={getStatusColor(job.status)}>
+                  <div className="flex-1 min-w-0 space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                      <CardTitle className="text-lg md:text-xl font-semibold leading-tight">{job.title}</CardTitle>
+                      <Badge className={`${getStatusColor(job.status)} text-xs font-medium`}>
                         <span className="flex items-center gap-1">
                           {getStatusIcon(job.status)}
                           {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
                         </span>
                       </Badge>
                     </div>
-                    <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                      <Badge variant="secondary">{getJobTypeLabel(job.jobType)}</Badge>
+                    <div className="flex flex-wrap items-center gap-3 text-sm">
+                      <Badge variant="secondary" className="font-medium">{getJobTypeLabel(job.jobType)}</Badge>
                       {job.location && (
-                        <span className="flex items-center gap-1">
+                        <span className="flex items-center gap-1 text-muted-foreground">
                           <MapPin className="h-4 w-4" />
-                          {job.location.city}, {job.location.country}
+                          <span className="font-medium">{job.location.city}, {job.location.country}</span>
                         </span>
                       )}
                     </div>
@@ -380,49 +385,49 @@ export default function ManageJobsPage() {
                 </div>
               </CardHeader>
 
-              <CardContent>
-                <CardDescription className="mb-4 line-clamp-2">
+              <CardContent className="pt-0 pb-4">
+                <CardDescription className="mb-4 line-clamp-2 text-sm leading-relaxed">
                   {job.description}
                 </CardDescription>
 
-                <div className="flex flex-wrap gap-2 mb-4">
+                <div className="flex flex-wrap gap-2 mb-5">
                   {job.specialties?.slice(0, 3).map((specialty) => (
-                    <Badge key={specialty.id} variant="outline">
+                    <Badge key={specialty.id} variant="outline" className="text-xs font-medium">
                       {specialty.name}
                     </Badge>
                   ))}
                   {job.specialties && job.specialties.length > 3 && (
-                    <Badge variant="outline">+{job.specialties.length - 3} more</Badge>
+                    <Badge variant="outline" className="text-xs font-medium">+{job.specialties.length - 3} more</Badge>
                   )}
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4 text-sm">
-                  <span className="flex items-center gap-1 text-primary font-medium">
+                <div className="flex flex-wrap items-center gap-4 md:gap-6 text-sm">
+                  <span className="flex items-center gap-1.5 text-primary font-semibold">
                     <DollarSign className="h-4 w-4" />
                     {formatSalary(job.salaryMin, job.salaryMax)}
                   </span>
-                  <span className="flex items-center gap-1 text-muted-foreground">
+                  <span className="flex items-center gap-1.5 text-muted-foreground font-medium">
                     <Eye className="h-4 w-4" />
                     {job.viewCount} views
                   </span>
-                  <span className="flex items-center gap-1 text-muted-foreground">
+                  <span className="flex items-center gap-1.5 text-muted-foreground font-medium">
                     <Clock className="h-4 w-4" />
                     Posted {new Date(job.postedDate).toLocaleDateString()}
                   </span>
                 </div>
               </CardContent>
 
-              <CardFooter className="flex gap-2">
-                <Button asChild variant="outline" className="flex-1 md:flex-none">
+              <CardFooter className="flex flex-col sm:flex-row gap-3 pt-4 bg-muted/20">
+                <Button asChild variant="outline" className="flex-1 sm:flex-none font-medium" size="sm">
                   <Link href={`/applications?job=${job.id}`}>
                     <Users className="mr-2 h-4 w-4" />
                     View Applications
                   </Link>
                 </Button>
-                <Button asChild variant="outline" className="flex-1 md:flex-none">
+                <Button asChild variant="outline" className="flex-1 sm:flex-none font-medium" size="sm">
                   <Link href={`/jobs/${job.id}/edit`}>
                     <Edit className="mr-2 h-4 w-4" />
-                    Edit
+                    Edit Job
                   </Link>
                 </Button>
               </CardFooter>
@@ -433,21 +438,21 @@ export default function ManageJobsPage() {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!jobToDelete} onOpenChange={() => setJobToDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader className="space-y-3">
+            <AlertDialogTitle className="text-lg font-semibold">Delete Job Posting?</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm leading-relaxed">
               This action cannot be undone. This will permanently delete the job posting and all
-              associated data.
+              associated data including applications and analytics.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogFooter className="gap-2 sm:gap-3">
+            <AlertDialogCancel className="font-medium">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => jobToDelete && handleDeleteJob(jobToDelete)}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-medium"
             >
-              Delete
+              Delete Job
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
