@@ -7,6 +7,46 @@ export const API_CONFIG = {
       googleLogin: "/user-auth/google",
       me: "/user-auth/me",
     },
+    applications: {
+      base: "/applications",
+      jobApplications : "/applications/job",
+      candidateApplications : "/applications/candidate",
+    },
+    doctorsProfiles: {
+      base: "/doctors-profiles",
+      byUser : "/doctors-profiles/user",
+    },
+    employerProfiles: {
+      base: "/employer-profiles",
+      byUser : "/employer-profiles/user",
+    },
+    jobNotes: {
+      base: "/job-notes",
+      byJob : "/job-notes/job",
+      byApplication : "/job-notes/application",
+    },
+    jobs: {
+      base: "/jobs",
+      byEmployer : "/jobs/employer",
+      byOrganization : "/jobs/organization",
+      byLocation : "/jobs/location",
+    },
+    organizations: {
+      base: "/organizations",
+      byEmployer : "/organizations/employer",
+    },
+    savedJobs: {
+      base: "/saved-jobs",
+      byUser : "/saved-jobs/user",
+    },
+    specialties: {
+      base: "/specialties",
+      bySlug : "/specialties/slug",
+    },
+    users: "/users",
+    attachments: "/attachments",
+    jobSeekerProfiles: "/job-seeker-profiles",
+    locations: "/locations",
   },
 };
 

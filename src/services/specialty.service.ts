@@ -1,33 +1,34 @@
 import httpService from '@/lib/http-service';
 import { Specialty, CreateSpecialtyDto, UpdateSpecialtyDto } from '@/types';
+import { API_CONFIG } from '@/constants/constants';
 
 export const specialtyService = {
   async findAll(): Promise<Specialty[]> {
-    const response = await httpService.get<Specialty[]>('/specialties');
+    const response = await httpService.get<Specialty[]>(API_CONFIG.path.specialties.base);
     return response.data;
   },
 
   async findOne(id: string): Promise<Specialty> {
-    const response = await httpService.get<Specialty>(`/specialties/${id}`);
+    const response = await httpService.get<Specialty>(`${API_CONFIG.path.specialties.base}/${id}`);
     return response.data;
   },
 
   async findBySlug(slug: string): Promise<Specialty> {
-    const response = await httpService.get<Specialty>(`/specialties/slug/${slug}`);
+    const response = await httpService.get<Specialty>(`${API_CONFIG.path.specialties.bySlug}/${slug}`);
     return response.data;
   },
 
   async create(data: CreateSpecialtyDto): Promise<Specialty> {
-    const response = await httpService.post<Specialty>('/specialties', data);
+    const response = await httpService.post<Specialty>(API_CONFIG.path.specialties.base, data);
     return response.data;
   },
 
   async update(id: string, data: UpdateSpecialtyDto): Promise<Specialty> {
-    const response = await httpService.patch<Specialty>(`/specialties/${id}`, data);
+    const response = await httpService.patch<Specialty>(`${API_CONFIG.path.specialties.base}/${id}`, data);
     return response.data;
   },
 
   async remove(id: string): Promise<void> {
-    await httpService.delete(`/specialties/${id}`);
+    await httpService.delete(`${API_CONFIG.path.specialties.base}/${id}`);
   },
 };
