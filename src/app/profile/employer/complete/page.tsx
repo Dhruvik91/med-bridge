@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,8 +14,10 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Loader2, CheckCircle2 } from 'lucide-react';
 import { useGetMe } from '@/hooks/get/useGetMe';
+import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
 import { useCreateEmployerProfile } from '@/hooks/post/useCreateEmployerProfile';
 import { CreateEmployerProfileDto } from '@/types';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 
 const profileSchema = z.object({
   companyName: z.string().min(2, 'Company name must be at least 2 characters'),
@@ -40,9 +43,18 @@ const steps = [
 export default function EmployerProfileCompletePage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [error, setError] = useState('');
+  const router = useRouter();
 
   const { data: user } = useGetMe();
+  const { data: profile } = useGetEmployerProfile(user);
   const createProfileMutation = useCreateEmployerProfile();
+
+  // Redirect to dashboard if profile already exists
+  useEffect(() => {
+    if (user && profile) {
+      router.push(FRONTEND_ROUTES.DASHBOARD.EMPLOYER);
+    }
+  }, [user, profile, router]);
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
