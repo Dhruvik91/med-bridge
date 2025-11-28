@@ -48,6 +48,7 @@ import { useGetJob } from '@/hooks/get/useGetJob';
 import { useUpdateJob } from '@/hooks/update/useUpdateJob';
 import { useCreateOrganization } from '@/hooks/post/useCreateOrganization';
 import { useCreateLocation } from '@/hooks/post/useCreateLocation';
+import { useCreateSpecialty } from '@/hooks/post/useCreateSpecialty';
 import { useSpecialtySelection } from '@/hooks/useSpecialtySelection';
 import { useCreateJobDialogs } from '@/hooks/useCreateJobDialogs';
 import { useEmployerRoleCheck } from '@/hooks/useEmployerRoleCheck';
@@ -100,6 +101,12 @@ export default function EditJobPage() {
     openLocationDialog,
     closeLocationDialog,
     resetLocationForm,
+    showSpecialtyDialog,
+    newSpecialty,
+    setNewSpecialty,
+    openSpecialtyDialog,
+    closeSpecialtyDialog,
+    resetSpecialtyForm,
   } = useCreateJobDialogs();
 
   // Create mutations
@@ -115,6 +122,14 @@ export default function EditJobPage() {
       form.setValue('locationId', locationId);
     },
     onDialogClose: closeLocationDialog,
+  });
+
+  const createSpecialtyMutation = useCreateSpecialty({
+    onSuccess: (specialty) => {
+      // Add the created specialty to selected specialties
+      addSpecialty(specialty);
+    },
+    onDialogClose: closeSpecialtyDialog,
   });
 
   // Form hook
@@ -201,6 +216,31 @@ export default function EditJobPage() {
       country: newLocation.country,
       postalCode: newLocation.postalCode || undefined,
     });
+  };
+
+  const handleCreateSpecialty = () => {
+    if (!newSpecialty.name) {
+      toast({
+        title: 'Error',
+        description: 'Please provide a specialty name.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    createSpecialtyMutation.mutate({
+      name: newSpecialty.name,
+      description: newSpecialty.description || undefined,
+    });
+  };
+
+  // Handle form submission with specific status
+  const handleSubmitWithStatus = (status: JobStatus) => {
+    setValue('status', status);
+    // Use setTimeout to ensure setValue is processed before form submission
+    setTimeout(() => {
+      handleSubmit(handleFormSubmit)();
+    }, 0);
   };
 
   // Handle successful update
@@ -459,7 +499,6 @@ export default function EditJobPage() {
                 </Select>
                 <Button
                   type="button"
-                  variant="outline"
                   onClick={openOrgDialog}
                   className="shrink-0"
                 >
@@ -503,7 +542,6 @@ export default function EditJobPage() {
                 </Select>
                 <Button
                   type="button"
-                  variant="outline"
                   onClick={openLocationDialog}
                   className="shrink-0"
                 >
@@ -524,34 +562,54 @@ export default function EditJobPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="specialty">Add Specialty</Label>
-              <Select onValueChange={handleAddSpecialty}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a specialty to add" />
-                </SelectTrigger>
-                <SelectContent>
-                  {specialties
-                    .filter((s) => !selectedSpecialties.find((sel) => sel.id === s.id))
-                    .map((specialty) => (
-                      <SelectItem key={specialty.id} value={specialty.id}>
-                        {specialty.name}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
+              <Label htmlFor="specialty" className="text-sm sm:text-base">Specialty (Optional)</Label>
+              <div className="flex gap-2">
+                {specialties.filter((s) => !selectedSpecialties.find((sel) => sel.id === s.id)).length > 0 ? (
+                  <Select onValueChange={handleAddSpecialty}>
+                    <SelectTrigger className="flex-1">
+                      <SelectValue placeholder="Select a specialty to add" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {specialties
+                        .filter((s) => !selectedSpecialties.find((sel) => sel.id === s.id))
+                        .map((specialty) => (
+                          <SelectItem key={specialty.id} value={specialty.id}>
+                            {specialty.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <div className="flex-1 flex items-center justify-center py-3 px-4 border border-dashed border-muted-foreground/25 rounded-md bg-muted/10">
+                    <p className="text-sm text-muted-foreground">
+                      {selectedSpecialties.length > 0 
+                        ? "All available specialties have been selected" 
+                        : "No specialties available"}
+                    </p>
+                  </div>
+                )}
+                <Button
+                  type="button"
+                  onClick={openSpecialtyDialog}
+                  className="shrink-0"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
             {selectedSpecialties.length > 0 && (
-              <div>
-                <Label>Selected Specialties</Label>
-                <div className="flex flex-wrap gap-2 mt-2">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Selected Specialties ({selectedSpecialties.length})</Label>
+                <div className="flex flex-wrap gap-2 p-3 bg-muted/30 rounded-md border">
                   {selectedSpecialties.map((specialty) => (
-                    <Badge key={specialty.id} variant="secondary" className="gap-1">
+                    <Badge key={specialty.id} variant="secondary" className="gap-1 px-3 py-1">
                       {specialty.name}
                       <button
                         type="button"
                         onClick={() => handleRemoveSpecialty(specialty.id)}
-                        className="ml-1 hover:text-destructive"
+                        className="ml-1 hover:text-destructive transition-colors"
+                        title="Remove specialty"
                       >
                         <X className="h-3 w-3" />
                       </button>
@@ -576,10 +634,10 @@ export default function EditJobPage() {
             </Button>
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Button
-                type="submit"
+                type="button"
                 variant="outline"
                 disabled={isSubmitting || updateJobMutation.isPending}
-                onClick={() => setValue('status', JobStatus.draft)}
+                onClick={() => handleSubmitWithStatus(JobStatus.draft)}
                 className="w-full sm:w-auto"
               >
                 {updateJobMutation.isPending ? (
@@ -591,9 +649,9 @@ export default function EditJobPage() {
                 <span className="xs:hidden sm:hidden">Draft</span>
               </Button>
               <Button
-                type="submit"
+                type="button"
                 disabled={isSubmitting || updateJobMutation.isPending}
-                onClick={() => setValue('status', JobStatus.published)}
+                onClick={() => handleSubmitWithStatus(JobStatus.published)}
                 className="w-full sm:w-auto"
               >
                 {updateJobMutation.isPending ? (
@@ -733,6 +791,46 @@ export default function EditJobPage() {
             </Button>
             <Button onClick={handleCreateLocation} disabled={createLocationMutation.isPending}>
               Create Location
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Specialty Dialog */}
+      <Dialog open={showSpecialtyDialog} onOpenChange={closeSpecialtyDialog}>
+        <DialogContent className="max-w-[95vw] sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Create New Specialty</DialogTitle>
+            <DialogDescription>
+              Add a new medical specialty
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label htmlFor="specialty-name">Specialty Name *</Label>
+              <Input
+                id="specialty-name"
+                placeholder="e.g., Cardiology"
+                value={newSpecialty.name}
+                onChange={(e) => setNewSpecialty({ ...newSpecialty, name: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="specialty-description">Description</Label>
+              <Textarea
+                id="specialty-description"
+                placeholder="Brief description of the specialty..."
+                value={newSpecialty.description}
+                onChange={(e) => setNewSpecialty({ ...newSpecialty, description: e.target.value })}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={closeSpecialtyDialog}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreateSpecialty} disabled={createSpecialtyMutation.isPending}>
+              Create Specialty
             </Button>
           </DialogFooter>
         </DialogContent>
