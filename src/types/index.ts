@@ -275,13 +275,13 @@ export interface CreateJobDto {
   locationId?: string;
   title: string;
   description: string;
-  requirements?: string;
-  benefits?: string;
-  salaryMin?: number;
-  salaryMax?: number;
+  requirements?: string[];
+  perks?: string[];
+  salaryMin?: string;
+  salaryMax?: string;
   jobType: JobType;
   status?: JobStatus;
-  closingDate?: string;
+  applicationDeadline?: string;
   specialtyIds?: string[];
 }
 
