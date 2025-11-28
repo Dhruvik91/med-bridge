@@ -97,10 +97,10 @@ export const useJobEditForm = ({ job, employerProfileId, selectedSpecialties, on
     }
 
     // Convert textarea strings to arrays by splitting on newlines
-    const requirementsArray = data.requirements
+    const requirementsArray = data.requirements && typeof data.requirements === 'string'
       ? data.requirements.split('\n').filter((line) => line.trim())
       : undefined;
-    const perksArray = data.benefits
+    const perksArray = data.benefits && typeof data.benefits === 'string'
       ? data.benefits.split('\n').filter((line) => line.trim())
       : undefined;
 
