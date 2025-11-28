@@ -2,12 +2,20 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Stethoscope, Briefcase, MessageSquare, User, Users, Home } from "lucide-react"
+import { Briefcase, User, Users, Home, Building2, BookmarkCheck, PlusCircle, LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/providers/auth-provider"
+import { UserRole } from "@/types"
 
-// MVP mobile nav: Home, Jobs and Profile
-const items = [
+// Navigation item type
+type NavItem = {
+  href: string
+  label: string
+  icon: LucideIcon
+}
+
+// Role-based navigation items
+const getCandidateNavItems = (): NavItem[] => [
   {
     href: "/dashboard/candidate",
     label: "Home",
@@ -19,31 +27,43 @@ const items = [
     icon: Briefcase,
   },
   {
+    href: "/applications",
+    label: "Applications",
+    icon: BookmarkCheck,
+  },
+  {
     href: "/profile",
     label: "Profile",
     icon: User,
   },
-  // The following items are intentionally commented out for MVP scope:
-  // {
-  //   href: "/dashboard",
-  //   label: "Home",
-  //   icon: Stethoscope,
-  // },
-  // {
-  //   href: "/doctors",
-  //   label: "Doctors",
-  //   icon: Users,
-  // },
-  // {
-  //   href: "/hospitals",
-  //   label: "Hospitals",
-  //   icon: Home,
-  // },
-  // {
-  //   href: "/messages",
-  //   label: "Messages",
-  //   icon: MessageSquare,
-  // },
+]
+
+const getEmployerNavItems = (): NavItem[] => [
+  {
+    href: "/dashboard/employer",
+    label: "Home",
+    icon: Home,
+  },
+  {
+    href: "/jobs/manage",
+    label: "Jobs",
+    icon: Briefcase,
+  },
+  {
+    href: "/jobs/create",
+    label: "Post Job",
+    icon: PlusCircle,
+  },
+  {
+    href: "/applications/manage",
+    label: "Applications",
+    icon: Users,
+  },
+  {
+    href: "/profile",
+    label: "Profile",
+    icon: Building2,
+  },
 ]
 
 export function MobileBottomNav() {
@@ -53,6 +73,23 @@ export function MobileBottomNav() {
   if (loading || !user) {
     return null
   }
+
+  // Determine navigation items based on user role
+  const getNavItems = () => {
+    const role = user.role
+    
+    // Map both role systems: doctor/hospital and candidate/employer
+    if (role === UserRole.candidate) {
+      return getCandidateNavItems()
+    } else if (role === UserRole.employer) {
+      return getEmployerNavItems()
+    }
+    
+    // Default to candidate navigation for admin or unknown roles
+    return getCandidateNavItems()
+  }
+
+  const items = getNavItems()
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:hidden">

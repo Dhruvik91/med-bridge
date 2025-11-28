@@ -5,8 +5,8 @@ import { useRouter, usePathname } from 'next/navigation';
 import { API_CONFIG, AUTH_TOKEN_KEY, FRONTEND_ROUTES } from '@/constants/constants';
 import httpService from '@/lib/http-service';
 import { getDashboardRoute } from '@/lib/dashboard-routes';
+import { UserRole } from '@/types';
 
-type UserRole = 'doctor' | 'hospital' | 'admin';
 
 type AuthUser = {
   id: string;
@@ -41,7 +41,7 @@ interface AuthContextType
   profile: UserProfile | null;
   loading: boolean;
   signIn: ( email: string, password: string ) => Promise<void>;
-  signUp: ( email: string, password: string, role: 'doctor' | 'hospital' ) => Promise<void>;
+  signUp: ( email: string, password: string, role: UserRole.candidate | UserRole.employer ) => Promise<void>;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
 }
@@ -184,7 +184,7 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
     }
   };
 
-  const signUp = async ( email: string, password: string, role: 'doctor' | 'hospital' ) =>
+  const signUp = async ( email: string, password: string, role: UserRole.candidate | UserRole.employer ) =>
   {
     setLoading( true );
     try
