@@ -12,9 +12,9 @@ export const API_CONFIG = {
       jobApplications : "/applications/job",
       candidateApplications : "/applications/candidate",
     },
-    doctorsProfiles: {
-      base: "/doctors-profiles",
-      byUser : "/doctors-profiles/user",
+    doctorProfiles: {
+      base: "/doctor-profiles",
+      byUser : "/doctor-profiles/user",
     },
     employerProfiles: {
       base: "/employer-profiles",
@@ -52,8 +52,16 @@ export const API_CONFIG = {
 
 export const FRONTEND_ROUTES = {
   HOME: '/',
-  JOBS: '/jobs',
-  APPLICATIONS: '/applications',
+  JOBS: {
+    BASE: '/jobs',
+    CREATE: '/jobs/create',
+    MANAGE: '/jobs/manage',
+    DETAIL: '/jobs/[id]',
+  },
+  APPLICATIONS: {
+    BASE: '/applications',
+    MANAGE: '/applications/manage',
+  },
   SAVED_JOBS: '/saved-jobs',
   AUTH: {
     LOGIN: '/auth/login',
@@ -69,10 +77,12 @@ export const FRONTEND_ROUTES = {
   PROFILE: {
     BASE: '/profile',
     DOCTOR: {
+      BASE: '/profile/doctor',
       COMPLETE: '/profile/doctor/complete',
       EDIT: '/profile/doctor/edit',
     },
     EMPLOYER: {
+      BASE: '/profile/employer',
       COMPLETE: '/profile/employer/complete',
       EDIT: '/profile/employer/edit',
     },

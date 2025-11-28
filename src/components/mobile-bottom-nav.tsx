@@ -6,6 +6,7 @@ import { Briefcase, User, Users, Home, Building2, BookmarkCheck, PlusCircle, Luc
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/providers/auth-provider"
 import { UserRole } from "@/types"
+import { FRONTEND_ROUTES } from "@/constants/constants"
 
 // Navigation item type
 type NavItem = {
@@ -17,22 +18,22 @@ type NavItem = {
 // Role-based navigation items
 const getCandidateNavItems = (): NavItem[] => [
   {
-    href: "/dashboard/candidate",
+    href: FRONTEND_ROUTES.DASHBOARD.CANDIDATE,
     label: "Home",
     icon: Home,
   },
   {
-    href: "/jobs",
+    href: FRONTEND_ROUTES.JOBS.BASE,
     label: "Jobs",
     icon: Briefcase,
   },
   {
-    href: "/applications",
+    href: FRONTEND_ROUTES.APPLICATIONS.BASE,
     label: "Applications",
     icon: BookmarkCheck,
   },
   {
-    href: "/profile",
+    href: FRONTEND_ROUTES.PROFILE.BASE,
     label: "Profile",
     icon: User,
   },
@@ -40,27 +41,27 @@ const getCandidateNavItems = (): NavItem[] => [
 
 const getEmployerNavItems = (): NavItem[] => [
   {
-    href: "/dashboard/employer",
+    href: FRONTEND_ROUTES.DASHBOARD.EMPLOYER,
     label: "Home",
     icon: Home,
   },
   {
-    href: "/jobs/manage",
+    href: FRONTEND_ROUTES.JOBS.MANAGE,
     label: "Jobs",
     icon: Briefcase,
   },
   {
-    href: "/jobs/create",
+    href: FRONTEND_ROUTES.JOBS.CREATE,
     label: "Post Job",
     icon: PlusCircle,
   },
   {
-    href: "/applications/manage",
+    href: FRONTEND_ROUTES.APPLICATIONS.BASE,
     label: "Applications",
     icon: Users,
   },
   {
-    href: "/profile",
+    href: FRONTEND_ROUTES.PROFILE.BASE,
     label: "Profile",
     icon: Building2,
   },
