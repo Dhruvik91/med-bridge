@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { jobService } from '@/services/job.service';
 import { useToast } from '@/hooks/use-toast';
@@ -7,10 +7,12 @@ import { CreateJobDto } from '@/types';
 export const useCreateJob = () => {
   const router = useRouter();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (data: CreateJobDto) => jobService.create(data),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employerJobs'] });
       toast({
         title: 'Job created',
         description: 'Your job posting has been created successfully.',

@@ -16,11 +16,7 @@ import { Badge } from '@/components/ui/badge'
 import { 
   Stethoscope, 
   User, 
-  Settings, 
-  LogOut,
-  Briefcase,
-  MessageSquare,
-  Bell
+  LogOut
 } from 'lucide-react'
 import { getDashboardRoute } from '@/lib/dashboard-routes'
 
@@ -91,9 +87,9 @@ export function Navigation() {
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={undefined} alt={profile?.name || user.email || ''} />
+                          <AvatarImage src={(profile?.metadata as any)?.avatarUrl as string | undefined} alt={(profile?.metadata as any)?.name || user.email || ''} />
                           <AvatarFallback>
-                            {profile?.name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                            {(profile?.metadata as any)?.name?.charAt(0) || user.email?.charAt(0) || 'U'}
                           </AvatarFallback>
                         </Avatar>
                       </Button>
@@ -102,7 +98,7 @@ export function Navigation() {
                       <DropdownMenuLabel className="font-normal">
                         <div className="flex flex-col space-y-1">
                           <p className="text-sm font-medium leading-none">
-                            {profile?.name || 'User'}
+                            {(profile?.metadata as any)?.name || 'User'}
                           </p>
                           <p className="text-xs leading-none text-muted-foreground">
                             {user.email}
