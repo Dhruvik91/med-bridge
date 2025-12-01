@@ -46,6 +46,7 @@ import { useGetSavedJobs } from '@/hooks/get/useGetSavedJobs';
 import { useGetApplicationsByCandidate } from '@/hooks/get/useGetApplications';
 import { useApplyToJob } from '@/hooks/post/useApplyToJob';
 import { useSaveJob, useUnsaveJob } from '@/hooks/post/useSaveJob';
+import { useUploadFile } from '@/hooks/post/useUploadFile';
 import { useToast } from '@/hooks/use-toast';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 import { JobType } from '@/types';
@@ -126,7 +127,7 @@ export default function JobDetailPage() {
   const router = useRouter();
   const { toast } = useToast();
   const jobId = params.id as string;
-  
+
   const [isSaved, setIsSaved] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -149,6 +150,7 @@ export default function JobDetailPage() {
   const applyMutation = useApplyToJob();
   const saveJobMutation = useSaveJob();
   const unsaveJobMutation = useUnsaveJob();
+  const uploadMutation = useUploadFile();
 
   useEffect(() => {
     if (savedJobs && jobId) {
@@ -173,25 +175,14 @@ export default function JobDetailPage() {
     }
 
     let resumeUrl = '';
-    
-    // If a resume file is selected, convert it to base64 for now
-    // TODO: Implement proper file upload service
+
+    // If a resume file is selected, upload it
     if (data.resume && data.resume.length > 0) {
       const file = data.resume[0];
       try {
-        const base64 = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
-        resumeUrl = base64;
+        resumeUrl = await uploadMutation.mutateAsync(file);
       } catch (error) {
-        toast({
-          title: 'Error',
-          description: 'Failed to process resume file',
-          variant: 'destructive',
-        });
+        // Error handling is done in the hook
         return;
       }
     }
@@ -469,7 +460,7 @@ export default function JobDetailPage() {
                           </FormItem>
                         )}
                       />
-                      
+
                       {/* Resume Upload Field */}
                       <FormField
                         control={form.control}
@@ -492,7 +483,7 @@ export default function JobDetailPage() {
                                   />
                                   {!selectedFile && <Upload className="h-4 w-4 text-muted-foreground" />}
                                 </div>
-                                
+
                                 {/* File info display */}
                                 {selectedFile && (
                                   <div className="flex items-center justify-between p-3 bg-muted rounded-md">
@@ -525,7 +516,7 @@ export default function JobDetailPage() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <Button
                         type="submit"
                         disabled={applyMutation.isPending}

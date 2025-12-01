@@ -9,44 +9,45 @@ export const API_CONFIG = {
     },
     applications: {
       base: "/applications",
-      jobApplications : "/applications/job",
-      candidateApplications : "/applications/candidate",
+      jobApplications: "/applications/job",
+      candidateApplications: "/applications/candidate",
     },
     doctorProfiles: {
       base: "/doctor-profiles",
-      byUser : "/doctor-profiles/user",
+      byUser: "/doctor-profiles/user",
     },
     employerProfiles: {
       base: "/employer-profiles",
-      byUser : "/employer-profiles/user",
+      byUser: "/employer-profiles/user",
     },
     jobNotes: {
       base: "/job-notes",
-      byJob : "/job-notes/job",
-      byApplication : "/job-notes/application",
+      byJob: "/job-notes/job",
+      byApplication: "/job-notes/application",
     },
     jobs: {
       base: "/jobs",
-      byEmployer : "/jobs/employer",
-      byOrganization : "/jobs/organization",
-      byLocation : "/jobs/location",
+      byEmployer: "/jobs/employer",
+      byOrganization: "/jobs/organization",
+      byLocation: "/jobs/location",
     },
     organizations: {
       base: "/organizations",
-      byEmployer : "/organizations/employer",
+      byEmployer: "/organizations/employer",
     },
     savedJobs: {
       base: "/saved-jobs",
-      byUser : "/saved-jobs/user",
+      byUser: "/saved-jobs/user",
     },
     specialties: {
       base: "/specialties",
-      bySlug : "/specialties/slug",
+      bySlug: "/specialties/slug",
     },
     users: "/users",
     attachments: "/attachments",
     jobSeekerProfiles: "/job-seeker-profiles",
     locations: "/locations",
+    uploads: "/uploads",
   },
 };
 
