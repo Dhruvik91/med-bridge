@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +15,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import {
   MapPin,
   Building2,
@@ -38,15 +50,93 @@ import { useToast } from '@/hooks/use-toast';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 import { JobType } from '@/types';
 
+// File validation constants
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ACCEPTED_FILE_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+const ACCEPTED_FILE_EXTENSIONS = ['.pdf', '.doc', '.docx'];
+
+// Zod schema for application form
+const applicationSchema = z.object({
+  coverLetter: z.string().optional(),
+  resume: z
+    .custom<FileList>()
+    .refine(
+      (files) => {
+        return files && files.length > 0;
+      },
+      { message: 'Resume is required. Please upload your resume.' }
+    )
+    .refine(
+      (files) => {
+        if (!files || files.length === 0) return false;
+        return files.length === 1;
+      },
+      { message: 'Please select only one file' }
+    )
+    .refine(
+      (files) => {
+        if (!files || files.length === 0) return false;
+        return files[0].size > 0;
+      },
+      { message: 'File is empty. Please select a valid resume file.' }
+    )
+    .refine(
+      (files) => {
+        if (!files || files.length === 0) return false;
+        return files[0].size <= MAX_FILE_SIZE;
+      },
+      { message: `File size must be less than ${MAX_FILE_SIZE / 1024 / 1024}MB` }
+    )
+    .refine(
+      (files) => {
+        if (!files || files.length === 0) return false;
+        return ACCEPTED_FILE_TYPES.includes(files[0].type);
+      },
+      { message: 'Only PDF, DOC, and DOCX files are accepted' }
+    )
+    .refine(
+      (files) => {
+        if (!files || files.length === 0) return false;
+        const fileName = files[0].name.toLowerCase();
+        return ACCEPTED_FILE_EXTENSIONS.some(ext => fileName.endsWith(ext));
+      },
+      { message: 'Invalid file extension. Only .pdf, .doc, and .docx are allowed' }
+    )
+    .refine(
+      (files) => {
+        if (!files || files.length === 0) return false;
+        return files[0].name.length <= 255;
+      },
+      { message: 'File name is too long (max 255 characters)' }
+    )
+    .refine(
+      (files) => {
+        if (!files || files.length === 0) return false;
+        const dangerousChars = /[<>:"\/\\|?*\x00-\x1f]/g;
+        return !dangerousChars.test(files[0].name);
+      },
+      { message: 'File name contains invalid characters' }
+    ),
+});
+
+type ApplicationFormData = z.infer<typeof applicationSchema>;
+
 export default function JobDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
   const jobId = params.id as string;
   
-  const [coverLetter, setCoverLetter] = useState('');
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [isSaved, setIsSaved] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  // Initialize form
+  const form = useForm<ApplicationFormData>({
+    resolver: zodResolver(applicationSchema),
+    defaultValues: {
+      coverLetter: '',
+    },
+  });
 
   // Fetch data using hooks
   const { data: user } = useGetMe();
@@ -66,7 +156,7 @@ export default function JobDetailPage() {
     }
   }, [savedJobs, jobId]);
 
-  const handleApply = async () => {
+  const onSubmitApplication = async (data: ApplicationFormData) => {
     if (!user) {
       router.push(`${FRONTEND_ROUTES.AUTH.LOGIN}?redirect=/jobs/${jobId}`);
       return;
@@ -86,13 +176,14 @@ export default function JobDetailPage() {
     
     // If a resume file is selected, convert it to base64 for now
     // TODO: Implement proper file upload service
-    if (resumeFile) {
+    if (data.resume && data.resume.length > 0) {
+      const file = data.resume[0];
       try {
         const base64 = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => resolve(reader.result as string);
           reader.onerror = reject;
-          reader.readAsDataURL(resumeFile);
+          reader.readAsDataURL(file);
         });
         resumeUrl = base64;
       } catch (error) {
@@ -108,36 +199,29 @@ export default function JobDetailPage() {
     applyMutation.mutate({
       jobId,
       candidateId: profile!.id,
-      coverLetter,
+      coverLetter: data.coverLetter || '',
       resumeUrl: resumeUrl || undefined,
     });
   };
 
-  const handleResumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Validate file type
-      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-      if (!allowedTypes.includes(file.type)) {
-        toast({
-          title: 'Invalid file type',
-          description: 'Please upload a PDF or Word document',
-          variant: 'destructive',
-        });
-        return;
-      }
-      
-      // Validate file size (5MB limit)
-      if (file.size > 5 * 1024 * 1024) {
-        toast({
-          title: 'File too large',
-          description: 'Please upload a file smaller than 5MB',
-          variant: 'destructive',
-        });
-        return;
-      }
-      
-      setResumeFile(file);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setSelectedFile(files[0]);
+      field.onChange(files);
+    } else {
+      setSelectedFile(null);
+      field.onChange(undefined);
+    }
+  };
+
+  const handleClearResume = (field: any) => {
+    setSelectedFile(null);
+    field.onChange(undefined);
+    // Reset the file input
+    const fileInput = document.getElementById('resume') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
     }
   };
 
@@ -365,56 +449,99 @@ export default function JobDetailPage() {
                     </AlertDescription>
                   </Alert>
                 ) : (
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="coverLetter">Cover Letter (Optional)</Label>
-                      <Textarea
-                        id="coverLetter"
-                        rows={6}
-                        placeholder="Tell the employer why you're a great fit for this position..."
-                        value={coverLetter}
-                        onChange={(e) => setCoverLetter(e.target.value)}
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmitApplication)} className="space-y-4">
+                      {/* Cover Letter Field */}
+                      <FormField
+                        control={form.control}
+                        name="coverLetter"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Cover Letter (Optional)</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                rows={6}
+                                placeholder="Tell the employer why you're a great fit for this position..."
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="resume">Resume (Optional)</Label>
-                      <div className="flex items-center gap-2">
-                        <Input
-                          id="resume"
-                          type="file"
-                          accept=".pdf,.doc,.docx"
-                          onChange={handleResumeChange}
-                          className="file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
-                        />
-                        <Upload className="h-4 w-4 text-muted-foreground" />
-                      </div>
-                      {resumeFile && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <FileText className="h-4 w-4" />
-                          <span>{resumeFile.name} ({(resumeFile.size / 1024 / 1024).toFixed(2)} MB)</span>
-                        </div>
-                      )}
-                      <p className="text-xs text-muted-foreground">
-                        Accepted formats: PDF, DOC, DOCX (max 5MB)
-                      </p>
-                    </div>
-                    
-                    <Button
-                      onClick={handleApply}
-                      disabled={applyMutation.isPending}
-                      className="w-full"
-                    >
-                      {applyMutation.isPending ? (
-                        'Submitting...'
-                      ) : (
-                        <>
-                          <Send className="mr-2 h-4 w-4" aria-hidden="true" />
-                          Submit Application
-                        </>
-                      )}
-                    </Button>
-                  </div>
+                      
+                      {/* Resume Upload Field */}
+                      <FormField
+                        control={form.control}
+                        name="resume"
+                        render={({ field: { onChange, value, ...field } }) => (
+                          <FormItem>
+                            <FormLabel>
+                              Resume <span className="text-destructive">*</span>
+                            </FormLabel>
+                            <FormControl>
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                  <Input
+                                    id="resume"
+                                    type="file"
+                                    accept=".pdf,.doc,.docx"
+                                    className="file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                                    onChange={(e) => handleFileChange(e, { onChange })}
+                                    {...field}
+                                  />
+                                  {!selectedFile && <Upload className="h-4 w-4 text-muted-foreground" />}
+                                </div>
+                                
+                                {/* File info display */}
+                                {selectedFile && (
+                                  <div className="flex items-center justify-between p-3 bg-muted rounded-md">
+                                    <div className="flex items-center gap-2 text-sm">
+                                      <FileText className="h-4 w-4 text-primary" />
+                                      <div>
+                                        <p className="font-medium">{selectedFile.name}</p>
+                                        <p className="text-xs text-muted-foreground">
+                                          {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleClearResume({ onChange })}
+                                      className="h-8 px-2"
+                                    >
+                                      Remove
+                                    </Button>
+                                  </div>
+                                )}
+                              </div>
+                            </FormControl>
+                            <FormDescription>
+                              Required • Accepted formats: PDF, DOC, DOCX • Maximum size: 5MB
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <Button
+                        type="submit"
+                        disabled={applyMutation.isPending}
+                        className="w-full"
+                      >
+                        {applyMutation.isPending ? (
+                          'Submitting...'
+                        ) : (
+                          <>
+                            <Send className="mr-2 h-4 w-4" aria-hidden="true" />
+                            Submit Application
+                          </>
+                        )}
+                      </Button>
+                    </form>
+                  </Form>
                 )}
               </CardContent>
             </Card>
