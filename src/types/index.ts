@@ -291,6 +291,7 @@ export interface CreateApplicationDto {
   jobId: string;
   candidateId: string;
   coverLetter?: string;
+  resumeUrl?: string;
 }
 
 export interface UpdateApplicationDto {

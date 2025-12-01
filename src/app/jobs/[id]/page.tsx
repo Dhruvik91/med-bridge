@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
@@ -22,7 +23,9 @@ import {
   Share2,
   Eye,
   ArrowLeft,
-  Send
+  Send,
+  Upload,
+  FileText
 } from 'lucide-react';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetJob } from '@/hooks/get/useGetJob';
@@ -42,6 +45,7 @@ export default function JobDetailPage() {
   const jobId = params.id as string;
   
   const [coverLetter, setCoverLetter] = useState('');
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [isSaved, setIsSaved] = useState(false);
 
   // Fetch data using hooks
@@ -62,7 +66,7 @@ export default function JobDetailPage() {
     }
   }, [savedJobs, jobId]);
 
-  const handleApply = () => {
+  const handleApply = async () => {
     if (!user) {
       router.push(`${FRONTEND_ROUTES.AUTH.LOGIN}?redirect=/jobs/${jobId}`);
       return;
@@ -78,11 +82,63 @@ export default function JobDetailPage() {
       return;
     }
 
+    let resumeUrl = '';
+    
+    // If a resume file is selected, convert it to base64 for now
+    // TODO: Implement proper file upload service
+    if (resumeFile) {
+      try {
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(resumeFile);
+        });
+        resumeUrl = base64;
+      } catch (error) {
+        toast({
+          title: 'Error',
+          description: 'Failed to process resume file',
+          variant: 'destructive',
+        });
+        return;
+      }
+    }
+
     applyMutation.mutate({
       jobId,
       candidateId: profile!.id,
       coverLetter,
+      resumeUrl: resumeUrl || undefined,
     });
+  };
+
+  const handleResumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (!allowedTypes.includes(file.type)) {
+        toast({
+          title: 'Invalid file type',
+          description: 'Please upload a PDF or Word document',
+          variant: 'destructive',
+        });
+        return;
+      }
+      
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: 'File too large',
+          description: 'Please upload a file smaller than 5MB',
+          variant: 'destructive',
+        });
+        return;
+      }
+      
+      setResumeFile(file);
+    }
   };
 
   const handleSaveJob = () => {
@@ -320,6 +376,30 @@ export default function JobDetailPage() {
                         onChange={(e) => setCoverLetter(e.target.value)}
                       />
                     </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="resume">Resume (Optional)</Label>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          id="resume"
+                          type="file"
+                          accept=".pdf,.doc,.docx"
+                          onChange={handleResumeChange}
+                          className="file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                        />
+                        <Upload className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                      {resumeFile && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <FileText className="h-4 w-4" />
+                          <span>{resumeFile.name} ({(resumeFile.size / 1024 / 1024).toFixed(2)} MB)</span>
+                        </div>
+                      )}
+                      <p className="text-xs text-muted-foreground">
+                        Accepted formats: PDF, DOC, DOCX (max 5MB)
+                      </p>
+                    </div>
+                    
                     <Button
                       onClick={handleApply}
                       disabled={applyMutation.isPending}
@@ -343,26 +423,29 @@ export default function JobDetailPage() {
 
         {/* Sidebar */}
         <div className="space-y-6">
-          {/* Quick Apply Card */}
-          {(!user || user.role === 'candidate') && !hasApplied && (
+          {/* Quick Actions Card */}
+          {(!user || user.role === 'candidate') && (
             <Card className="sticky top-4">
               <CardHeader>
-                <CardTitle>Quick Apply</CardTitle>
+                <CardTitle>Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Button
-                  onClick={() => {
-                    if (!user) {
-                      router.push(`${FRONTEND_ROUTES.AUTH.LOGIN}?redirect=/jobs/${jobId}`);
-                    } else {
-                      document.getElementById('apply')?.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
-                  className="w-full"
-                  size="lg"
-                >
-                  Apply Now
-                </Button>
+                {!hasApplied && (
+                  <Button
+                    onClick={() => {
+                      if (!user) {
+                        router.push(`${FRONTEND_ROUTES.AUTH.LOGIN}?redirect=/jobs/${jobId}`);
+                      } else {
+                        document.getElementById('apply')?.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                    variant="outline"
+                    className="w-full"
+                    size="lg"
+                  >
+                    Go to Application
+                  </Button>
+                )}
                 <Button
                   onClick={handleSaveJob}
                   variant="outline"
