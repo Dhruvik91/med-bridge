@@ -95,7 +95,7 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange={false}
             >
-              <Toaster position="bottom-center" />
+              <Toaster position="bottom-right" />
               <AppShell>
                 {children}
               </AppShell>
