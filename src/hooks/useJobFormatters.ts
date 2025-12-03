@@ -7,9 +7,9 @@ export const useJobFormatters = () => {
     const maxNum = max != null ? Number(max) : null;
 
     if (minNum === null && maxNum === null) return 'Competitive';
-    if (minNum !== null && maxNum !== null) return `${(minNum).toFixed(0)}k - ${(maxNum).toFixed(0)}k`;
-    if (minNum !== null) return `From ${(minNum).toFixed(0)}k`;
-    return `Up to ${(maxNum!).toFixed(0)}k`;
+    if (minNum !== null && maxNum !== null) return `${(minNum).toFixed(0)} - ${(maxNum).toFixed(0)}`;
+    if (minNum !== null) return `From ${(minNum).toFixed(0)}`;
+    return `Up to ${(maxNum!).toFixed(0)}`;
   };
 
   const getJobTypeLabel = (type: JobType) => {
