@@ -46,15 +46,15 @@ export default function EmployerProfileCompletePage() {
   const router = useRouter();
 
   const { data: user } = useGetMe();
-  const { data: profile } = useGetEmployerProfile(user);
+  const { data: profile, isLoading: profileLoading } = useGetEmployerProfile(user);
   const createProfileMutation = useCreateEmployerProfile();
 
   // Redirect to dashboard if profile already exists
   useEffect(() => {
-    if (user && profile) {
+    if (user && !profileLoading && profile) {
       router.push(FRONTEND_ROUTES.DASHBOARD.EMPLOYER);
     }
-  }, [user, profile, router]);
+  }, [user, profile, profileLoading, router]);
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),

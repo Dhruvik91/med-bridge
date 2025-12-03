@@ -34,7 +34,7 @@ export default function EmployerDashboardPage() {
   const { data: user, isLoading: userLoading } = useGetMe();
 
   // Fetch employer profile
-  const { data: profile } = useGetEmployerProfile(user);
+  const { data: profile, isLoading: profileLoading } = useGetEmployerProfile(user);
 
   // Fetch jobs
   const { data: jobs = [], isLoading: jobsLoading } = useGetJobsByEmployer(profile?.id || '');
@@ -43,11 +43,11 @@ export default function EmployerDashboardPage() {
   const { data: allApplications = [] } = useGetApplications();
 
   useEffect(() => {
-    if (user && !profile) {
-      // If profile doesn't exist, redirect to complete profile
+    if (user && !profileLoading && !profile) {
+      // If profile doesn't exist and we're done loading, redirect to complete profile
       router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.COMPLETE);
     }
-  }, [user, profile, router]);
+  }, [user, profile, profileLoading, router]);
 
   // Filter applications for this employer's jobs
   const applications = allApplications.filter(app =>
@@ -77,7 +77,7 @@ export default function EmployerDashboardPage() {
     }
   };
 
-  if (userLoading) {
+  if (userLoading || profileLoading) {
     return (
       <div className="container mx-auto px-4 py-4 md:py-8 space-y-4 md:space-y-8">
         <Skeleton className="h-8 md:h-12 w-48 md:w-64" />

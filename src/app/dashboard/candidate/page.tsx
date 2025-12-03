@@ -36,7 +36,7 @@ export default function CandidateDashboardPage() {
   const { data: user, isLoading: userLoading } = useGetMe();
 
   // Fetch doctor profile
-  const { data: profile } = useGetDoctorProfile(user?.id || '');
+  const { data: profile, isLoading: profileLoading } = useGetDoctorProfile(user?.id || '');
 
   // Fetch applications
   const { data: applications = [], isLoading: applicationsLoading } = useGetApplicationsByCandidate(profile?.id || '');
@@ -45,11 +45,11 @@ export default function CandidateDashboardPage() {
   const { data: savedJobs = [], isLoading: savedJobsLoading } = useGetSavedJobs(user?.id || '');
 
   useEffect(() => {
-    if (user && !profile) {
-      // If profile doesn't exist, redirect to complete profile
+    if (user && !profileLoading && !profile) {
+      // If profile doesn't exist and we're done loading, redirect to complete profile
       router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE);
     }
-  }, [user, profile, router]);
+  }, [user, profile, profileLoading, router]);
 
   // Calculate statistics
   const stats = {
@@ -93,7 +93,7 @@ export default function CandidateDashboardPage() {
     }
   };
 
-  if (userLoading) {
+  if (userLoading || profileLoading) {
     return (
       <div className="container mx-auto px-4 py-4 md:py-8 space-y-4 md:space-y-8">
         <Skeleton className="h-8 md:h-12 w-48 md:w-64" />

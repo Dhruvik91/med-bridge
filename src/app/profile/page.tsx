@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -7,9 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  User, Phone, Mail, MapPin, Calendar, Award, 
-  Building2, Globe, Edit, Briefcase, FileText 
+import {
+  User, Phone, Mail, MapPin, Calendar, Award,
+  Building2, Globe, Edit, Briefcase, FileText
 } from 'lucide-react';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
@@ -17,12 +18,18 @@ import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
 
 export default function ProfilePage() {
   const router = useRouter();
-  
+
   const { data: user, isLoading: userLoading } = useGetMe();
   const { data: doctorProfile, isLoading: doctorProfileLoading } = useGetDoctorProfile(user?.id || '');
   const { data: employerProfile, isLoading: employerProfileLoading } = useGetEmployerProfile(user);
 
   const isLoading = userLoading || doctorProfileLoading || employerProfileLoading;
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push(FRONTEND_ROUTES.AUTH.LOGIN);
+    }
+  }, [isLoading, user, router]);
 
   if (isLoading) {
     return (
@@ -38,7 +45,6 @@ export default function ProfilePage() {
   }
 
   if (!user) {
-    router.push(FRONTEND_ROUTES.AUTH.LOGIN);
     return null;
   }
 
@@ -52,7 +58,7 @@ export default function ProfilePage() {
               No profile found. Please complete your profile to get started.
             </AlertDescription>
           </Alert>
-          <Button 
+          <Button
             className="mt-4"
             onClick={() => router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE)}
           >
@@ -153,10 +159,10 @@ export default function ProfilePage() {
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Date of Birth</p>
                   <p className="text-sm">
-                    {new Date(doctorProfile.dob).toLocaleDateString('en-US', { 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
+                    {new Date(doctorProfile.dob).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
                     })}
                   </p>
                 </div>
@@ -216,7 +222,7 @@ export default function ProfilePage() {
                 <p className="text-muted-foreground mb-4">
                   No professional bio yet. Add one to showcase your expertise!
                 </p>
-                <Button 
+                <Button
                   variant="outline"
                   onClick={() => router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.EDIT)}
                 >
@@ -241,7 +247,7 @@ export default function ProfilePage() {
               No profile found. Please complete your company profile to get started.
             </AlertDescription>
           </Alert>
-          <Button 
+          <Button
             className="mt-4"
             onClick={() => router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.COMPLETE)}
           >
@@ -340,7 +346,7 @@ export default function ProfilePage() {
               {employerProfile.website && (
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Website</p>
-                  <a 
+                  <a
                     href={employerProfile.website}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -407,7 +413,7 @@ export default function ProfilePage() {
                 <p className="text-muted-foreground mb-4">
                   No company description yet. Add one to attract top healthcare talent!
                 </p>
-                <Button 
+                <Button
                   variant="outline"
                   onClick={() => router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.EDIT)}
                 >

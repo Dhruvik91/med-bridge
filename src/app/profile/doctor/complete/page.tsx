@@ -50,15 +50,15 @@ export default function DoctorProfileCompletePage() {
   const router = useRouter();
 
   const { data: user } = useGetMe();
-  const { data: profile } = useGetDoctorProfile(user?.id || '');
+  const { data: profile, isLoading: profileLoading } = useGetDoctorProfile(user?.id || '');
   const createProfileMutation = useCreateDoctorProfile();
 
   // Redirect to dashboard if profile already exists
   useEffect(() => {
-    if (user && profile) {
+    if (user && !profileLoading && profile) {
       router.push(FRONTEND_ROUTES.DASHBOARD.CANDIDATE);
     }
-  }, [user, profile, router]);
+  }, [user, profile, profileLoading, router]);
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
