@@ -18,12 +18,13 @@ import {
   User,
   LogOut
 } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
 import { getDashboardRoute } from '@/lib/dashboard-routes'
 import { UserRole } from '@/types'
 import { FRONTEND_ROUTES } from '@/constants/constants'
 
 export function Navigation() {
-  const { user, profile, signOut } = useAuth()
+  const { user, profile, signOut, loading } = useAuth()
   const logoHref = user ? getDashboardRoute(profile?.role || null) : '/'
 
   const handleSignOut = async () => {
@@ -46,7 +47,18 @@ export function Navigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center justify-between flex-1 ml-8">
-            {user ? (
+            {loading ? (
+              <>
+                <div className="flex items-center space-x-6">
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-4 w-20" />
+                </div>
+                <div className="flex items-center space-x-4">
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                </div>
+              </>
+            ) : user ? (
               <>
                 {/* Logged-in nav links - Role-based navigation */}
                 <div className="flex items-center space-x-6">
