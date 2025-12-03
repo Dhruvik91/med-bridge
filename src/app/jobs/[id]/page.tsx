@@ -249,11 +249,15 @@ export default function JobDetailPage() {
 
   const hasApplied = applications.some(app => app.jobId === jobId);
 
-  const formatSalary = (min?: number, max?: number) => {
-    if (!min && !max) return 'Competitive salary';
-    if (min && max) return `$${(min / 1000).toFixed(0)}k - $${(max / 1000).toFixed(0)}k per year`;
-    if (min) return `From $${(min / 1000).toFixed(0)}k per year`;
-    return `Up to $${(max! / 1000).toFixed(0)}k per year`;
+  const formatSalary = (min?: string | number, max?: string | number, currency?: string) => {
+    const minNum = min ? parseFloat(min.toString()) : null;
+    const maxNum = max ? parseFloat(max.toString()) : null;
+    const currencySymbol = currency === 'INR' ? '₹' : '$';
+
+    if (!minNum && !maxNum) return 'Competitive salary';
+    if (minNum && maxNum) return `${currencySymbol}${minNum.toLocaleString()} - ${currencySymbol}${maxNum.toLocaleString()} per year`;
+    if (minNum) return `From ${currencySymbol}${minNum.toLocaleString()} per year`;
+    return `Up to ${currencySymbol}${maxNum!.toLocaleString()} per year`;
   };
 
   const getJobTypeLabel = (type: JobType) => {
@@ -344,14 +348,24 @@ export default function JobDetailPage() {
                   <Briefcase className="mr-1 h-4 w-4" aria-hidden="true" />
                   {getJobTypeLabel(job.jobType)}
                 </Badge>
+                {job.remote && (
+                  <Badge variant="secondary" className="text-sm">
+                    Remote
+                  </Badge>
+                )}
                 <Badge variant="outline" className="text-sm">
                   <Clock className="mr-1 h-4 w-4" aria-hidden="true" />
-                  Posted {new Date(job.postedDate).toLocaleDateString()}
+                  Posted {new Date(job.createdAt || job.publishedAt || new Date()).toLocaleDateString()}
                 </Badge>
                 <Badge variant="outline" className="text-sm">
                   <Eye className="mr-1 h-4 w-4" aria-hidden="true" />
-                  {job.viewCount} views
+                  {job.viewsCount || 0} views
                 </Badge>
+                {job.status && (
+                  <Badge variant={job.status === 'published' ? 'default' : 'secondary'} className="text-sm">
+                    {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
+                  </Badge>
+                )}
               </div>
             </CardHeader>
 
@@ -362,8 +376,35 @@ export default function JobDetailPage() {
                   <DollarSign className="h-5 w-5 text-primary" aria-hidden="true" />
                   Salary
                 </h3>
-                <p className="text-lg">{formatSalary(job.salaryMin, job.salaryMax)}</p>
+                <p className="text-lg">{formatSalary(job.salaryMin, job.salaryMax, job.currency)}</p>
               </div>
+
+              {/* Application Deadline & Max Applications */}
+              {(job.applicationDeadline || job.maxApplications) && (
+                <>
+                  <Separator />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {job.applicationDeadline && (
+                      <div>
+                        <h3 className="font-semibold mb-2">Application Deadline</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(job.applicationDeadline).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                    )}
+                    {job.maxApplications && (
+                      <div>
+                        <h3 className="font-semibold mb-2">Max Applications</h3>
+                        <p className="text-sm text-muted-foreground">{job.maxApplications}</p>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
 
               <Separator />
 
@@ -393,14 +434,52 @@ export default function JobDetailPage() {
               </div>
 
               {/* Requirements */}
-              {job.requirements && (
+              {job.requirements && (Array.isArray(job.requirements) ? job.requirements.length > 0 : job.requirements) && (
                 <>
                   <Separator />
                   <div>
                     <h3 className="font-semibold mb-3">Requirements</h3>
-                    <div className="prose prose-sm max-w-none">
-                      <p className="whitespace-pre-wrap">{job.requirements}</p>
-                    </div>
+                    {Array.isArray(job.requirements) ? (
+                      <ul className="list-disc list-inside space-y-2">
+                        {job.requirements.map((req, index) => (
+                          <li key={index} className="text-sm">{req}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className="prose prose-sm max-w-none">
+                        <p className="whitespace-pre-wrap">{job.requirements}</p>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* Responsibilities */}
+              {job.responsibilities && Array.isArray(job.responsibilities) && job.responsibilities.length > 0 && (
+                <>
+                  <Separator />
+                  <div>
+                    <h3 className="font-semibold mb-3">Responsibilities</h3>
+                    <ul className="list-disc list-inside space-y-2">
+                      {job.responsibilities.map((resp, index) => (
+                        <li key={index} className="text-sm">{resp}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </>
+              )}
+
+              {/* Perks */}
+              {job.perks && Array.isArray(job.perks) && job.perks.length > 0 && (
+                <>
+                  <Separator />
+                  <div>
+                    <h3 className="font-semibold mb-3">Perks</h3>
+                    <ul className="list-disc list-inside space-y-2">
+                      {job.perks.map((perk, index) => (
+                        <li key={index} className="text-sm">{perk}</li>
+                      ))}
+                    </ul>
                   </div>
                 </>
               )}
@@ -593,6 +672,49 @@ export default function JobDetailPage() {
                     </p>
                   )}
                 </div>
+
+                {/* Employer Contact Information */}
+                {job.employerProfile && (
+                  <div className="space-y-2 text-sm">
+                    {job.employerProfile.contactPerson && (
+                      <div>
+                        <span className="font-medium">Contact Person: </span>
+                        <span className="text-muted-foreground">{job.employerProfile.contactPerson}</span>
+                      </div>
+                    )}
+                    {job.employerProfile.phone && (
+                      <div>
+                        <span className="font-medium">Phone: </span>
+                        <a href={`tel:${job.employerProfile.phone}`} className="text-primary hover:underline">
+                          {job.employerProfile.phone}
+                        </a>
+                      </div>
+                    )}
+                    {job.employerProfile.email && (
+                      <div>
+                        <span className="font-medium">Email: </span>
+                        <a href={`mailto:${job.employerProfile.email}`} className="text-primary hover:underline">
+                          {job.employerProfile.email}
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Organization Address */}
+                {job.employerProfile && (job.employerProfile.address || job.employerProfile.city) && (
+                  <div className="text-sm">
+                    <span className="font-medium">Address: </span>
+                    <p className="text-muted-foreground">
+                      {job.employerProfile.address && `${job.employerProfile.address}, `}
+                      {job.employerProfile.city && `${job.employerProfile.city}, `}
+                      {job.employerProfile.state && `${job.employerProfile.state}, `}
+                      {job.employerProfile.country}
+                      {job.employerProfile.postalCode && ` - ${job.employerProfile.postalCode}`}
+                    </p>
+                  </div>
+                )}
+
                 {(job.organization?.website || job.employerProfile?.website) && (
                   <Button asChild variant="outline" className="w-full" size="sm">
                     <a
@@ -612,18 +734,23 @@ export default function JobDetailPage() {
           {job.location && (
             <Card>
               <CardHeader>
-                <CardTitle>Location</CardTitle>
+                <CardTitle>Job Location</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 text-sm">
-                  <p className="font-medium">{job.location.name}</p>
-                  {job.location.address && <p>{job.location.address}</p>}
-                  <p>
+                  {job.remote && (
+                    <Badge variant="secondary" className="mb-2">Remote Position</Badge>
+                  )}
+                  <p className="font-medium">
                     {job.location.city}
                     {job.location.state && `, ${job.location.state}`}
-                    {job.location.postalCode && ` ${job.location.postalCode}`}
                   </p>
-                  <p>{job.location.country}</p>
+                  <p className="text-muted-foreground">{job.location.country}</p>
+                  {(job.location.latitude && job.location.longitude) && (
+                    <p className="text-xs text-muted-foreground">
+                      Coordinates: {job.location.latitude}, {job.location.longitude}
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>

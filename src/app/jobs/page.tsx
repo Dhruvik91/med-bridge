@@ -9,11 +9,11 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  Search, 
-  MapPin, 
-  Briefcase, 
-  DollarSign, 
+import {
+  Search,
+  MapPin,
+  Briefcase,
+  DollarSign,
   Clock,
   Building2,
   Filter,
@@ -21,6 +21,9 @@ import {
 } from 'lucide-react';
 import { useGetJobs } from '@/hooks/get/useGetJobs';
 import { Job, JobType, JobStatus } from '@/types';
+import { useJobFormatters } from '@/hooks/useJobFormatters';
+import { formatDate } from 'date-fns';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 
 export default function JobsPage() {
   const searchParams = useSearchParams();
@@ -70,16 +73,7 @@ export default function JobsPage() {
     setJobType('all');
   };
 
-  const formatSalary = (min?: number, max?: number) => {
-    if (!min && !max) return 'Competitive';
-    if (min && max) return `$${(min / 1000).toFixed(0)}k - $${(max / 1000).toFixed(0)}k`;
-    if (min) return `From $${(min / 1000).toFixed(0)}k`;
-    return `Up to $${(max! / 1000).toFixed(0)}k`;
-  };
-
-  const getJobTypeLabel = (type: JobType) => {
-    return type.replace('_', ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-  };
+  const { formatSalary, getJobTypeLabel, formatDate } = useJobFormatters();
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -125,7 +119,7 @@ export default function JobsPage() {
                 <Filter className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                 <span className="text-sm font-medium">Filters:</span>
               </div>
-              
+
               <Select value={jobType} onValueChange={(value) => setJobType(value as JobType | 'all')}>
                 <SelectTrigger className="w-[180px]" aria-label="Job type filter">
                   <SelectValue placeholder="Job Type" />
@@ -228,17 +222,17 @@ export default function JobsPage() {
                   </span>
                   <span className="flex items-center gap-1 text-muted-foreground">
                     <Clock className="h-4 w-4" aria-hidden="true" />
-                    Posted {new Date(job.postedDate).toLocaleDateString()}
+                    Posted {formatDate(String(job.postedDate))}
                   </span>
                 </div>
               </CardContent>
 
               <CardFooter className="flex gap-2">
                 <Button asChild className="flex-1 md:flex-none">
-                  <Link href={`/jobs/${job.id}`}>View Details</Link>
+                  <Link href={`${FRONTEND_ROUTES.JOBS.BASE}/${job.id}`}>View Details</Link>
                 </Button>
                 <Button asChild variant="outline" className="flex-1 md:flex-none">
-                  <Link href={`/jobs/${job.id}#apply`}>Quick Apply</Link>
+                  <Link href={`${FRONTEND_ROUTES.JOBS.BASE}/${job.id}#apply`}>Quick Apply</Link>
                 </Button>
               </CardFooter>
             </Card>

@@ -51,6 +51,8 @@ import { useGetJobsByEmployer } from '@/hooks/get/useGetJobsByEmployer';
 import { useDeleteJob } from '@/hooks/delete/useDeleteJob';
 import { useUpdateJob } from '@/hooks/update/useUpdateJob';
 import { Job, JobType, JobStatus, UserRole } from '@/types';
+import { FRONTEND_ROUTES } from '@/constants/constants';
+import { useJobFormatters } from '@/hooks/useJobFormatters';
 
 export default function ManageJobsPage() {
   const router = useRouter();
@@ -67,6 +69,7 @@ export default function ManageJobsPage() {
 
   // Get employer's jobs
   const { data: jobs = [], isLoading } = useGetJobsByEmployer(employerProfile?.id || '');
+  const { formatSalary, getJobTypeLabel } = useJobFormatters();
 
   // Delete hook
   const deleteJobMutation = useDeleteJob();
@@ -75,12 +78,6 @@ export default function ManageJobsPage() {
   const handleDeleteJob = (jobId: string) => {
     deleteJobMutation.mutate(jobId);
     setJobToDelete(null);
-  };
-
-  // Handle status update
-  const handleStatusUpdate = (jobId: string, status: JobStatus) => {
-    const updateJobMutation = useUpdateJob(jobId);
-    updateJobMutation.mutate({ status });
   };
 
   // Filter jobs
@@ -107,24 +104,13 @@ export default function ManageJobsPage() {
   // Check if user is employer
   useEffect(() => {
     if (user && user.role !== UserRole.employer) {
-      router.push('/jobs');
+      router.push(FRONTEND_ROUTES.JOBS.BASE);
     }
   }, [user, router]);
 
   const clearFilters = () => {
     setSearchQuery('');
     setStatusFilter('all');
-  };
-
-  const formatSalary = (min?: number, max?: number) => {
-    if (!min && !max) return 'Competitive';
-    if (min && max) return `$${(min / 1000).toFixed(0)}k - $${(max / 1000).toFixed(0)}k`;
-    if (min) return `From $${(min / 1000).toFixed(0)}k`;
-    return `Up to $${(max! / 1000).toFixed(0)}k`;
-  };
-
-  const getJobTypeLabel = (type: JobType) => {
-    return type.replace('_', ' ').split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   };
 
   const getStatusColor = (status: JobStatus) => {
@@ -305,7 +291,7 @@ export default function ManageJobsPage() {
       ) : (
         <div className="space-y-6">
           {filteredJobs.map((job) => (
-            <Card key={job.id} className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-transparent hover:border-l-primary">
+            <Card key={job.id} className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0 space-y-3">
@@ -336,43 +322,17 @@ export default function ManageJobsPage() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem asChild>
-                        <Link href={`/jobs/${job.id}`} className="cursor-pointer">
+                        <Link href={`${FRONTEND_ROUTES.JOBS.BASE}/${job.id}`} className="cursor-pointer">
                           <Eye className="mr-2 h-4 w-4" />
                           View Job
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href={`/jobs/${job.id}/edit`} className="cursor-pointer">
+                        <Link href={`${FRONTEND_ROUTES.JOBS.BASE}/${job.id}/edit`} className="cursor-pointer">
                           <Edit className="mr-2 h-4 w-4" />
                           Edit Job
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      {job.status !== JobStatus.published && (
-                        <DropdownMenuItem
-                          onClick={() => handleStatusUpdate(job.id, JobStatus.published)}
-                        >
-                          <CheckCircle className="mr-2 h-4 w-4" />
-                          Publish Job
-                        </DropdownMenuItem>
-                      )}
-                      {job.status === JobStatus.published && (
-                        <DropdownMenuItem
-                          onClick={() => handleStatusUpdate(job.id, JobStatus.closed)}
-                        >
-                          <XCircle className="mr-2 h-4 w-4" />
-                          Close Job
-                        </DropdownMenuItem>
-                      )}
-                      {job.status !== JobStatus.archived && (
-                        <DropdownMenuItem
-                          onClick={() => handleStatusUpdate(job.id, JobStatus.archived)}
-                        >
-                          <Archive className="mr-2 h-4 w-4" />
-                          Archive Job
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={() => setJobToDelete(job.id)}
                         className="text-destructive focus:text-destructive"
@@ -401,6 +361,7 @@ export default function ManageJobsPage() {
                   )}
                 </div>
 
+
                 <div className="flex flex-wrap items-center gap-4 md:gap-6 text-sm">
                   <span className="flex items-center gap-1.5 text-primary font-semibold">
                     <DollarSign className="h-4 w-4" />
@@ -408,28 +369,25 @@ export default function ManageJobsPage() {
                   </span>
                   <span className="flex items-center gap-1.5 text-muted-foreground font-medium">
                     <Eye className="h-4 w-4" />
-                    {job.viewCount} views
+                    {job.viewCount || job.viewsCount || 0} views
                   </span>
                   <span className="flex items-center gap-1.5 text-muted-foreground font-medium">
                     <Clock className="h-4 w-4" />
-                    Posted {new Date(job.postedDate).toLocaleDateString()}
+                    Posted {new Date(job.postedDate || job.createdAt || job.publishedAt || new Date()).toLocaleDateString()}
                   </span>
                 </div>
               </CardContent>
 
-              <CardFooter className="flex flex-col sm:flex-row gap-3 pt-4 bg-muted/20">
-                <Button asChild variant="outline" className="flex-1 sm:flex-none font-medium" size="sm">
-                  <Link href={`/applications?job=${job.id}`}>
-                    <Users className="mr-2 h-4 w-4" />
-                    View Applications
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" className="flex-1 sm:flex-none font-medium" size="sm">
-                  <Link href={`/jobs/${job.id}/edit`}>
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit Job
-                  </Link>
-                </Button>
+              <CardFooter className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
+                {
+                  user?.role === UserRole.candidate &&
+                  <Button asChild variant="default" className="flex-1 sm:flex-none font-medium">
+                    <Link href={`${FRONTEND_ROUTES.APPLICATIONS.BASE}?job=${job.id}`}>
+                      <Users className="mr-2 h-4 w-4" />
+                      View Applications
+                    </Link>
+                  </Button>
+                }
               </CardFooter>
             </Card>
           ))}

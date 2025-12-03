@@ -108,9 +108,17 @@ export interface Organization {
   id: string;
   employerProfileId: string;
   name: string;
+  slug?: string | null;
   description?: string;
   website?: string;
   logoUrl?: string;
+  address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  country?: string | null;
+  phone?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
   createdAt: string;
   updatedAt: string;
   employerProfile?: EmployerProfile;
@@ -136,22 +144,38 @@ export interface Job {
   organizationId?: string;
   locationId?: string;
   title: string;
+  slug?: string | null;
   description: string;
-  requirements?: string;
+  requirements?: string | string[];
+  responsibilities?: string[];
+  perks?: string[];
   benefits?: string;
-  salaryMin?: number;
-  salaryMax?: number;
+  salaryMin?: string | number;
+  salaryMax?: string | number;
+  currency?: string;
+  remote?: boolean;
   jobType: JobType;
   status: JobStatus;
-  postedDate: string;
+  postedByUserId?: string | null;
+  publishedAt?: string | null;
+  applicationDeadline?: string | null;
+  maxApplications?: number | null;
+  postedDate?: string;
   closingDate?: string;
-  viewCount: number;
+  viewCount?: number;
+  viewsCount?: string | number;
+  favoritesCount?: string | number;
+  searchVector?: any;
+  metadata?: Record<string, any>;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
   employerProfile?: EmployerProfile;
   organization?: Organization;
   location?: Location;
   specialties?: Specialty[];
+  postedBy?: User | null;
+  applications?: Application[];
 }
 
 export interface Application {
@@ -249,7 +273,7 @@ export interface CreateDoctorProfileDto {
   socialLinks?: Record<string, any>;
 }
 
-export interface UpdateDoctorProfileDto extends Partial<CreateDoctorProfileDto> {}
+export interface UpdateDoctorProfileDto extends Partial<CreateDoctorProfileDto> { }
 
 export interface CreateEmployerProfileDto {
   userId: string;
@@ -267,7 +291,7 @@ export interface CreateEmployerProfileDto {
   logoUrl?: string;
 }
 
-export interface UpdateEmployerProfileDto extends Partial<CreateEmployerProfileDto> {}
+export interface UpdateEmployerProfileDto extends Partial<CreateEmployerProfileDto> { }
 
 export interface CreateJobDto {
   employerProfileId: string;
@@ -285,7 +309,7 @@ export interface CreateJobDto {
   specialtyIds?: string[];
 }
 
-export interface UpdateJobDto extends Partial<CreateJobDto> {}
+export interface UpdateJobDto extends Partial<CreateJobDto> { }
 
 export interface CreateApplicationDto {
   jobId: string;
@@ -320,7 +344,7 @@ export interface CreateSpecialtyDto {
   description?: string;
 }
 
-export interface UpdateSpecialtyDto extends Partial<CreateSpecialtyDto> {}
+export interface UpdateSpecialtyDto extends Partial<CreateSpecialtyDto> { }
 
 export interface CreateOrganizationDto {
   employerProfileId: string;
@@ -330,7 +354,7 @@ export interface CreateOrganizationDto {
   logoUrl?: string;
 }
 
-export interface UpdateOrganizationDto extends Partial<CreateOrganizationDto> {}
+export interface UpdateOrganizationDto extends Partial<CreateOrganizationDto> { }
 
 export interface CreateLocationDto {
   name: string;
@@ -343,7 +367,7 @@ export interface CreateLocationDto {
   longitude?: number;
 }
 
-export interface UpdateLocationDto extends Partial<CreateLocationDto> {}
+export interface UpdateLocationDto extends Partial<CreateLocationDto> { }
 
 export interface CreateAttachmentDto {
   ownerType: string;

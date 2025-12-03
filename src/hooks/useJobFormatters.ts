@@ -1,11 +1,15 @@
 import { JobType } from '@/types';
 
 export const useJobFormatters = () => {
-  const formatSalary = (min?: number, max?: number) => {
-    if (!min && !max) return 'Competitive';
-    if (min && max) return `$${(min / 1000).toFixed(0)}k - $${(max / 1000).toFixed(0)}k`;
-    if (min) return `From $${(min / 1000).toFixed(0)}k`;
-    return `Up to $${(max! / 1000).toFixed(0)}k`;
+
+  const formatSalary = (min?: string | number, max?: string | number) => {
+    const minNum = min != null ? Number(min) : null;
+    const maxNum = max != null ? Number(max) : null;
+
+    if (minNum === null && maxNum === null) return 'Competitive';
+    if (minNum !== null && maxNum !== null) return `$${(minNum / 1000).toFixed(0)}k - $${(maxNum / 1000).toFixed(0)}k`;
+    if (minNum !== null) return `From $${(minNum / 1000).toFixed(0)}k`;
+    return `Up to $${(maxNum! / 1000).toFixed(0)}k`;
   };
 
   const getJobTypeLabel = (type: JobType) => {
@@ -17,7 +21,7 @@ export const useJobFormatters = () => {
     const now = new Date();
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 0) return 'Today';
     if (diffDays === 1) return 'Yesterday';
     if (diffDays < 7) return `${diffDays} days ago`;

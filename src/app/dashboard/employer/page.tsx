@@ -50,7 +50,7 @@ export default function EmployerDashboardPage() {
   }, [user, profile, router]);
 
   // Filter applications for this employer's jobs
-  const applications = allApplications.filter(app => 
+  const applications = allApplications.filter(app =>
     jobs.some(job => job.id === app.jobId)
   );
 
@@ -59,7 +59,7 @@ export default function EmployerDashboardPage() {
     activeJobs: jobs.filter(j => j.status === JobStatus.published).length,
     totalApplications: applications.length,
     newApplications: applications.filter(a => a.status === ApplicationStatus.applied).length,
-    totalViews: jobs.reduce((sum, job) => sum + job.viewCount, 0),
+    totalViews: jobs.reduce((sum, job) => sum + (job.viewCount || job.viewsCount ? Number(job.viewCount || job.viewsCount || 0) : 0), 0),
   };
 
   const getJobStatusColor = (status: JobStatus) => {
@@ -239,7 +239,7 @@ export default function EmployerDashboardPage() {
                 return (
                   <Link
                     key={job.id}
-                    href={`/jobs/${job.id}/manage`}
+                    href={`/jobs/${job.id}`}
                     className="group block p-4 md:p-5 border rounded-xl hover:border-primary hover:shadow-md transition-all duration-200 bg-gradient-to-r from-background to-muted/20 hover:from-primary/5 hover:to-primary/10"
                   >
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
@@ -264,7 +264,7 @@ export default function EmployerDashboardPage() {
                           </div>
                           <div className="flex items-center gap-2 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-300 px-3 py-1.5 rounded-full">
                             <Eye className="h-4 w-4" aria-hidden="true" />
-                            <span className="font-medium">{job.viewCount}</span>
+                            <span className="font-medium">{job.viewCount || job.viewsCount || 0}</span>
                             <span className="text-xs">views</span>
                           </div>
                           {jobApplications.filter(a => a.status === ApplicationStatus.applied).length > 0 && (
