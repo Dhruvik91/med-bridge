@@ -28,7 +28,7 @@ interface UseJobEditFormProps {
 export const useJobEditForm = ({ job, employerProfileId, selectedSpecialties, onSubmit }: UseJobEditFormProps) => {
   const { toast } = useToast();
   const [isFormReady, setIsFormReady] = useState(false);
-  
+
   const form = useForm<JobEditFormData>({
     defaultValues: {
       title: '',
@@ -50,11 +50,13 @@ export const useJobEditForm = ({ job, employerProfileId, selectedSpecialties, on
   useEffect(() => {
     if (job) {
       // Job requirements and benefits are already strings, not arrays
-      const requirementsString = job.requirements || '';
+      const requirementsString = Array.isArray(job.requirements)
+        ? job.requirements.join('\n')
+        : job.requirements || '';
       const benefitsString = job.benefits || '';
-      
+
       // Format date for input field
-      const formattedClosingDate = job.closingDate 
+      const formattedClosingDate = job.closingDate
         ? new Date(job.closingDate).toISOString().split('T')[0]
         : '';
 
