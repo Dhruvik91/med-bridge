@@ -19,7 +19,7 @@ import Link from 'next/link';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
 import { useUpdateDoctorProfile } from '@/hooks/update/useUpdateDoctorProfile';
-import { Gender, UpdateDoctorProfileDto } from '@/types';
+import { Gender, UpdateDoctorProfileDto, UserRole } from '@/types';
 
 const profileSchema = z.object({
   fullName: z.string().min(2, 'Full name must be at least 2 characters'),
@@ -112,7 +112,7 @@ export default function DoctorProfileEditPage() {
     );
   }
 
-  if (!user || user.role !== 'candidate') {
+  if (!user || user.role !== UserRole.candidate) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-primary/5 py-12 px-4">
         <div className="container mx-auto max-w-2xl">
@@ -136,7 +136,7 @@ export default function DoctorProfileEditPage() {
             </AlertDescription>
           </Alert>
           <Button asChild className="mt-4">
-            <Link href="/profile/doctor/complete">Complete Profile</Link>
+            <Link href={FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE}>Complete Profile</Link>
           </Button>
         </div>
       </div>
