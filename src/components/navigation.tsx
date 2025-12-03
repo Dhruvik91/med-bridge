@@ -13,12 +13,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
-import { 
-  Stethoscope, 
-  User, 
+import {
+  Stethoscope,
+  User,
   LogOut
 } from 'lucide-react'
 import { getDashboardRoute } from '@/lib/dashboard-routes'
+import { UserRole } from '@/types'
+import { FRONTEND_ROUTES } from '@/constants/constants'
 
 export function Navigation() {
   const { user, profile, signOut } = useAuth()
@@ -46,21 +48,39 @@ export function Navigation() {
           <div className="hidden md:flex items-center justify-between flex-1 ml-8">
             {user ? (
               <>
-                {/* Logged-in nav links (MVP: only Jobs) */}
+                {/* Logged-in nav links - Role-based navigation */}
                 <div className="flex items-center space-x-6">
-                  <Link href="/jobs" className="text-foreground hover:text-primary transition-colors">
+                  {/* Dashboard - Available to all roles */}
+                  <Link
+                    href={getDashboardRoute(profile?.role || null)}
+                    className="text-foreground hover:text-primary transition-colors"
+                  >
+                    Dashboard
+                  </Link>
+
+                  {/* Jobs - Available to all roles */}
+                  <Link href={FRONTEND_ROUTES.JOBS.BASE} className="text-foreground hover:text-primary transition-colors">
                     Jobs
                   </Link>
-                  {/**
-                   * MVP: hide Doctors and Hospitals navigation links for now
-                   *
-                   * <Link href="/doctors" className="text-foreground hover:text-primary transition-colors">
-                   *   Doctors
-                   * </Link>
-                   * <Link href="/hospitals" className="text-foreground hover:text-primary transition-colors">
-                   *   Hospitals
-                   * </Link>
-                   */}
+
+                  {/* Employer-specific navigation */}
+                  {(profile?.role === UserRole.employer || profile?.role === UserRole.admin) && (
+                    <Link href={FRONTEND_ROUTES.JOBS.MANAGE} className="text-foreground hover:text-primary transition-colors">
+                      Manage Jobs
+                    </Link>
+                  )}
+
+                  {/* Candidate-specific navigation */}
+                  {(profile?.role === UserRole.candidate || profile?.role === UserRole.admin) && (
+                    <>
+                      <Link href={FRONTEND_ROUTES.APPLICATIONS.BASE} className="text-foreground hover:text-primary transition-colors">
+                        Applications
+                      </Link>
+                      <Link href={FRONTEND_ROUTES.SAVED_JOBS} className="text-foreground hover:text-primary transition-colors">
+                        Saved Jobs
+                      </Link>
+                    </>
+                  )}
                 </div>
 
                 {/* Logged-in actions (MVP: only Profile + Sign out) */}
@@ -111,7 +131,7 @@ export function Navigation() {
                       <DropdownMenuSeparator />
                       {/* MVP: keep Profile entry */}
                       <DropdownMenuItem asChild>
-                        <Link href="/profile" className="flex items-center">
+                        <Link href={FRONTEND_ROUTES.PROFILE.BASE} className="flex items-center">
                           <User className="mr-2 h-4 w-4" />
                           Profile
                         </Link>
@@ -157,10 +177,10 @@ export function Navigation() {
 
                 {/* Auth actions */}
                 <div className="flex items-center space-x-2">
-                  <Link href="/auth/login">
+                  <Link href={FRONTEND_ROUTES.AUTH.LOGIN}>
                     <Button variant="ghost">Sign In</Button>
                   </Link>
-                  <Link href="/auth/signup">
+                  <Link href={FRONTEND_ROUTES.AUTH.SIGNUP}>
                     <Button>Get Started</Button>
                   </Link>
                 </div>

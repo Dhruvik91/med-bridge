@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,8 +17,8 @@ import {
   Plus,
   ArrowRight,
   AlertCircle,
-  Building2,
-  MapPin
+  MapPin,
+  EyeIcon
 } from 'lucide-react';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 import { useGetMe } from '@/hooks/get/useGetMe';
@@ -202,7 +202,7 @@ export default function EmployerDashboardPage() {
               <CardDescription className="text-sm md:text-base text-muted-foreground mt-1">Manage your published job listings</CardDescription>
             </div>
             <Button asChild variant="outline" size="sm" className="self-start sm:self-center hover:bg-primary hover:text-primary-foreground transition-colors shadow-sm">
-              <Link href="/jobs/manage" className="flex items-center gap-2">
+              <Link href={`${FRONTEND_ROUTES.JOBS.MANAGE}`} className="flex items-center gap-2">
                 <span className="font-medium">View All</span>
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
@@ -277,8 +277,8 @@ export default function EmployerDashboardPage() {
                         </div>
                       </div>
                       <Button variant="outline" size="sm" className="self-start md:self-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                        <Building2 className="h-4 w-4 mr-2" />
-                        Manage
+                        <EyeIcon className="h-4 w-4 mr-2" />
+                        View Job
                       </Button>
                     </div>
                   </Link>

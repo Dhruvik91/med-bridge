@@ -17,13 +17,14 @@ import {
   Clock,
   Building2,
   Filter,
-  X
+  X,
+  IndianRupee
 } from 'lucide-react';
 import { useGetJobs } from '@/hooks/get/useGetJobs';
-import { Job, JobType, JobStatus } from '@/types';
+import { Job, JobType, JobStatus, UserRole } from '@/types';
 import { useJobFormatters } from '@/hooks/useJobFormatters';
-import { formatDate } from 'date-fns';
 import { FRONTEND_ROUTES } from '@/constants/constants';
+import { useAuth } from '@/providers/auth-provider';
 
 export default function JobsPage() {
   const searchParams = useSearchParams();
@@ -31,6 +32,7 @@ export default function JobsPage() {
   const [location, setLocation] = useState(searchParams.get('location') || '');
   const [jobType, setJobType] = useState<JobType | 'all'>('all');
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
+  const { profile } = useAuth();
 
   const { data: jobs = [], isLoading } = useGetJobs();
 
@@ -217,12 +219,12 @@ export default function JobsPage() {
 
                 <div className="flex flex-wrap items-center gap-4 text-sm">
                   <span className="flex items-center gap-1 text-primary font-medium">
-                    <DollarSign className="h-4 w-4" aria-hidden="true" />
+                    <IndianRupee className="h-4 w-4" aria-hidden="true" />
                     {formatSalary(job.salaryMin, job.salaryMax)}
                   </span>
                   <span className="flex items-center gap-1 text-muted-foreground">
                     <Clock className="h-4 w-4" aria-hidden="true" />
-                    Posted {formatDate(String(job.postedDate))}
+                    Posted {formatDate(String(job.postedDate || job.createdAt))}
                   </span>
                 </div>
               </CardContent>
@@ -231,9 +233,13 @@ export default function JobsPage() {
                 <Button asChild className="flex-1 md:flex-none">
                   <Link href={`${FRONTEND_ROUTES.JOBS.BASE}/${job.id}`}>View Details</Link>
                 </Button>
-                <Button asChild variant="outline" className="flex-1 md:flex-none">
-                  <Link href={`${FRONTEND_ROUTES.JOBS.BASE}/${job.id}#apply`}>Quick Apply</Link>
-                </Button>
+                {
+                  profile?.role === UserRole.candidate && (
+                    <Button asChild variant="outline" className="flex-1 md:flex-none">
+                      <Link href={`${FRONTEND_ROUTES.JOBS.BASE}/${job.id}#apply`}>Quick Apply</Link>
+                    </Button>
+                  )
+                }
               </CardFooter>
             </Card>
           ))}
