@@ -3,11 +3,12 @@
 import { ReactNode } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/providers/auth-provider'
+import { ToastContainer } from 'react-toastify';
+
 import { MobileBottomNav } from '@/components/mobile-bottom-nav'
-import { Button } from '@/components/ui/button'
-import { ArrowLeft } from 'lucide-react'
 import { Navigation } from '@/components/navigation'
 import { Sidebar } from '@/components/sidebar'
+import { useTheme } from 'next-themes';
 
 interface AppShellProps {
   children: ReactNode
@@ -29,6 +30,7 @@ export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname()
   const router = useRouter()
   const { user } = useAuth()
+  const { theme } = useTheme()
 
   const isAppRoute = APP_ROUTES_PREFIXES.some((prefix) => pathname?.startsWith(prefix))
 
@@ -52,6 +54,18 @@ export function AppShell({ children }: AppShellProps) {
           <main className="pt-16 md:pt-0 flex-1">
             {children}
           </main>
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme={theme === 'dark' ? 'dark' : 'light'}
+          />
         </div>
         <MobileBottomNav />
       </div>
@@ -64,6 +78,18 @@ export function AppShell({ children }: AppShellProps) {
       <main className="pt-16">
         {children}
       </main>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme={theme === 'dark' ? 'dark' : 'light'}
+      />
       <div className="p-8 border-t border-border text-center text-sm text-muted-foreground">
         <p>&copy; {new Date().getFullYear()} MedBridge. All rights reserved. Healthcare Job Marketplace.</p>
       </div>

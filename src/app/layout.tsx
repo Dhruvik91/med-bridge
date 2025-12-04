@@ -5,7 +5,7 @@ import { ThemeProvider } from '@/providers/theme-provider'
 import { AuthProvider } from '@/providers/auth-provider'
 import { QueryProvider } from '@/providers/query-provider'
 import { AppShell } from '@/components/app-shell'
-import { Toaster } from "react-hot-toast";
+import { ToastContainer } from 'react-toastify';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -91,11 +91,10 @@ export default function RootLayout({
           <AuthProvider>
             <ThemeProvider
               attribute="class"
-              defaultTheme="light"
+              defaultTheme="dark"
               enableSystem
               disableTransitionOnChange={false}
             >
-              <Toaster position="bottom-right" />
               <AppShell>
                 {children}
               </AppShell>
