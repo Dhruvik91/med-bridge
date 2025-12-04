@@ -159,7 +159,7 @@ export default function ManageJobsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6 md:py-8 max-w-7xl">
+    <div className="container mx-auto px-4 py-4 md:py-8 space-y-4 md:space-y-8">
       {/* Header */}
       <div className="mb-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">

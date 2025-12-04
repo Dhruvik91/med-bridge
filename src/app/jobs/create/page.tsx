@@ -208,17 +208,9 @@ export default function CreateJobPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-4 md:py-8 space-y-4 md:space-y-8">
       {/* Header */}
       <div className="mb-6 sm:mb-8">
-        <Button
-          variant="ghost"
-          onClick={() => router.back()}
-          className="mb-4 -ml-2"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          <span className="hidden sm:inline">Back</span>
-        </Button>
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">Post a New Job</h1>
         <p className="text-sm sm:text-base text-muted-foreground">
           Create a job posting to attract qualified medical professionals

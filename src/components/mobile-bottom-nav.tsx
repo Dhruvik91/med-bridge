@@ -46,7 +46,7 @@ const getEmployerNavItems = (): NavItem[] => [
     icon: Home,
   },
   {
-    href: FRONTEND_ROUTES.JOBS.MANAGE,
+    href: FRONTEND_ROUTES.JOBS.BASE,
     label: "Jobs",
     icon: Briefcase,
   },
@@ -54,6 +54,11 @@ const getEmployerNavItems = (): NavItem[] => [
     href: FRONTEND_ROUTES.JOBS.CREATE,
     label: "Post Job",
     icon: PlusCircle,
+  },
+  {
+    href: FRONTEND_ROUTES.JOBS.MANAGE,
+    label: "Manage",
+    icon: Briefcase,
   },
   {
     href: FRONTEND_ROUTES.PROFILE.BASE,
@@ -73,14 +78,14 @@ export function MobileBottomNav() {
   // Determine navigation items based on user role
   const getNavItems = () => {
     const role = user.role
-    
+
     // Map both role systems: doctor/hospital and candidate/employer
     if (role === UserRole.candidate) {
       return getCandidateNavItems()
     } else if (role === UserRole.employer) {
       return getEmployerNavItems()
     }
-    
+
     // Default to candidate navigation for admin or unknown roles
     return getCandidateNavItems()
   }
@@ -92,7 +97,7 @@ export function MobileBottomNav() {
       <div className="mx-auto flex max-w-md items-center justify-between px-4 py-2">
         {items.map((item) => {
           const Icon = item.icon
-          const active = pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href))
+          const active = pathname === item.href
 
           return (
             <Link

@@ -70,6 +70,11 @@ const getEmployerNavItems = (): NavItem[] => [
         icon: Home,
     },
     {
+        href: FRONTEND_ROUTES.JOBS.BASE,
+        label: "Jobs",
+        icon: Briefcase,
+    },
+    {
         href: FRONTEND_ROUTES.JOBS.MANAGE,
         label: "Manage Jobs",
         icon: Briefcase,
@@ -78,11 +83,6 @@ const getEmployerNavItems = (): NavItem[] => [
         href: FRONTEND_ROUTES.JOBS.CREATE,
         label: "Post Job",
         icon: PlusCircle,
-    },
-    {
-        href: FRONTEND_ROUTES.PROFILE.BASE,
-        label: "Profile",
-        icon: Building2,
     },
 ]
 
@@ -124,7 +124,7 @@ export function Sidebar({ className, ...props }: SidebarProps) {
             <div className="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
                 {items.map((item) => {
                     const Icon = item.icon
-                    const isActive = pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href))
+                    const isActive = pathname === item.href;
 
                     return (
                         <Link
