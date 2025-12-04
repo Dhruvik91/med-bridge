@@ -86,8 +86,8 @@ export default function EmployerProfileEditPage() {
 
   if (userLoading || profileLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-primary/5 py-12 px-4">
-        <div className="container mx-auto max-w-2xl">
+      <div className="container mx-auto px-4 py-4 md:py-8 space-y-4 md:space-y-8">
+        <div>
           <Skeleton className="h-12 w-64 mb-8" />
           <Card>
             <CardHeader>
@@ -106,8 +106,8 @@ export default function EmployerProfileEditPage() {
 
   if (!user || user.role !== UserRole.employer) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-primary/5 py-12 px-4">
-        <div className="container mx-auto max-w-2xl">
+      <div className="container mx-auto px-4 py-4 md:py-8 space-y-4 md:space-y-8">
+        <div>
           <Alert variant="destructive">
             <AlertDescription>
               You don't have access to this page. Please sign in as an employer.
@@ -120,8 +120,8 @@ export default function EmployerProfileEditPage() {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-primary/5 py-12 px-4">
-        <div className="container mx-auto max-w-2xl">
+      <div className="container mx-auto px-4 py-4 md:py-8 space-y-4 md:space-y-8">
+        <div>
           <Alert>
             <AlertDescription>
               No profile found. Please complete your profile first.
@@ -136,16 +136,10 @@ export default function EmployerProfileEditPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-primary/5 py-12 px-4">
-      <div className="container mx-auto max-w-2xl">
+    <div className="container mx-auto px-4 py-4 md:py-8 space-y-4 md:space-y-8">
+      <div>
         {/* Header */}
         <div className="mb-8">
-          <Button variant="ghost" asChild className="mb-4">
-            <Link href="/dashboard/employer">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Dashboard
-            </Link>
-          </Button>
           <h1 className="text-3xl font-bold">Edit Company Profile</h1>
           <p className="text-muted-foreground mt-1">
             Update your company information
