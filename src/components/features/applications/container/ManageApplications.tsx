@@ -16,6 +16,8 @@ import { ApplicationStatus, UserRole, Job, Application } from '@/types';
 import { ApplicationStats } from '../components/ApplicationStats';
 import { ApplicationFilters } from '../components/ApplicationFilters';
 import { ApplicationList } from '../components/ApplicationList';
+import { NotAuthorizedUser } from '@/components/NotAuthorized';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 
 export function ManageApplications() {
     const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'all'>('all');
@@ -145,15 +147,7 @@ export function ManageApplications() {
 
     if (!user || user.role !== UserRole.employer) {
         return (
-            <main className="pt-16 min-h-screen bg-background">
-                <div className="container mx-auto px-4 py-8">
-                    <Alert variant="destructive">
-                        <AlertDescription>
-                            You don't have access to this page. Please sign in as an employer.
-                        </AlertDescription>
-                    </Alert>
-                </div>
-            </main>
+            <NotAuthorizedUser userType={user?.role} />
         );
     }
 
@@ -198,7 +192,7 @@ export function ManageApplications() {
                 {filteredApplications.length > 0 && (
                     <div className="mt-8 text-center">
                         <Button variant="outline" asChild>
-                            <Link href="/dashboard/employer">Back to Dashboard</Link>
+                            <Link href={FRONTEND_ROUTES.DASHBOARD.EMPLOYER}>Back to Dashboard</Link>
                         </Button>
                     </div>
                 )}
