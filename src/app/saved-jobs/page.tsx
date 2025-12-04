@@ -6,10 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
+import {
   BookmarkPlus,
-  MapPin, 
-  DollarSign, 
+  MapPin,
+  DollarSign,
   Clock,
   Building2,
   ArrowRight,
@@ -33,16 +33,14 @@ export default function SavedJobsPage() {
   if (userLoading || savedJobsLoading) {
     return (
       <>
-        <main className="pt-16 min-h-screen bg-background">
-          <div className="container mx-auto px-4 py-8">
-            <Skeleton className="h-12 w-64 mb-8" />
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3, 4, 5, 6].map(i => (
-                <Skeleton key={i} className="h-80" />
-              ))}
-            </div>
+        <div className="container mx-auto px-4 py-8">
+          <Skeleton className="h-12 w-64 mb-8" />
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3, 4, 5, 6].map(i => (
+              <Skeleton key={i} className="h-80" />
+            ))}
           </div>
-        </main>
+        </div>
       </>
     );
   }
@@ -50,59 +48,56 @@ export default function SavedJobsPage() {
   if (!user) {
     return (
       <>
-        <main className="pt-16 min-h-screen bg-background">
-          <div className="container mx-auto px-4 py-8">
-            <Alert>
-              <AlertDescription>
-                Please sign in to view your saved jobs.
-              </AlertDescription>
-            </Alert>
-            <Button asChild className="mt-4">
-              <Link href="/auth/login">Sign In</Link>
-            </Button>
-          </div>
-        </main>
+        <div className="container mx-auto px-4 py-8">
+          <Alert>
+            <AlertDescription>
+              Please sign in to view your saved jobs.
+            </AlertDescription>
+          </Alert>
+          <Button asChild className="mt-4">
+            <Link href="/auth/login">Sign In</Link>
+          </Button>
+        </div>
       </>
     );
   }
 
   return (
-    <main className="pt-16 min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">Saved Jobs</h1>
-            <p className="text-muted-foreground">
-              {savedJobs.length} {savedJobs.length === 1 ? 'job' : 'jobs'} saved for later
+    <div className="container mx-auto px-4 py-8">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">Saved Jobs</h1>
+        <p className="text-muted-foreground">
+          {savedJobs.length} {savedJobs.length === 1 ? 'job' : 'jobs'} saved for later
+        </p>
+      </div>
+
+      {/* Empty State */}
+      {savedJobs.length === 0 ? (
+        <Card className="text-center py-16">
+          <CardContent>
+            <BookmarkPlus className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h2 className="text-2xl font-semibold mb-2">No saved jobs yet</h2>
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+              Start saving jobs you're interested in to review them later. You can find jobs on the browse page.
             </p>
-          </div>
+            <Button asChild size="lg">
+              <Link href="/jobs">
+                Browse Jobs
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        /* Saved Jobs Grid */
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {savedJobs.map((savedJob) => {
+            const job = savedJob.job;
+            if (!job) return null;
 
-          {/* Empty State */}
-          {savedJobs.length === 0 ? (
-            <Card className="text-center py-16">
-              <CardContent>
-                <BookmarkPlus className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h2 className="text-2xl font-semibold mb-2">No saved jobs yet</h2>
-                <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                  Start saving jobs you're interested in to review them later. You can find jobs on the browse page.
-                </p>
-                <Button asChild size="lg">
-                  <Link href="/jobs">
-                    Browse Jobs
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          ) : (
-            /* Saved Jobs Grid */
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {savedJobs.map((savedJob) => {
-                const job = savedJob.job;
-                if (!job) return null;
-
-                return (
-                  <Card key={savedJob.id} className="hover:shadow-lg transition-shadow flex flex-col">
+            return (
+              <Card key={savedJob.id} className="hover:shadow-lg transition-shadow flex flex-col">
                 <CardHeader>
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
@@ -187,19 +182,18 @@ export default function SavedJobsPage() {
                 </CardFooter>
               </Card>
             );
-            })}
-            </div>
-          )}
+          })}
+        </div>
+      )}
 
-          {/* Back to Dashboard Link */}
-          {savedJobs.length > 0 && (
-            <div className="mt-8 text-center">
-              <Button variant="outline" asChild>
-                <Link href="/dashboard/candidate">Back to Dashboard</Link>
-              </Button>
-            </div>
-          )}
-      </div>
-    </main>
+      {/* Back to Dashboard Link */}
+      {savedJobs.length > 0 && (
+        <div className="mt-8 text-center">
+          <Button variant="outline" asChild>
+            <Link href="/dashboard/candidate">Back to Dashboard</Link>
+          </Button>
+        </div>
+      )}
+    </div>
   );
 }
