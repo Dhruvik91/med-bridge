@@ -32,6 +32,7 @@ import { NotAuthorizedUser } from '@/components/NotAuthorized';
 import { ProgressIndicator } from '../components/ProgressIndicator';
 import { CreateResourceDialog } from '../components/CreateResourceDialog';
 import { SpecialtySelector } from '../components/SpecialtySelector';
+import { JobFormSkeleton } from '../components/JobFormSkeleton';
 
 const STEPS = [
     { id: 1, title: 'Essentials', description: 'Title, Type & Description' },
@@ -182,23 +183,16 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
         form.handleSubmit(handleFormSubmit)();
     };
 
-    if (!user || !isEmployer) {
-        return <NotAuthorizedUser userType="employer" />;
+    if (!isFormReady || !user) {
+        return <JobFormSkeleton />;
     }
 
-    if (!isFormReady) {
-        return <div className="container mx-auto px-4 py-8">Loading...</div>;
+    if (!user || !isEmployer) {
+        return <NotAuthorizedUser userType={user?.role} />;
     }
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <Button asChild variant="ghost" className="mb-6">
-                <Link href={FRONTEND_ROUTES.JOBS.MANAGE}>
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back to Manage Jobs
-                </Link>
-            </Button>
-
             <div className="max-w-4xl mx-auto">
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold mb-2">

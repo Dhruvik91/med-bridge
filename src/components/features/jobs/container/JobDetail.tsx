@@ -210,13 +210,6 @@ export const JobDetail = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <Button asChild variant="ghost" className="mb-6">
-                <Link href={FRONTEND_ROUTES.JOBS.BASE}>
-                    <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
-                    Back to Jobs
-                </Link>
-            </Button>
-
             <div className="grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-6">
                     <Card>

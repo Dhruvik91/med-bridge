@@ -4,7 +4,6 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -28,6 +27,7 @@ import { JobStats } from '../components/JobStats';
 import { ManageJobsFilters } from '../components/ManageJobsFilters';
 import { JobCard } from '../components/JobCard';
 import { EmptyState } from '../components/EmptyState';
+import { JobsManageSkeleton } from '../components/JobsManageSkeleton';
 
 const getStatusColor = (status: JobStatus) => {
     switch (status) {
@@ -66,7 +66,7 @@ export const JobsManage = () => {
     const [jobToDelete, setJobToDelete] = useState<string | null>(null);
 
     const { data: user } = useGetMe();
-    const { data: employerProfile } = useGetEmployerProfile(user);
+    const { data: employerProfile, isLoading: isLoadingEmployerProfile } = useGetEmployerProfile(user);
     const { data: jobs = [], isLoading } = useGetJobsByEmployer(employerProfile?.id || '');
     const { formatSalary, getJobTypeLabel } = useJobFormatters();
     const deleteJobMutation = useDeleteJob();
@@ -117,8 +117,12 @@ export const JobsManage = () => {
         setJobToDelete(null);
     };
 
-    if (!user || user.role !== UserRole.employer) {
-        return <NotAuthorizedUser userType={UserRole.employer} />;
+    if (isLoading || isLoadingEmployerProfile || !user) {
+        return <JobsManageSkeleton />;
+    }
+
+    if (user.role !== UserRole.employer) {
+        return <NotAuthorizedUser userType={user.role} />;
     }
 
     const showClearButton = !!(searchQuery || statusFilter !== 'all');
@@ -162,13 +166,7 @@ export const JobsManage = () => {
             />
 
             {/* Job Listings */}
-            {isLoading ? (
-                <div className="space-y-4">
-                    {[1, 2, 3].map((i) => (
-                        <Skeleton key={i} className="h-64" />
-                    ))}
-                </div>
-            ) : filteredJobs.length === 0 ? (
+            {filteredJobs.length === 0 ? (
                 <EmptyState
                     icon={Briefcase}
                     title={jobs.length === 0 ? 'No jobs posted yet' : 'No jobs found'}
