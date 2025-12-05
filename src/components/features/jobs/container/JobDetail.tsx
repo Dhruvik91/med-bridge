@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
@@ -21,7 +21,7 @@ import { useSaveJob, useUnsaveJob } from '@/hooks/post/useSaveJob';
 import { useUploadFile } from '@/hooks/post/useUploadFile';
 import { useToast } from '@/hooks/use-toast';
 import { FRONTEND_ROUTES } from '@/constants/constants';
-import { JobType } from '@/types';
+import { JobType, UserRole } from '@/types';
 import { JobDetailHeader } from '../components/JobDetailHeader';
 import { JobDetailContent } from '../components/JobDetailContent';
 import { ApplicationForm } from '../components/ApplicationForm';
@@ -82,7 +82,7 @@ export const JobDetail = () => {
         }
     }, [savedJobs, jobId]);
 
-    const onSubmitApplication = useCallback(async (data: ApplicationFormData) => {
+    const onSubmitApplication = async (data: ApplicationFormData) => {
         if (!user) {
             router.push(`${FRONTEND_ROUTES.AUTH.LOGIN}?redirect=/jobs/${jobId}`);
             return;
@@ -113,9 +113,9 @@ export const JobDetail = () => {
             coverLetter: data.coverLetter || '',
             resumeUrl: resumeUrl || undefined,
         });
-    }, [user, profile, jobId, router, toast, uploadMutation, applyMutation]);
+    };
 
-    const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>, field: any) => {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
         const files = e.target.files;
         if (files && files.length > 0) {
             setSelectedFile(files[0]);
@@ -124,16 +124,16 @@ export const JobDetail = () => {
             setSelectedFile(null);
             field.onChange(undefined);
         }
-    }, []);
+    };
 
-    const handleClearResume = useCallback((field: any) => {
+    const handleClearResume = (field: any) => {
         setSelectedFile(null);
         field.onChange(undefined);
         const fileInput = document.getElementById('resume') as HTMLInputElement;
         if (fileInput) fileInput.value = '';
-    }, []);
+    };
 
-    const handleSaveJob = useCallback(() => {
+    const handleSaveJob = () => {
         if (!user) {
             router.push(`${FRONTEND_ROUTES.AUTH.LOGIN}?redirect=/jobs/${jobId}`);
             return;
@@ -146,9 +146,9 @@ export const JobDetail = () => {
             saveJobMutation.mutate({ userId: user.id, jobId });
             setIsSaved(true);
         }
-    }, [user, isSaved, jobId, router, saveJobMutation, unsaveJobMutation]);
+    };
 
-    const handleShare = useCallback(() => {
+    const handleShare = () => {
         if (navigator.share) {
             navigator.share({
                 title: job?.title,
@@ -159,11 +159,11 @@ export const JobDetail = () => {
             navigator.clipboard.writeText(window.location.href);
             toast({ title: 'Link copied', description: 'Job link copied to clipboard' });
         }
-    }, [job, toast]);
+    };
 
     const hasApplied = useMemo(() => applications.some(app => app.jobId === jobId), [applications, jobId]);
 
-    const formatSalary = useCallback((min?: string | number, max?: string | number, currency?: string) => {
+    const formatSalary = (min?: string | number, max?: string | number, currency?: string) => {
         const minNum = min ? parseFloat(min.toString()) : null;
         const maxNum = max ? parseFloat(max.toString()) : null;
         const currencySymbol = currency === 'INR' ? '₹' : '$';
@@ -172,19 +172,19 @@ export const JobDetail = () => {
         if (minNum && maxNum) return `${currencySymbol}${minNum.toLocaleString()} - ${currencySymbol}${maxNum.toLocaleString()} per year`;
         if (minNum) return `From ${currencySymbol}${minNum.toLocaleString()} per year`;
         return `Up to ${currencySymbol}${maxNum!.toLocaleString()} per year`;
-    }, []);
+    };
 
-    const getJobTypeLabel = useCallback((type: JobType) => {
+    const getJobTypeLabel = (type: JobType) => {
         return type.replace('_', ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    }, []);
+    };
 
-    const handleApplyScroll = useCallback(() => {
+    const handleApplyScroll = () => {
         if (!user) {
             router.push(`${FRONTEND_ROUTES.AUTH.LOGIN}?redirect=/jobs/${jobId}`);
         } else {
             document.getElementById('apply')?.scrollIntoView({ behavior: 'smooth' });
         }
-    }, [user, router, jobId]);
+    };
 
     if (isLoading) {
         return (
@@ -253,7 +253,7 @@ export const JobDetail = () => {
                         </CardContent>
                     </Card>
 
-                    {user && user.role === 'candidate' && (
+                    {user && user.role === UserRole.candidate && (
                         <Card id="apply">
                             <CardHeader>
                                 <CardTitle>Apply for this position</CardTitle>
@@ -280,7 +280,7 @@ export const JobDetail = () => {
                 </div>
 
                 <div className="space-y-6">
-                    {(!user || user.role === 'candidate') && (
+                    {(!user || user.role === UserRole.candidate) && (
                         <QuickActionsCard
                             hasApplied={hasApplied}
                             isSaved={isSaved}

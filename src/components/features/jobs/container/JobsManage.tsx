@@ -21,13 +21,43 @@ import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
 import { useGetJobsByEmployer } from '@/hooks/get/useGetJobsByEmployer';
 import { useDeleteJob } from '@/hooks/delete/useDeleteJob';
 import { useJobFormatters } from '@/hooks/useJobFormatters';
-import { Job, JobStatus, UserRole } from '@/types';
+import { JobStatus, UserRole } from '@/types';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 import { NotAuthorizedUser } from '@/components/NotAuthorized';
 import { JobStats } from '../components/JobStats';
 import { ManageJobsFilters } from '../components/ManageJobsFilters';
 import { JobCard } from '../components/JobCard';
 import { EmptyState } from '../components/EmptyState';
+
+const getStatusColor = (status: JobStatus) => {
+    switch (status) {
+        case JobStatus.published:
+            return 'bg-green-500/10 text-green-600 hover:bg-green-500/20';
+        case JobStatus.draft:
+            return 'bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20';
+        case JobStatus.closed:
+            return 'bg-red-500/10 text-red-600 hover:bg-red-500/20';
+        case JobStatus.archived:
+            return 'bg-gray-500/10 text-gray-600 hover:bg-gray-500/20';
+        default:
+            return 'bg-gray-500/10 text-gray-600 hover:bg-gray-500/20';
+    }
+};
+
+const getStatusIcon = (status: JobStatus) => {
+    switch (status) {
+        case JobStatus.published:
+            return <CheckCircle className="h-4 w-4" />;
+        case JobStatus.draft:
+            return <FileText className="h-4 w-4" />;
+        case JobStatus.closed:
+            return <XCircle className="h-4 w-4" />;
+        case JobStatus.archived:
+            return <Archive className="h-4 w-4" />;
+        default:
+            return <FileText className="h-4 w-4" />;
+    }
+};
 
 export const JobsManage = () => {
     const router = useRouter();
@@ -82,40 +112,10 @@ export const JobsManage = () => {
         setStatusFilter('all');
     }, []);
 
-    const handleDeleteJob = useCallback((jobId: string) => {
+    const handleDeleteJob = (jobId: string) => {
         deleteJobMutation.mutate(jobId);
         setJobToDelete(null);
-    }, [deleteJobMutation]);
-
-    const getStatusColor = useCallback((status: JobStatus) => {
-        switch (status) {
-            case JobStatus.published:
-                return 'bg-green-500/10 text-green-600 hover:bg-green-500/20';
-            case JobStatus.draft:
-                return 'bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20';
-            case JobStatus.closed:
-                return 'bg-red-500/10 text-red-600 hover:bg-red-500/20';
-            case JobStatus.archived:
-                return 'bg-gray-500/10 text-gray-600 hover:bg-gray-500/20';
-            default:
-                return 'bg-gray-500/10 text-gray-600 hover:bg-gray-500/20';
-        }
-    }, []);
-
-    const getStatusIcon = useCallback((status: JobStatus) => {
-        switch (status) {
-            case JobStatus.published:
-                return <CheckCircle className="h-4 w-4" />;
-            case JobStatus.draft:
-                return <FileText className="h-4 w-4" />;
-            case JobStatus.closed:
-                return <XCircle className="h-4 w-4" />;
-            case JobStatus.archived:
-                return <Archive className="h-4 w-4" />;
-            default:
-                return <FileText className="h-4 w-4" />;
-        }
-    }, []);
+    };
 
     if (!user || user.role !== UserRole.employer) {
         return <NotAuthorizedUser userType={UserRole.employer} />;

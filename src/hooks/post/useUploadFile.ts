@@ -9,7 +9,7 @@ export const useUploadFile = () => {
         mutationFn: (file: File) => uploadService.uploadFile(file),
         onError: (error: any) => {
             toast({
-                title: 'Upload failed',
+                title: error.response?.data?.message || 'Failed to upload file',
                 description: error.response?.data?.message || 'Failed to upload file',
                 variant: 'destructive',
             });

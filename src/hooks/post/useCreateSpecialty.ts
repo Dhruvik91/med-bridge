@@ -17,7 +17,7 @@ export const useCreateSpecialty = ({ onSuccess, onDialogClose }: UseCreateSpecia
     onSuccess: (specialty) => {
       queryClient.invalidateQueries({ queryKey: ['specialties'] });
       toast({
-        title: 'Specialty created',
+        title: `${specialty.name} has been created successfully.`,
         description: `${specialty.name} has been created successfully.`,
       });
       onSuccess?.(specialty);
@@ -25,7 +25,7 @@ export const useCreateSpecialty = ({ onSuccess, onDialogClose }: UseCreateSpecia
     },
     onError: () => {
       toast({
-        title: 'Error',
+        title: 'Failed to create specialty.',
         description: 'Failed to create specialty.',
         variant: 'destructive',
       });

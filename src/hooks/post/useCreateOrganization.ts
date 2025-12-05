@@ -25,7 +25,7 @@ export const useCreateOrganization = ({ onSuccess, onDialogClose }: UseCreateOrg
     },
     onError: () => {
       toast({
-        title: 'Error',
+        title: 'Failed to create organization.',
         description: 'Failed to create organization.',
         variant: 'destructive',
       });

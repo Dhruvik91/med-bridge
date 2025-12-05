@@ -25,7 +25,7 @@ interface UseJobFormProps {
 
 export const useJobForm = ({ employerProfileId, selectedSpecialties, onSubmit }: UseJobFormProps) => {
   const { toast } = useToast();
-  
+
   const form = useForm<JobFormData>({
     defaultValues: {
       status: JobStatus.draft,
@@ -37,7 +37,7 @@ export const useJobForm = ({ employerProfileId, selectedSpecialties, onSubmit }:
   const handleFormSubmit = (data: JobFormData) => {
     if (!employerProfileId) {
       toast({
-        title: 'Error',
+        title: 'Employer profile not found.',
         description: 'Employer profile not found.',
         variant: 'destructive',
       });
@@ -58,8 +58,8 @@ export const useJobForm = ({ employerProfileId, selectedSpecialties, onSubmit }:
       description: data.description,
       requirements: requirementsArray,
       perks: perksArray,
-      salaryMin: data.salaryMin || undefined,
-      salaryMax: data.salaryMax || undefined,
+      salaryMin: String(data.salaryMin) || undefined,
+      salaryMax: String(data.salaryMax) || undefined,
       jobType: data.jobType,
       status: data.status,
       applicationDeadline: data.closingDate || undefined,

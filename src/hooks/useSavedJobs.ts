@@ -42,8 +42,8 @@ export const useSavedJobs = () => {
     },
     onError: (error: any) => {
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to remove saved job',
+        title: error.response?.data?.message[0] || 'Failed to remove saved job',
+        description: error.response?.data?.message || 'Failed to remove saved job',
         variant: 'destructive',
       });
       setDeletingJobId(null);

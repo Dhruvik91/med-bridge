@@ -16,17 +16,17 @@ export const useApplyToJob = () => {
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: ['candidateApplications'] });
       queryClient.invalidateQueries({ queryKey: ['allApplications'] });
-      
+
       toast({
         title: 'Application submitted',
         description: 'Your application has been sent to the employer',
       });
-      
+
       router.push(FRONTEND_ROUTES.DASHBOARD.CANDIDATE);
     },
     onError: (error: any) => {
       toast({
-        title: 'Application failed',
+        title: error.response?.data?.message || 'Failed to submit application',
         description: error.response?.data?.message || 'Failed to submit application',
         variant: 'destructive',
       });
