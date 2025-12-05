@@ -5,6 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowRight, BookmarkPlus } from 'lucide-react';
 import { SavedJobCard } from './SavedJobCard';
 import { EmptyState } from './EmptyState';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 
 interface SavedJob {
     id: string;
@@ -37,8 +38,8 @@ export function SavedJobsList({ savedJobs, isLoading }: SavedJobsListProps) {
                             Jobs you've bookmarked for later
                         </CardDescription>
                     </div>
-                    <Button asChild variant="outline" size="sm" className="self-start sm:self-center hover:bg-primary hover:text-primary-foreground transition-colors shadow-sm">
-                        <Link href="/saved-jobs" className="flex items-center gap-2">
+                    <Button asChild size="sm" className="self-start sm:self-center">
+                        <Link href={FRONTEND_ROUTES.SAVED_JOBS} className="flex items-center gap-2">
                             <span className="font-medium">View All</span>
                             <ArrowRight className="h-4 w-4" aria-hidden="true" />
                         </Link>
@@ -58,11 +59,11 @@ export function SavedJobsList({ savedJobs, isLoading }: SavedJobsListProps) {
                         title="No saved jobs"
                         description="Save interesting jobs to review them later and apply when you're ready"
                         actionLabel="Browse Jobs"
-                        actionHref="/jobs"
+                        actionHref={FRONTEND_ROUTES.JOBS.BASE}
                     />
                 ) : (
-                    <div className="space-y-4">
-                        {savedJobs.slice(0, 5).map((savedJob) => (
+                    <div className="space-y-4 h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                        {savedJobs.map((savedJob) => (
                             <SavedJobCard key={savedJob.id} savedJob={savedJob} />
                         ))}
                     </div>

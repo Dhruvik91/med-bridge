@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/providers/auth-provider'
@@ -27,7 +29,9 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { FRONTEND_ROUTES } from '@/constants/constants'
 import { UserRole } from '@/types'
+
 import { getDashboardRoute } from '@/lib/dashboard-routes'
+import { SignOutConfirmationModal } from '@/components/features/profile/components/SignOutConfirmationModal'
 
 type NavItem = {
     href: string
@@ -83,25 +87,35 @@ const getEmployerNavItems = (): NavItem[] => [
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> { }
 
+const getNavItems = (role: UserRole) => {
+    switch (role) {
+        case UserRole.candidate:
+            return getCandidateNavItems()
+        case UserRole.employer:
+            return getEmployerNavItems()
+        default:
+            return getCandidateNavItems()
+    }
+}
+
 export function Sidebar({ className, ...props }: SidebarProps) {
     const pathname = usePathname()
     const { user, profile, signOut, loading } = useAuth()
+    const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false)
 
     if (loading || !user) return null
 
-    const getNavItems = () => {
-        const role = user.role
-        if (role === UserRole.candidate) return getCandidateNavItems()
-        if (role === UserRole.employer) return getEmployerNavItems()
-        return getCandidateNavItems()
-    }
-
-    const items = getNavItems()
+    const items = getNavItems(user.role)
     const dashboardRoute = getDashboardRoute(profile?.role || null)
 
-    const handleSignOut = async () => {
+    const handleSignOutClick = () => {
+        setIsSignOutModalOpen(true)
+    }
+
+    const handleConfirmSignOut = async () => {
         try {
             await signOut()
+            setIsSignOutModalOpen(false)
         } catch (error) {
             console.error('Error signing out:', error)
         }
@@ -164,13 +178,19 @@ export function Sidebar({ className, ...props }: SidebarProps) {
                                 <span>Profile</span>
                             </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive focus:text-destructive">
+                        <DropdownMenuItem onClick={handleSignOutClick} className="cursor-pointer text-destructive focus:text-destructive">
                             <LogOut className="mr-2 h-4 w-4" />
                             <span>Sign out</span>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
+
+            <SignOutConfirmationModal
+                isOpen={isSignOutModalOpen}
+                onClose={() => setIsSignOutModalOpen(false)}
+                onConfirm={handleConfirmSignOut}
+            />
         </div>
     )
 }

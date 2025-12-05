@@ -1,15 +1,12 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { useSavedJobs } from '@/hooks/useSavedJobs';
 import { useJobFormatters } from '@/hooks/useJobFormatters';
 import { SavedJobsLoading } from '../components/SavedJobsLoading';
 import { SavedJobsUnauthenticated } from '../components/SavedJobsUnauthenticated';
 import { SavedJobsEmptyState } from '../components/SavedJobsEmptyState';
 import { SavedJobCard } from '../components/SavedJobCard';
-import { FRONTEND_ROUTES } from '@/constants/constants';
 import { JobSearchFilters } from '../../jobs/components/JobSearchFilters';
 import { MobileFilterDrawer } from '../../jobs/components/MobileFilterDrawer';
 import { EmptyState } from '../../jobs/components/EmptyState';

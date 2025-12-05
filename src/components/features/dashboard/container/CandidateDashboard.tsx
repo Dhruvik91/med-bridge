@@ -118,14 +118,16 @@ export function CandidateDashboard() {
 
             <StatsGrid stats={stats} />
 
-            <ApplicationsList
-                applications={applications}
-                isLoading={applicationsLoading}
-                getStatusIcon={getStatusIcon}
-                getStatusColor={getStatusColor}
-            />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
+                <ApplicationsList
+                    applications={applications}
+                    isLoading={applicationsLoading}
+                    getStatusIcon={getStatusIcon}
+                    getStatusColor={getStatusColor}
+                />
 
-            <SavedJobsList savedJobs={savedJobs} isLoading={savedJobsLoading} />
+                <SavedJobsList savedJobs={savedJobs} isLoading={savedJobsLoading} />
+            </div>
         </div>
     );
 }

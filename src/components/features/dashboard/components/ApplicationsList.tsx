@@ -6,6 +6,7 @@ import { ArrowRight, Briefcase } from 'lucide-react';
 import { ApplicationStatus } from '@/types';
 import { ApplicationCard } from './ApplicationCard';
 import { EmptyState } from './EmptyState';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 
 interface Application {
     id: string;
@@ -40,8 +41,8 @@ export function ApplicationsList({ applications, isLoading, getStatusIcon, getSt
                             Track the status of your job applications
                         </CardDescription>
                     </div>
-                    <Button asChild variant="outline" size="sm" className="self-start sm:self-center hover:bg-primary hover:text-primary-foreground transition-colors shadow-sm">
-                        <Link href="/applications" className="flex items-center gap-2">
+                    <Button asChild size="sm" className="self-start sm:self-center">
+                        <Link href={FRONTEND_ROUTES.APPLICATIONS.BASE} className="flex items-center gap-2">
                             <span className="font-medium">View All</span>
                             <ArrowRight className="h-4 w-4" aria-hidden="true" />
                         </Link>
@@ -61,11 +62,11 @@ export function ApplicationsList({ applications, isLoading, getStatusIcon, getSt
                         title="No applications yet"
                         description="Start applying to jobs to see them here and track your application progress"
                         actionLabel="Browse Jobs"
-                        actionHref="/jobs"
+                        actionHref={FRONTEND_ROUTES.JOBS.BASE}
                     />
                 ) : (
-                    <div className="space-y-4">
-                        {applications.slice(0, 5).map((application) => (
+                    <div className="space-y-4 h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                        {applications.map((application) => (
                             <ApplicationCard
                                 key={application.id}
                                 application={application}
