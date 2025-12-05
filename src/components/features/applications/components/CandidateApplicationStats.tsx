@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 interface CandidateApplicationStatsProps {
     stats: {
@@ -10,11 +11,12 @@ interface CandidateApplicationStatsProps {
         hired: number;
         rejected: number;
     };
+    className?: string;
 }
 
-export function CandidateApplicationStats({ stats }: CandidateApplicationStatsProps) {
+export function CandidateApplicationStats({ stats, className }: CandidateApplicationStatsProps) {
     return (
-        <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6 mb-8">
+        <div className={cn("grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6", className)}>
             <Card>
                 <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">Total</CardTitle>
