@@ -56,11 +56,6 @@ const getCandidateNavItems = (): NavItem[] => [
         label: "Saved Jobs",
         icon: BookmarkCheck,
     },
-    {
-        href: FRONTEND_ROUTES.PROFILE.BASE,
-        label: "Profile",
-        icon: User,
-    },
 ]
 
 const getEmployerNavItems = (): NavItem[] => [

@@ -5,7 +5,6 @@ import { ThemeProvider } from '@/providers/theme-provider'
 import { AuthProvider } from '@/providers/auth-provider'
 import { QueryProvider } from '@/providers/query-provider'
 import { AppShell } from '@/components/app-shell'
-import { ToastContainer } from 'react-toastify';
 
 const inter = Inter({
   subsets: ['latin'],

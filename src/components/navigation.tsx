@@ -46,7 +46,7 @@ export function Navigation() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center justify-between flex-1 ml-8">
+          <div className="hidden md:flex items-center justify-end flex-1 ml-8">
             {loading ? (
               <>
                 <div className="flex items-center space-x-6">
@@ -177,16 +177,6 @@ export function Navigation() {
               </>
             ) : (
               <>
-                {/* General (logged-out) nav links */}
-                <div className="flex items-center space-x-6">
-                  <Link href="/doctors" className="text-foreground hover:text-primary transition-colors">
-                    Doctors
-                  </Link>
-                  <Link href="/hospitals" className="text-foreground hover:text-primary transition-colors">
-                    Hospitals
-                  </Link>
-                </div>
-
                 {/* Auth actions */}
                 <div className="flex items-center space-x-2">
                   <Link href={FRONTEND_ROUTES.AUTH.LOGIN}>

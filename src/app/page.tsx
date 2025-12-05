@@ -4,11 +4,11 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Stethoscope, 
-  Users, 
-  Briefcase, 
-  Shield, 
+import {
+  Stethoscope,
+  Users,
+  Briefcase,
+  Shield,
   Clock,
   Star,
   ArrowRight,
@@ -31,14 +31,14 @@ export default function HomePage() {
             <TrendingUp className="mr-1 h-3 w-3" aria-hidden="true" />
             Trusted by 10,000+ Healthcare Professionals
           </Badge>
-          
+
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
             Connecting Healthcare
             <span className="text-primary block mt-2">Professionals</span>
           </h1>
-          
+
           <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-            The trusted marketplace where qualified doctors find their next opportunity 
+            The trusted marketplace where qualified doctors find their next opportunity
             and hospitals discover exceptional medical talent.
           </p>
         </div>
@@ -245,9 +245,6 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" variant="secondary" className="text-base">
               <Link href="/auth/signup">Get Started Free</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="text-base border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
-              <Link href="/jobs">Browse Jobs</Link>
             </Button>
           </div>
         </div>

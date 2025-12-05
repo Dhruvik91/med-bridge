@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Briefcase, User, Users, Home, Building2, BookmarkCheck, PlusCircle, LucideIcon } from "lucide-react"
+import { Briefcase, User, Users, Home, Building2, BookmarkCheck, PlusCircle, LucideIcon, File } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/providers/auth-provider"
 import { UserRole } from "@/types"
@@ -30,6 +30,11 @@ const getCandidateNavItems = (): NavItem[] => [
   {
     href: FRONTEND_ROUTES.APPLICATIONS.BASE,
     label: "Applications",
+    icon: File,
+  },
+  {
+    href: FRONTEND_ROUTES.SAVED_JOBS,
+    label: "Saved",
     icon: BookmarkCheck,
   },
   {

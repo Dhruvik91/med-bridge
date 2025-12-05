@@ -14,7 +14,7 @@ interface CandidateApplicationStatsProps {
 
 export function CandidateApplicationStats({ stats }: CandidateApplicationStatsProps) {
     return (
-        <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6 mb-8">
+        <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6 mb-8">
             <Card>
                 <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">Total</CardTitle>
