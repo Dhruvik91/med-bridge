@@ -1,12 +1,17 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
 import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
+import { useAuth } from '@/providers/auth-provider';
+import { Button } from '@/components/ui/button';
+import { LogOut } from 'lucide-react';
+import { SignOutConfirmationModal } from '../components/SignOutConfirmationModal';
+
 
 import { ProfileSkeleton } from '../components/ProfileSkeleton';
 import { NoProfileAlert } from '../components/NoProfileAlert';
@@ -20,9 +25,12 @@ import { EmployerInfoCards } from '../employer/components/EmployerInfoCards';
 import { CompanyInfoCard } from '../employer/components/CompanyInfoCard';
 import { ContactDetailsCard } from '../employer/components/ContactDetailsCard';
 import { CompanyDescriptionCard } from '../employer/components/CompanyDescriptionCard';
+import { UserRole } from '@/types';
 
 export function ProfileView() {
     const router = useRouter();
+    const { signOut } = useAuth();
+    const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
 
     const { data: user, isLoading: userLoading } = useGetMe();
     const { data: doctorProfile, isLoading: doctorProfileLoading } = useGetDoctorProfile(user?.id || '');
@@ -36,6 +44,15 @@ export function ProfileView() {
         }
     }, [isLoading, user, router]);
 
+    const handleSignOut = async () => {
+        try {
+            await signOut();
+            setIsSignOutModalOpen(false);
+        } catch (error) {
+            console.error('Error signing out:', error);
+        }
+    };
+
     if (isLoading) {
         return <ProfileSkeleton />;
     }
@@ -45,7 +62,7 @@ export function ProfileView() {
     }
 
     // Doctor/Candidate Profile View
-    if (user.role === 'candidate') {
+    if (user.role === UserRole.candidate) {
         if (!doctorProfile) {
             return (
                 <NoProfileAlert
@@ -57,7 +74,7 @@ export function ProfileView() {
         }
 
         return (
-            <div className="container mx-auto px-4 py-8 space-y-8">
+            <div className="container mx-auto px-4 py-8 space-y-8 pb-24 md:pb-8">
                 <CandidateProfileHeader
                     displayName={doctorProfile.displayName || ''}
                     fullName={doctorProfile.fullName}
@@ -88,12 +105,29 @@ export function ProfileView() {
                     summary={doctorProfile.summary ?? undefined}
                     onEditClick={() => router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.EDIT)}
                 />
+
+                <div className="md:hidden pt-4">
+                    <Button
+                        variant="destructive"
+                        className="w-full"
+                        onClick={() => setIsSignOutModalOpen(true)}
+                    >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sign Out
+                    </Button>
+                </div>
+
+                <SignOutConfirmationModal
+                    isOpen={isSignOutModalOpen}
+                    onClose={() => setIsSignOutModalOpen(false)}
+                    onConfirm={handleSignOut}
+                />
             </div>
         );
     }
 
     // Employer Profile View
-    if (user.role === 'employer') {
+    if (user.role === UserRole.employer) {
         if (!employerProfile) {
             return (
                 <NoProfileAlert
@@ -105,7 +139,7 @@ export function ProfileView() {
         }
 
         return (
-            <div className="container mx-auto px-4 py-8 space-y-8">
+            <div className="container mx-auto px-4 py-8 space-y-8 pb-24 md:pb-8">
                 <EmployerProfileHeader
                     companyName={employerProfile.name}
                     onEditClick={() => router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.EDIT)}
@@ -138,6 +172,23 @@ export function ProfileView() {
                 <CompanyDescriptionCard
                     description={employerProfile.description ?? undefined}
                     onEditClick={() => router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.EDIT)}
+                />
+
+                <div className="md:hidden pt-4">
+                    <Button
+                        variant="destructive"
+                        className="w-full"
+                        onClick={() => setIsSignOutModalOpen(true)}
+                    >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sign Out
+                    </Button>
+                </div>
+
+                <SignOutConfirmationModal
+                    isOpen={isSignOutModalOpen}
+                    onClose={() => setIsSignOutModalOpen(false)}
+                    onConfirm={handleSignOut}
                 />
             </div>
         );
