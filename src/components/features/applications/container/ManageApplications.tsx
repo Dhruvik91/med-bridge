@@ -16,6 +16,8 @@ import { ApplicationStatus, UserRole, Job, Application } from '@/types';
 import { ApplicationStats } from '../components/ApplicationStats';
 import { ApplicationFilters } from '../components/ApplicationFilters';
 import { ApplicationList } from '../components/ApplicationList';
+import { MobileApplicationStatsDrawer } from '../components/MobileApplicationStatsDrawer';
+import { MobileApplicationFilterDrawer } from '../components/MobileApplicationFilterDrawer';
 import { NotAuthorizedUser } from '@/components/NotAuthorized';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 
@@ -123,25 +125,24 @@ export function ManageApplications() {
         setStatusFilter('all');
         setJobFilter('all');
         setSearchQuery('');
+        setSortBy('recent');
     };
 
     if (userLoading || profileLoading) {
         return (
-            <main className="pt-16 min-h-screen bg-background">
-                <div className="container mx-auto px-4 py-8">
-                    <Skeleton className="h-12 w-64 mb-8" />
-                    <div className="grid gap-6 md:grid-cols-4 mb-8">
-                        {[1, 2, 3, 4].map(i => (
-                            <Skeleton key={i} className="h-24" />
-                        ))}
-                    </div>
-                    <div className="space-y-4">
-                        {[1, 2, 3, 4].map(i => (
-                            <Skeleton key={i} className="h-48" />
-                        ))}
-                    </div>
+            <div className="container mx-auto px-4 py-8">
+                <Skeleton className="h-12 w-64 mb-8" />
+                <div className="grid gap-6 md:grid-cols-4 mb-8">
+                    {[1, 2, 3, 4].map(i => (
+                        <Skeleton key={i} className="h-24" />
+                    ))}
                 </div>
-            </main>
+                <div className="space-y-4">
+                    {[1, 2, 3, 4].map(i => (
+                        <Skeleton key={i} className="h-48" />
+                    ))}
+                </div>
+            </div>
         );
     }
 
@@ -152,51 +153,78 @@ export function ManageApplications() {
     }
 
     return (
-        <main className="pt-16 min-h-screen bg-background">
-            <div className="container mx-auto px-4 py-8">
-                {/* Header */}
-                <div className="mb-8">
-                    <h1 className="text-3xl md:text-4xl font-bold mb-2">Manage Applications</h1>
-                    <p className="text-muted-foreground">
-                        Review and manage applications from candidates
-                    </p>
-                </div>
+        <div className="flex flex-col h-[calc(100vh-4rem)]">
+            {/* Fixed Header - Sticky on Desktop */}
+            <div className="sticky top-0 z-10 bg-background border-b">
+                <div className="container mx-auto px-4 py-4 md:py-6">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 md:mb-0">
+                        <div className="flex items-center justify-between">
+                            <div className="space-y-1">
+                                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight">Manage Applications</h1>
+                                <p className="text-sm md:text-base text-muted-foreground">
+                                    {filteredApplications.length} {filteredApplications.length === 1 ? 'application' : 'applications'} found
+                                </p>
+                            </div>
 
-                {/* Stats Cards */}
-                <ApplicationStats stats={stats} />
+                            {/* Mobile Buttons */}
+                            <div className="flex gap-2 md:hidden">
+                                <MobileApplicationStatsDrawer stats={stats} />
+                                <MobileApplicationFilterDrawer
+                                    searchQuery={searchQuery}
+                                    setSearchQuery={setSearchQuery}
+                                    jobFilter={jobFilter}
+                                    setJobFilter={setJobFilter}
+                                    statusFilter={statusFilter}
+                                    setStatusFilter={setStatusFilter}
+                                    sortBy={sortBy}
+                                    setSortBy={setSortBy}
+                                    jobs={jobs}
+                                />
+                            </div>
+                        </div>
 
-                {/* Filters */}
-                <ApplicationFilters
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    jobFilter={jobFilter}
-                    setJobFilter={setJobFilter}
-                    statusFilter={statusFilter}
-                    setStatusFilter={setStatusFilter}
-                    sortBy={sortBy}
-                    setSortBy={setSortBy}
-                    jobs={jobs}
-                />
-
-                {/* Applications List */}
-                <ApplicationList
-                    isLoading={jobsLoading}
-                    filteredApplications={filteredApplications}
-                    allApplicationsCount={applications.length}
-                    jobs={jobs}
-                    onStatusChange={handleStatusChange}
-                    onClearFilters={handleClearFilters}
-                />
-
-                {/* Back to Dashboard Link */}
-                {filteredApplications.length > 0 && (
-                    <div className="mt-8 text-center">
-                        <Button variant="outline" asChild>
-                            <Link href={FRONTEND_ROUTES.DASHBOARD.EMPLOYER}>Back to Dashboard</Link>
+                        <Button asChild size="lg" className="w-full md:w-auto hidden md:flex">
+                            <Link href={FRONTEND_ROUTES.DASHBOARD.EMPLOYER}>
+                                Back to Dashboard
+                            </Link>
                         </Button>
                     </div>
-                )}
+
+                    {/* Stats Cards - Desktop Only */}
+                    <div className="hidden md:block mt-4 mb-4">
+                        <ApplicationStats stats={stats} />
+                    </div>
+
+                    {/* Filters - Desktop Only */}
+                    <div className="hidden md:block mt-4">
+                        <ApplicationFilters
+                            searchQuery={searchQuery}
+                            setSearchQuery={setSearchQuery}
+                            jobFilter={jobFilter}
+                            setJobFilter={setJobFilter}
+                            statusFilter={statusFilter}
+                            setStatusFilter={setStatusFilter}
+                            sortBy={sortBy}
+                            setSortBy={setSortBy}
+                            jobs={jobs}
+                        />
+                    </div>
+                </div>
             </div>
-        </main>
+
+            {/* Scrollable Applications List */}
+            <div className="flex-1 overflow-y-auto">
+                <div className="container mx-auto px-4 py-6">
+                    <ApplicationList
+                        isLoading={jobsLoading}
+                        filteredApplications={filteredApplications}
+                        allApplicationsCount={applications.length}
+                        jobs={jobs}
+                        onStatusChange={handleStatusChange}
+                        onClearFilters={handleClearFilters}
+                    />
+                </div>
+            </div>
+        </div>
     );
 }

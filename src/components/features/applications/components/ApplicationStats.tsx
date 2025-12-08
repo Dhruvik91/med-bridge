@@ -16,7 +16,7 @@ interface ApplicationStatsProps {
 
 export function ApplicationStats({ stats }: ApplicationStatsProps) {
     return (
-        <div className="grid gap-4 md:grid-cols-4 lg:grid-cols-8 mb-8">
+        <div className="grid gap-4 grid-cols-3 md:grid-cols-4 lg:grid-cols-8 mb-8">
             <Card>
                 <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">Total</CardTitle>

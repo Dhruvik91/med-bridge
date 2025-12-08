@@ -4,14 +4,16 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { BarChart3 } from 'lucide-react';
-import { CandidateApplicationStats } from './CandidateApplicationStats';
+import { ApplicationStats } from './ApplicationStats';
 
 interface MobileApplicationStatsDrawerProps {
     stats: {
         total: number;
         applied: number;
         viewed: number;
+        shortlisted: number;
         interview: number;
+        offer: number;
         hired: number;
         rejected: number;
     };
@@ -33,7 +35,7 @@ export const MobileApplicationStatsDrawer = ({ stats }: MobileApplicationStatsDr
                     <SheetTitle>Application Statistics</SheetTitle>
                 </SheetHeader>
 
-                <CandidateApplicationStats stats={stats} />
+                <ApplicationStats stats={stats} />
 
                 <div className="mt-4">
                     <Button className="w-full" onClick={() => setOpen(false)}>

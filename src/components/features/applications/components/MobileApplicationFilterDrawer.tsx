@@ -5,33 +5,50 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
-import { SlidersHorizontal } from 'lucide-react';
-import { ApplicationStatus } from '@/types';
+import { Input } from '@/components/ui/input';
+import { SlidersHorizontal, Search } from 'lucide-react';
+import { ApplicationStatus, Job } from '@/types';
 
 interface MobileApplicationFilterDrawerProps {
+    searchQuery: string;
+    setSearchQuery: (value: string) => void;
+    jobFilter: string;
+    setJobFilter: (value: string) => void;
     statusFilter: ApplicationStatus | 'all';
+    setStatusFilter: (value: ApplicationStatus | 'all') => void;
     sortBy: 'recent' | 'oldest';
-    onStatusChange: (value: ApplicationStatus | 'all') => void;
-    onSortChange: (value: 'recent' | 'oldest') => void;
-    onClearFilters: () => void;
-    showClearButton: boolean;
+    setSortBy: (value: 'recent' | 'oldest') => void;
+    jobs: Job[];
 }
 
 export const MobileApplicationFilterDrawer = ({
+    searchQuery,
+    setSearchQuery,
+    jobFilter,
+    setJobFilter,
     statusFilter,
+    setStatusFilter,
     sortBy,
-    onStatusChange,
-    onSortChange,
-    onClearFilters,
-    showClearButton,
+    setSortBy,
+    jobs,
 }: MobileApplicationFilterDrawerProps) => {
     const [open, setOpen] = useState(false);
 
     // Count active filters
     const activeFilterCount = [
+        searchQuery ? 'search' : null,
         statusFilter !== 'all' ? statusFilter : null,
+        jobFilter !== 'all' ? jobFilter : null,
         sortBy !== 'recent' ? sortBy : null,
     ].filter(Boolean).length;
+
+    const handleClearFilters = () => {
+        setSearchQuery('');
+        setStatusFilter('all');
+        setJobFilter('all');
+        setSortBy('recent');
+        setOpen(false);
+    };
 
     const handleApplyFilters = () => {
         setOpen(false);
@@ -58,25 +75,60 @@ export const MobileApplicationFilterDrawer = ({
                     <SheetTitle>Filter Applications</SheetTitle>
                 </SheetHeader>
                 <div className="space-y-4 mt-6">
+                    {/* Search */}
+                    <div className="space-y-2">
+                        <label htmlFor="mobile-search" className="text-sm font-medium">
+                            Search Candidate
+                        </label>
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                            <Input
+                                id="mobile-search"
+                                type="text"
+                                placeholder="Search by name..."
+                                className="pl-10 h-11 text-sm"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Job Filter */}
+                    <div className="space-y-2">
+                        <label htmlFor="mobile-job" className="text-sm font-medium">
+                            Filter by Job
+                        </label>
+                        <Select value={jobFilter} onValueChange={setJobFilter}>
+                            <SelectTrigger id="mobile-job" className="h-11">
+                                <SelectValue placeholder="All Jobs" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Jobs</SelectItem>
+                                {jobs.map((job) => (
+                                    <SelectItem key={job.id} value={job.id}>
+                                        {job.title}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
                     {/* Status Filter */}
                     <div className="space-y-2">
                         <label htmlFor="mobile-status" className="text-sm font-medium">
                             Filter by Status
                         </label>
-                        <Select value={statusFilter} onValueChange={(value) => onStatusChange(value as ApplicationStatus | 'all')}>
-                            <SelectTrigger id="mobile-status">
-                                <SelectValue placeholder="All Applications" />
+                        <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as ApplicationStatus | 'all')}>
+                            <SelectTrigger id="mobile-status" className="h-11">
+                                <SelectValue placeholder="All Statuses" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="all">All Applications</SelectItem>
-                                <SelectItem value={ApplicationStatus.applied}>Pending Review</SelectItem>
-                                <SelectItem value={ApplicationStatus.viewed}>Viewed</SelectItem>
-                                <SelectItem value={ApplicationStatus.shortlisted}>Shortlisted</SelectItem>
-                                <SelectItem value={ApplicationStatus.interview}>Interview</SelectItem>
-                                <SelectItem value={ApplicationStatus.offer}>Offer</SelectItem>
-                                <SelectItem value={ApplicationStatus.hired}>Hired</SelectItem>
-                                <SelectItem value={ApplicationStatus.rejected}>Rejected</SelectItem>
-                                <SelectItem value={ApplicationStatus.withdrawn}>Withdrawn</SelectItem>
+                                <SelectItem value="all">All Statuses</SelectItem>
+                                {Object.values(ApplicationStatus).map((status) => (
+                                    <SelectItem key={status} value={status}>
+                                        {status.charAt(0).toUpperCase() + status.slice(1)}
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
                     </div>
@@ -84,11 +136,11 @@ export const MobileApplicationFilterDrawer = ({
                     {/* Sort By */}
                     <div className="space-y-2">
                         <label htmlFor="mobile-sort" className="text-sm font-medium">
-                            Sort by
+                            Sort By
                         </label>
-                        <Select value={sortBy} onValueChange={(value) => onSortChange(value as 'recent' | 'oldest')}>
-                            <SelectTrigger id="mobile-sort">
-                                <SelectValue />
+                        <Select value={sortBy} onValueChange={(value) => setSortBy(value as 'recent' | 'oldest')}>
+                            <SelectTrigger id="mobile-sort" className="h-11">
+                                <SelectValue placeholder="Sort order" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="recent">Most Recent</SelectItem>
@@ -105,13 +157,10 @@ export const MobileApplicationFilterDrawer = ({
                         >
                             Apply Filters
                         </Button>
-                        {showClearButton && (
+                        {activeFilterCount > 0 && (
                             <Button
                                 variant="outline"
-                                onClick={() => {
-                                    onClearFilters();
-                                    setOpen(false);
-                                }}
+                                onClick={handleClearFilters}
                                 className="flex-1"
                             >
                                 Clear All
