@@ -25,7 +25,7 @@ export function RecentApplicationsList({ applications, jobs }: RecentApplication
                             Latest candidates who applied to your jobs
                         </CardDescription>
                     </div>
-                    <Button asChild variant="outline" size="sm" className="self-start sm:self-center hover:bg-primary hover:text-primary-foreground transition-colors shadow-sm">
+                    <Button asChild size="sm" className="self-start sm:self-center">
                         <Link href="/applications/manage" className="flex items-center gap-2">
                             <span className="font-medium">View All</span>
                             <ArrowRight className="h-4 w-4" aria-hidden="true" />

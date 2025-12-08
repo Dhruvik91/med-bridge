@@ -28,7 +28,7 @@ export function ActiveJobsList({ jobs, applications, isLoading, getJobStatusColo
                             Manage your published job listings
                         </CardDescription>
                     </div>
-                    <Button asChild variant="outline" size="sm" className="self-start sm:self-center hover:bg-primary hover:text-primary-foreground transition-colors shadow-sm">
+                    <Button asChild size="sm" className="self-start sm:self-center">
                         <Link href="/jobs/manage" className="flex items-center gap-2">
                             <span className="font-medium">View All</span>
                             <ArrowRight className="h-4 w-4" aria-hidden="true" />
