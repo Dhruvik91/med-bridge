@@ -14,10 +14,13 @@ import { applicationService } from '@/services/application.service';
 import { useToast } from '@/hooks/use-toast';
 import { ApplicationStatus, UserRole, Job, Application } from '@/types';
 import { ApplicationStats } from '../components/ApplicationStats';
-import { ApplicationFilters } from '../components/ApplicationFilters';
+
 import { ApplicationList } from '../components/ApplicationList';
 import { MobileApplicationStatsDrawer } from '../components/MobileApplicationStatsDrawer';
 import { MobileApplicationFilterDrawer } from '../components/MobileApplicationFilterDrawer';
+import { DesktopApplicationFilterDrawer } from '../components/DesktopApplicationFilterDrawer';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
 import { NotAuthorizedUser } from '@/components/NotAuthorized';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 
@@ -183,11 +186,34 @@ export function ManageApplications() {
                             </div>
                         </div>
 
-                        <Button asChild size="lg" className="w-full md:w-auto hidden md:flex">
-                            <Link href={FRONTEND_ROUTES.DASHBOARD.EMPLOYER}>
-                                Back to Dashboard
-                            </Link>
-                        </Button>
+                        {/* Desktop Actions */}
+                        <div className="hidden md:flex items-center gap-2">
+                            <div className="relative w-64">
+                                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    placeholder="Search by name..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="pl-8"
+                                />
+                            </div>
+
+                            <DesktopApplicationFilterDrawer
+                                jobFilter={jobFilter}
+                                setJobFilter={setJobFilter}
+                                statusFilter={statusFilter}
+                                setStatusFilter={setStatusFilter}
+                                sortBy={sortBy}
+                                setSortBy={setSortBy}
+                                jobs={jobs}
+                            />
+
+                            <Button asChild size="lg" className="w-full md:w-auto">
+                                <Link href={FRONTEND_ROUTES.DASHBOARD.EMPLOYER}>
+                                    Back to Dashboard
+                                </Link>
+                            </Button>
+                        </div>
                     </div>
 
                     {/* Stats Cards - Desktop Only */}
@@ -195,20 +221,7 @@ export function ManageApplications() {
                         <ApplicationStats stats={stats} />
                     </div>
 
-                    {/* Filters - Desktop Only */}
-                    <div className="hidden md:block mt-4">
-                        <ApplicationFilters
-                            searchQuery={searchQuery}
-                            setSearchQuery={setSearchQuery}
-                            jobFilter={jobFilter}
-                            setJobFilter={setJobFilter}
-                            statusFilter={statusFilter}
-                            setStatusFilter={setStatusFilter}
-                            sortBy={sortBy}
-                            setSortBy={setSortBy}
-                            jobs={jobs}
-                        />
-                    </div>
+
                 </div>
             </div>
 
@@ -225,6 +238,6 @@ export function ManageApplications() {
                     />
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

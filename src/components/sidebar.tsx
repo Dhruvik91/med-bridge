@@ -14,10 +14,10 @@ import {
     Briefcase,
     BookmarkCheck,
     User,
-    Building2,
     PlusCircle,
     LogOut,
-    LucideIcon
+    LucideIcon,
+    User2Icon
 } from 'lucide-react'
 import {
     DropdownMenu,
@@ -72,6 +72,11 @@ const getEmployerNavItems = (): NavItem[] => [
         href: FRONTEND_ROUTES.JOBS.BASE,
         label: "Jobs",
         icon: Briefcase,
+    },
+    {
+        href: FRONTEND_ROUTES.APPLICATIONS.MANAGE,
+        label: "Applications",
+        icon: User2Icon,
     },
     {
         href: FRONTEND_ROUTES.JOBS.MANAGE,

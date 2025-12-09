@@ -14,7 +14,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Briefcase, Plus, CheckCircle, FileText, XCircle, Archive } from 'lucide-react';
+import { Briefcase, Plus, CheckCircle, FileText, XCircle, Archive, Eye } from 'lucide-react';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
 import { useGetJobsByEmployer } from '@/hooks/get/useGetJobsByEmployer';
@@ -157,12 +157,22 @@ export const JobsManage = () => {
                             </div>
                         </div>
 
-                        <Button asChild size="lg" className="w-full md:w-auto hidden md:flex">
-                            <Link href={FRONTEND_ROUTES.JOBS.CREATE}>
-                                <Plus className="mr-2 h-4 w-4" />
-                                Post New Job
-                            </Link>
-                        </Button>
+                        <div className='flex gap-2'>
+                            <Button asChild variant="outline" size="lg" className="w-full md:w-auto hidden md:flex">
+                                <Link href={FRONTEND_ROUTES.JOBS.BASE}>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    View Jobs
+                                </Link>
+                            </Button>
+
+                            <Button asChild size="lg" className="w-full md:w-auto hidden md:flex">
+                                <Link href={FRONTEND_ROUTES.JOBS.CREATE}>
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    Post New Job
+                                </Link>
+                            </Button>
+                        </div>
+
                     </div>
 
                     {/* Stats - Desktop Only */}
@@ -189,12 +199,19 @@ export const JobsManage = () => {
 
                     {/* Mobile Post Job Button - Visible only on mobile below header */}
                     <div className="md:hidden mt-4">
-                        <Button asChild size="lg" className="w-full">
+
+                        <Button asChild variant="outline" size="lg" className="w-full md:w-auto hidden md:flex">
+                            <Link href={FRONTEND_ROUTES.JOBS.BASE}>
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Jobs
+                            </Link>
+                        </Button>
+                        {/* <Button asChild size="lg" className="w-full">
                             <Link href={FRONTEND_ROUTES.JOBS.CREATE}>
                                 <Plus className="mr-2 h-4 w-4" />
                                 Post New Job
                             </Link>
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
             </div>
