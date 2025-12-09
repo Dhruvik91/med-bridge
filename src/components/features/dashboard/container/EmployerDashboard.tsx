@@ -126,19 +126,22 @@ export function EmployerDashboard() {
                 />
             </div>
 
-            {/* Active Jobs */}
-            <ActiveJobsList
-                jobs={jobs}
-                applications={applications}
-                isLoading={jobsLoading}
-                getJobStatusColor={getJobStatusColor}
-            />
+            {/* Active Jobs and Recent Applications - Side by Side */}
+            <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
+                {/* Active Jobs */}
+                <ActiveJobsList
+                    jobs={jobs}
+                    applications={applications}
+                    isLoading={jobsLoading}
+                    getJobStatusColor={getJobStatusColor}
+                />
 
-            {/* Recent Applications */}
-            <RecentApplicationsList
-                applications={applications}
-                jobs={jobs}
-            />
+                {/* Recent Applications */}
+                <RecentApplicationsList
+                    applications={applications}
+                    jobs={jobs}
+                />
+            </div>
         </div>
     );
 }

@@ -34,30 +34,32 @@ export function RecentApplicationsList({ applications, jobs }: RecentApplication
                 </div>
             </CardHeader>
             <CardContent>
-                {applications.length === 0 ? (
-                    <div className="text-center py-12 bg-gradient-to-br from-muted/30 to-muted/10 rounded-xl border-2 border-dashed border-muted">
-                        <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Users className="h-8 w-8 text-primary" aria-hidden="true" />
+                <div className="max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+                    {applications.length === 0 ? (
+                        <div className="text-center py-12 bg-gradient-to-br from-muted/30 to-muted/10 rounded-xl border-2 border-dashed border-muted">
+                            <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Users className="h-8 w-8 text-primary" aria-hidden="true" />
+                            </div>
+                            <h3 className="text-lg font-semibold mb-2 text-foreground">No applications yet</h3>
+                            <p className="text-muted-foreground max-w-md mx-auto">
+                                Applications will appear here once candidates start applying to your job postings
+                            </p>
                         </div>
-                        <h3 className="text-lg font-semibold mb-2 text-foreground">No applications yet</h3>
-                        <p className="text-muted-foreground max-w-md mx-auto">
-                            Applications will appear here once candidates start applying to your job postings
-                        </p>
-                    </div>
-                ) : (
-                    <div className="space-y-4">
-                        {recentApplications.map((application) => {
-                            const job = jobs.find(j => j.id === application.jobId);
-                            return (
-                                <RecentApplicationCard
-                                    key={application.id}
-                                    application={application}
-                                    jobTitle={job?.title || 'Job'}
-                                />
-                            );
-                        })}
-                    </div>
-                )}
+                    ) : (
+                        <div className="space-y-4">
+                            {recentApplications.map((application) => {
+                                const job = jobs.find(j => j.id === application.jobId);
+                                return (
+                                    <RecentApplicationCard
+                                        key={application.id}
+                                        application={application}
+                                        jobTitle={job?.title || 'Job'}
+                                    />
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
             </CardContent>
         </Card>
     );

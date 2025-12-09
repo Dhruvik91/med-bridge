@@ -37,46 +37,48 @@ export function ActiveJobsList({ jobs, applications, isLoading, getJobStatusColo
                 </div>
             </CardHeader>
             <CardContent>
-                {isLoading ? (
-                    <div className="space-y-4">
-                        {[1, 2, 3].map(i => (
-                            <Skeleton key={i} className="h-24" />
-                        ))}
-                    </div>
-                ) : jobs.length === 0 ? (
-                    <div className="text-center py-12 bg-gradient-to-br from-muted/30 to-muted/10 rounded-xl border-2 border-dashed border-muted">
-                        <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Briefcase className="h-8 w-8 text-primary" aria-hidden="true" />
+                <div className="max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+                    {isLoading ? (
+                        <div className="space-y-4">
+                            {[1, 2, 3].map(i => (
+                                <Skeleton key={i} className="h-24" />
+                            ))}
                         </div>
-                        <h3 className="text-lg font-semibold mb-2 text-foreground">No jobs posted yet</h3>
-                        <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                            Create your first job posting to start receiving applications from qualified candidates
-                        </p>
-                        <Button asChild size="lg" className="shadow-md hover:shadow-lg transition-shadow">
-                            <Link href="/jobs/create">
-                                <Plus className="mr-2 h-5 w-5" aria-hidden="true" />
-                                Post Your First Job
-                            </Link>
-                        </Button>
-                    </div>
-                ) : (
-                    <div className="space-y-4">
-                        {publishedJobs.map((job) => {
-                            const jobApplications = applications.filter(a => a.jobId === job.id);
-                            const newApplicationCount = jobApplications.filter(a => a.status === ApplicationStatus.applied).length;
+                    ) : jobs.length === 0 ? (
+                        <div className="text-center py-12 bg-gradient-to-br from-muted/30 to-muted/10 rounded-xl border-2 border-dashed border-muted">
+                            <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Briefcase className="h-8 w-8 text-primary" aria-hidden="true" />
+                            </div>
+                            <h3 className="text-lg font-semibold mb-2 text-foreground">No jobs posted yet</h3>
+                            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                                Create your first job posting to start receiving applications from qualified candidates
+                            </p>
+                            <Button asChild size="lg" className="shadow-md hover:shadow-lg transition-shadow">
+                                <Link href="/jobs/create">
+                                    <Plus className="mr-2 h-5 w-5" aria-hidden="true" />
+                                    Post Your First Job
+                                </Link>
+                            </Button>
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                            {publishedJobs.map((job) => {
+                                const jobApplications = applications.filter(a => a.jobId === job.id);
+                                const newApplicationCount = jobApplications.filter(a => a.status === ApplicationStatus.applied).length;
 
-                            return (
-                                <JobCard
-                                    key={job.id}
-                                    job={job}
-                                    applicationCount={jobApplications.length}
-                                    newApplicationCount={newApplicationCount}
-                                    getJobStatusColor={getJobStatusColor}
-                                />
-                            );
-                        })}
-                    </div>
-                )}
+                                return (
+                                    <JobCard
+                                        key={job.id}
+                                        job={job}
+                                        applicationCount={jobApplications.length}
+                                        newApplicationCount={newApplicationCount}
+                                        getJobStatusColor={getJobStatusColor}
+                                    />
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
             </CardContent>
         </Card>
     );
