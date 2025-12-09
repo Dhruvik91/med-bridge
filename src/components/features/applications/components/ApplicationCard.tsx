@@ -13,7 +13,9 @@ import {
     CheckCircle2,
     XCircle,
     AlertCircle,
-    ArrowRight
+    ArrowRight,
+    FileText,
+    ExternalLink
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -83,99 +85,99 @@ export function ApplicationCard({ application, job, candidate, onStatusChange }:
 
     return (
         <Card className="hover:shadow-md transition-shadow">
-            <CardHeader>
-                <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                                <User className="h-6 w-6 text-primary" />
-                            </div>
-                            <div className="flex-1">
-                                <CardTitle className="text-xl mb-1">
-                                    {candidate?.displayName || candidate?.fullName || 'Candidate'}
-                                </CardTitle>
-                                <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                                    <span className="flex items-center gap-1">
-                                        <Briefcase className="h-4 w-4" />
-                                        {job?.title || 'Job Title'}
-                                    </span>
-                                    <span className="flex items-center gap-1">
-                                        <Calendar className="h-4 w-4" />
-                                        Applied {formatDate(application.appliedAt)}
-                                    </span>
-                                </div>
+            <CardHeader className="pb-4">
+                {/* Header with Name and Status Badge */}
+                <div className="flex items-start justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <User className="h-6 w-6 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <CardTitle className="text-xl mb-1 truncate">
+                                {candidate?.displayName || candidate?.fullName || 'Candidate'}
+                            </CardTitle>
+                            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                <Briefcase className="h-3.5 w-3.5 flex-shrink-0" />
+                                <span className="truncate">{job?.title || 'Job Title'}</span>
                             </div>
                         </div>
-
-                        {/* Candidate Details */}
-                        {candidate && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-                                {candidate.experienceYears !== null && candidate.experienceYears !== undefined && (
-                                    <div className="flex items-center gap-2 text-sm">
-                                        <Award className="h-4 w-4 text-muted-foreground" />
-                                        <span>{candidate.experienceYears} years experience</span>
-                                    </div>
-                                )}
-                                {candidate.city && candidate.country && (
-                                    <div className="flex items-center gap-2 text-sm">
-                                        <MapPin className="h-4 w-4 text-muted-foreground" />
-                                        <span>{candidate.city}, {candidate.country}</span>
-                                    </div>
-                                )}
-                                {candidate.phone && (
-                                    <div className="flex items-center gap-2 text-sm">
-                                        <Phone className="h-4 w-4 text-muted-foreground" />
-                                        <span>{candidate.phone}</span>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Specialties */}
-                        {candidate?.specialties && candidate.specialties.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mb-3">
-                                {candidate.specialties.slice(0, 3).map((specialty: string, idx: number) => (
-                                    <Badge key={idx} variant="outline" className="text-xs">
-                                        {specialty}
-                                    </Badge>
-                                ))}
-                                {candidate.specialties.length > 3 && (
-                                    <Badge variant="outline" className="text-xs">
-                                        +{candidate.specialties.length - 3} more
-                                    </Badge>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Cover Letter */}
-                        {application.coverLetter && (
-                            <div className="bg-muted/50 p-3 rounded-md">
-                                <p className="text-sm font-medium mb-1">Cover Letter</p>
-                                <p className="text-sm text-muted-foreground line-clamp-2">
-                                    {application.coverLetter}
-                                </p>
-                            </div>
-                        )}
                     </div>
-
-                    <div className="flex flex-col gap-2 items-end">
-                        <Badge className={getStatusColor(application.status)}>
-                            <span className="flex items-center gap-1">
-                                {getStatusIcon(application.status)}
-                                {getStatusLabel(application.status)}
-                            </span>
-                        </Badge>
-                    </div>
+                    <Badge className={`${getStatusColor(application.status)} flex-shrink-0`}>
+                        <span className="flex items-center gap-1.5">
+                            {getStatusIcon(application.status)}
+                            {getStatusLabel(application.status)}
+                        </span>
+                    </Badge>
                 </div>
+
+                {/* Application Date */}
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
+                    <Calendar className="h-3.5 w-3.5" />
+                    <span>Applied {formatDate(application.appliedAt)}</span>
+                </div>
+
+                {/* Candidate Details Grid */}
+                {candidate && (
+                    <div className="space-y-2 mb-4">
+                        {candidate.experienceYears !== null && candidate.experienceYears !== undefined && (
+                            <div className="flex items-center gap-2 text-sm">
+                                <Award className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                                <span>{candidate.experienceYears} years experience</span>
+                            </div>
+                        )}
+                        {candidate.city && candidate.country && (
+                            <div className="flex items-center gap-2 text-sm">
+                                <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                                <span>{candidate.city}, {candidate.country}</span>
+                            </div>
+                        )}
+                        {candidate.phone && (
+                            <div className="flex items-center gap-2 text-sm">
+                                <Phone className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                                <span>{candidate.phone}</span>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Specialties */}
+                {candidate?.specialties && candidate.specialties.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                        {candidate.specialties.slice(0, 3).map((specialty: string, idx: number) => (
+                            <Badge key={idx} variant="outline" className="text-xs">
+                                {specialty}
+                            </Badge>
+                        ))}
+                        {candidate.specialties.length > 3 && (
+                            <Badge variant="outline" className="text-xs">
+                                +{candidate.specialties.length - 3} more
+                            </Badge>
+                        )}
+                    </div>
+                )}
+
+                {/* Cover Letter */}
+                {application.coverLetter && (
+                    <div className="bg-muted/50 p-3 rounded-md border border-border/50">
+                        <p className="text-sm font-medium mb-1.5">Cover Letter</p>
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                            {application.coverLetter}
+                        </p>
+                    </div>
+                )}
             </CardHeader>
-            <CardFooter className="flex flex-wrap gap-2">
-                <div className="flex-1">
-                    <label className="text-sm font-medium mb-2 block">Update Status</label>
+            
+            <CardFooter className="flex flex-col gap-4 pt-4 border-t bg-muted/20">
+                {/* Status Update Section */}
+                <div className="w-full">
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 block">
+                        Application Status
+                    </label>
                     <Select
                         value={application.status}
                         onValueChange={(value) => onStatusChange(application.id, value as ApplicationStatus)}
                     >
-                        <SelectTrigger className="w-full md:w-[200px]">
+                        <SelectTrigger className="w-full h-10 bg-background">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -189,18 +191,35 @@ export function ApplicationCard({ application, job, candidate, onStatusChange }:
                         </SelectContent>
                     </Select>
                 </div>
-                <div className="flex gap-2 items-end">
+                
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-2 w-full">
                     {(application.resumeUrl || candidate?.resumeUrl) && (
-                        <Button asChild variant="outline" size="sm">
-                            <a href={application.resumeUrl || candidate?.resumeUrl || ''} target="_blank" rel="noopener noreferrer">
-                                View Resume
+                        <Button 
+                            asChild 
+                            variant="outline" 
+                            className="flex-1 h-10 justify-start gap-2 bg-background hover:bg-accent"
+                        >
+                            <a 
+                                href={application.resumeUrl || candidate?.resumeUrl || ''} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                            >
+                                <FileText className="h-4 w-4" />
+                                <span>View Resume</span>
+                                <ExternalLink className="h-3.5 w-3.5 ml-auto opacity-60" />
                             </a>
                         </Button>
                     )}
-                    <Button asChild variant="outline" size="sm">
+                    <Button 
+                        asChild 
+                        variant="default" 
+                        className="flex-1 h-10 justify-start gap-2"
+                    >
                         <Link href={`/jobs/${application.jobId}`}>
-                            View Job
-                            <ArrowRight className="ml-2 h-4 w-4" />
+                            <Briefcase className="h-4 w-4" />
+                            <span>View Job Posting</span>
+                            <ArrowRight className="h-4 w-4 ml-auto" />
                         </Link>
                     </Button>
                 </div>

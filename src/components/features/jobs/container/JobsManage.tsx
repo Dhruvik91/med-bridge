@@ -176,7 +176,7 @@ export const JobsManage = () => {
                     </div>
 
                     {/* Stats - Desktop Only */}
-                    <div className="hidden md:block mt-4 mb-4">
+                    <div className="hidden md:block mt-4">
                         <JobStats
                             total={stats.total}
                             published={stats.published}
@@ -186,7 +186,7 @@ export const JobsManage = () => {
                     </div>
 
                     {/* Filters - Desktop Only */}
-                    <div className="hidden md:block mt-4">
+                    <div className="hidden md:block mt-3">
                         <ManageJobsFilters
                             searchQuery={searchQuery}
                             statusFilter={statusFilter}
@@ -206,12 +206,6 @@ export const JobsManage = () => {
                                 View Jobs
                             </Link>
                         </Button>
-                        {/* <Button asChild size="lg" className="w-full">
-                            <Link href={FRONTEND_ROUTES.JOBS.CREATE}>
-                                <Plus className="mr-2 h-4 w-4" />
-                                Post New Job
-                            </Link>
-                        </Button> */}
                     </div>
                 </div>
             </div>
@@ -232,7 +226,7 @@ export const JobsManage = () => {
                             onAction={jobs.length === 0 ? () => router.push(FRONTEND_ROUTES.JOBS.CREATE) : handleClearFilters}
                         />
                     ) : (
-                        <div className="space-y-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4 items-stretch">
                             {filteredJobs.map((job) => (
                                 <JobCard
                                     key={job.id}
