@@ -13,15 +13,15 @@ export function ApplicationInfo({ application }: ApplicationInfoProps) {
     const { coverLetter, resumeUrl, job } = application;
 
     return (
-        <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-6">
+        <div className="grid gap-6 lg:grid-cols-3">
+            <div className="space-y-6 lg:col-span-2">
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-lg">Cover Letter</CardTitle>
                     </CardHeader>
                     <CardContent>
                         {coverLetter ? (
-                            <p className="whitespace-pre-wrap text-sm text-gray-700 leading-relaxed">
+                            <p className="whitespace-pre-wrap text-sm leading-relaxed">
                                 {coverLetter}
                             </p>
                         ) : (
@@ -54,6 +54,69 @@ export function ApplicationInfo({ application }: ApplicationInfoProps) {
             </div>
 
             <div className="space-y-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-lg">Candidate Details</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div>
+                            <h4 className="font-medium text-sm mb-1">Name</h4>
+                            <p className="text-sm text-muted-foreground">
+                                {application.candidateProfile?.fullName || application.candidate?.email || 'N/A'}
+                            </p>
+                        </div>
+
+                        <div>
+                            <h4 className="font-medium text-sm mb-1">Email</h4>
+                            <p className="text-sm text-muted-foreground">
+                                {application.candidate?.email || 'N/A'}
+                            </p>
+                        </div>
+
+                        {application.candidateProfile?.phone && (
+                            <div>
+                                <h4 className="font-medium text-sm mb-1">Phone</h4>
+                                <p className="text-sm text-muted-foreground">
+                                    {application.candidateProfile.phone}
+                                </p>
+                            </div>
+                        )}
+
+                        {(application.candidateProfile?.city || application.candidateProfile?.country) && (
+                            <div>
+                                <h4 className="font-medium text-sm mb-1">Location</h4>
+                                <p className="text-sm text-muted-foreground">
+                                    {[application.candidateProfile.city, application.candidateProfile.country]
+                                        .filter(Boolean)
+                                        .join(', ')}
+                                </p>
+                            </div>
+                        )}
+
+                        {application.candidateProfile?.experienceYears !== undefined && application.candidateProfile?.experienceYears !== null && (
+                            <div>
+                                <h4 className="font-medium text-sm mb-1">Experience</h4>
+                                <p className="text-sm text-muted-foreground">
+                                    {application.candidateProfile.experienceYears} years
+                                </p>
+                            </div>
+                        )}
+
+                        {application.candidateProfile?.specialties && application.candidateProfile.specialties.length > 0 && (
+                            <div>
+                                <h4 className="font-medium text-sm mb-1">Specialties</h4>
+                                <div className="flex flex-wrap gap-1">
+                                    {application.candidateProfile.specialties.map((specialty, i) => (
+                                        <span key={i} className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                                            {specialty}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+
                 {job && (
                     <Card>
                         <CardHeader>
@@ -61,16 +124,16 @@ export function ApplicationInfo({ application }: ApplicationInfoProps) {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
-                                <h4 className="font-medium text-sm text-gray-900">Description</h4>
-                                <p className="text-sm text-gray-600 mt-1 line-clamp-4">
+                                <h4 className="font-medium text-sm mb-1">Description</h4>
+                                <p className="text-sm text-muted-foreground line-clamp-4">
                                     {job.description}
                                 </p>
                             </div>
 
                             {job.requirements && (
                                 <div>
-                                    <h4 className="font-medium text-sm text-gray-900">Requirements</h4>
-                                    <div className="text-sm text-gray-600 mt-1 line-clamp-4">
+                                    <h4 className="font-medium text-sm mb-1">Requirements</h4>
+                                    <div className="text-sm text-muted-foreground line-clamp-4">
                                         {Array.isArray(job.requirements) ? (
                                             <ul className="list-disc list-inside">
                                                 {job.requirements.map((req, i) => (

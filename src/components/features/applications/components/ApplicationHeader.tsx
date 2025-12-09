@@ -14,11 +14,11 @@ export function ApplicationHeader({ application }: ApplicationHeaderProps) {
     if (!job) return null;
 
     return (
-        <div className="bg-white rounded-lg border p-6 shadow-sm">
+        <div>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900 mb-2">{job.title}</h1>
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+                    <h1 className="text-xl md:text-2xl font-bold mb-2">{job.title}</h1>
+                    <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
                         {job.organization?.name && (
                             <div className="flex items-center gap-1">
                                 <Building2 className="w-4 h-4" />
