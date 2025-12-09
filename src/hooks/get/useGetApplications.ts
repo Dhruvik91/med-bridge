@@ -8,10 +8,10 @@ export const useGetApplications = () => {
     });
 };
 
-export const useGetApplicationsByCandidate = (candidateProfileId: string) => {
+export const useGetApplicationsByCandidate = (candidateId: string) => {
     return useQuery({
-        queryKey: ['candidateApplications', candidateProfileId],
-        queryFn: () => applicationService.findByCandidate(candidateProfileId),
-        enabled: !!candidateProfileId,
+        queryKey: ['candidateApplications', candidateId],
+        queryFn: () => applicationService.findByCandidate(candidateId),
+        enabled: !!candidateId,
     });
 };

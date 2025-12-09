@@ -89,8 +89,8 @@ export function ManageApplications() {
         if (searchQuery.trim()) {
             const query = searchQuery.toLowerCase();
             filtered = filtered.filter(app => {
-                const candidateName = app.candidate?.fullName?.toLowerCase() || '';
-                const displayName = app.candidate?.displayName?.toLowerCase() || '';
+                const candidateName = app.candidateProfile?.fullName?.toLowerCase() || '';
+                const displayName = app.candidateProfile?.displayName?.toLowerCase() || '';
                 return candidateName.includes(query) || displayName.includes(query);
             });
         }

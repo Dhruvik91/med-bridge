@@ -10,15 +10,17 @@ import { SlidersHorizontal, Search } from 'lucide-react';
 import { ApplicationStatus, Job } from '@/types';
 
 interface MobileApplicationFilterDrawerProps {
-    searchQuery: string;
-    setSearchQuery: (value: string) => void;
-    jobFilter: string;
-    setJobFilter: (value: string) => void;
+    searchQuery?: string;
+    setSearchQuery?: (value: string) => void;
+    jobFilter?: string;
+    setJobFilter?: (value: string) => void;
     statusFilter: ApplicationStatus | 'all';
     setStatusFilter: (value: ApplicationStatus | 'all') => void;
     sortBy: 'recent' | 'oldest';
     setSortBy: (value: 'recent' | 'oldest') => void;
-    jobs: Job[];
+    jobs?: Job[];
+    onClearFilters?: () => void;
+    showClearButton?: boolean;
 }
 
 export const MobileApplicationFilterDrawer = ({
@@ -31,6 +33,8 @@ export const MobileApplicationFilterDrawer = ({
     sortBy,
     setSortBy,
     jobs,
+    onClearFilters,
+    showClearButton,
 }: MobileApplicationFilterDrawerProps) => {
     const [open, setOpen] = useState(false);
 
@@ -38,15 +42,19 @@ export const MobileApplicationFilterDrawer = ({
     const activeFilterCount = [
         searchQuery ? 'search' : null,
         statusFilter !== 'all' ? statusFilter : null,
-        jobFilter !== 'all' ? jobFilter : null,
+        jobFilter && jobFilter !== 'all' ? jobFilter : null,
         sortBy !== 'recent' ? sortBy : null,
     ].filter(Boolean).length;
 
     const handleClearFilters = () => {
-        setSearchQuery('');
-        setStatusFilter('all');
-        setJobFilter('all');
-        setSortBy('recent');
+        if (onClearFilters) {
+            onClearFilters();
+        } else {
+            if (setSearchQuery) setSearchQuery('');
+            setStatusFilter('all');
+            if (setJobFilter) setJobFilter('all');
+            setSortBy('recent');
+        }
         setOpen(false);
     };
 
@@ -75,43 +83,47 @@ export const MobileApplicationFilterDrawer = ({
                     <SheetTitle>Filter Applications</SheetTitle>
                 </SheetHeader>
                 <div className="space-y-4 mt-6">
-                    {/* Search */}
-                    <div className="space-y-2">
-                        <label htmlFor="mobile-search" className="text-sm font-medium">
-                            Search Candidate
-                        </label>
-                        <div className="relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                            <Input
-                                id="mobile-search"
-                                type="text"
-                                placeholder="Search by name..."
-                                className="pl-10 h-11 text-sm"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
+                    {/* Search - Only if setSearchQuery is provided */}
+                    {setSearchQuery && (
+                        <div className="space-y-2">
+                            <label htmlFor="mobile-search" className="text-sm font-medium">
+                                Search Candidate
+                            </label>
+                            <div className="relative">
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                                <Input
+                                    id="mobile-search"
+                                    type="text"
+                                    placeholder="Search by name..."
+                                    className="pl-10 h-11 text-sm"
+                                    value={searchQuery || ''}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    )}
 
-                    {/* Job Filter */}
-                    <div className="space-y-2">
-                        <label htmlFor="mobile-job" className="text-sm font-medium">
-                            Filter by Job
-                        </label>
-                        <Select value={jobFilter} onValueChange={setJobFilter}>
-                            <SelectTrigger id="mobile-job" className="h-11">
-                                <SelectValue placeholder="All Jobs" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Jobs</SelectItem>
-                                {jobs.map((job) => (
-                                    <SelectItem key={job.id} value={job.id}>
-                                        {job.title}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
+                    {/* Job Filter - Only if setJobFilter and jobs are provided */}
+                    {setJobFilter && jobs && (
+                        <div className="space-y-2">
+                            <label htmlFor="mobile-job" className="text-sm font-medium">
+                                Filter by Job
+                            </label>
+                            <Select value={jobFilter || 'all'} onValueChange={setJobFilter}>
+                                <SelectTrigger id="mobile-job" className="h-11">
+                                    <SelectValue placeholder="All Jobs" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Jobs</SelectItem>
+                                    {jobs.map((job) => (
+                                        <SelectItem key={job.id} value={job.id}>
+                                            {job.title}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
 
                     {/* Status Filter */}
                     <div className="space-y-2">
@@ -157,7 +169,7 @@ export const MobileApplicationFilterDrawer = ({
                         >
                             Apply Filters
                         </Button>
-                        {activeFilterCount > 0 && (
+                        {(activeFilterCount > 0 || showClearButton) && (
                             <Button
                                 variant="outline"
                                 onClick={handleClearFilters}

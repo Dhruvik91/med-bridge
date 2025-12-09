@@ -190,9 +190,9 @@ export function ApplicationCard({ application, job, candidate, onStatusChange }:
                     </Select>
                 </div>
                 <div className="flex gap-2 items-end">
-                    {candidate?.resumeUrl && (
+                    {(application.resumeUrl || candidate?.resumeUrl) && (
                         <Button asChild variant="outline" size="sm">
-                            <a href={candidate.resumeUrl} target="_blank" rel="noopener noreferrer">
+                            <a href={application.resumeUrl || candidate?.resumeUrl || ''} target="_blank" rel="noopener noreferrer">
                                 View Resume
                             </a>
                         </Button>

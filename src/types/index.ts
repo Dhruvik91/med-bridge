@@ -184,11 +184,13 @@ export interface Application {
   candidateId: string;
   status: ApplicationStatus;
   coverLetter?: string;
+  resumeUrl?: string;
   appliedAt: string;
   updatedAt: string;
   isArchived: boolean;
   job?: Job;
-  candidate?: DoctorProfile;
+  candidate?: User;
+  candidateProfile?: DoctorProfile;
 }
 
 export interface SavedJob {

@@ -45,7 +45,7 @@ export function ApplicationList({
         <div className="space-y-4">
             {filteredApplications.map((application) => {
                 const job = jobs.find(j => j.id === application.jobId);
-                const candidate = application.candidate;
+                const candidate = application.candidateProfile;
 
                 return (
                     <ApplicationCard

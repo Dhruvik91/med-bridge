@@ -69,7 +69,7 @@ export const JobDetail = () => {
     const { data: profile } = useGetDoctorProfile(user?.id || '');
     const { data: job, isLoading } = useGetJob(jobId);
     const { data: savedJobs = [] } = useGetSavedJobs(user?.id || '');
-    const { data: applications = [] } = useGetApplicationsByCandidate(profile?.id || '');
+    const { data: applications = [] } = useGetApplicationsByCandidate(user?.id || '');
 
     const applyMutation = useApplyToJob();
     const saveJobMutation = useSaveJob();
@@ -109,7 +109,7 @@ export const JobDetail = () => {
 
         applyMutation.mutate({
             jobId,
-            candidateId: profile!.id,
+            candidateId: user!.id,
             coverLetter: data.coverLetter || '',
             resumeUrl: resumeUrl || undefined,
         });

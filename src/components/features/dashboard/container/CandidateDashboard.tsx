@@ -34,7 +34,7 @@ export function CandidateDashboard() {
     const { data: profile, isLoading: profileLoading } = useGetDoctorProfile(user?.id || '');
 
     // Fetch applications
-    const { data: applications = [], isLoading: applicationsLoading } = useGetApplicationsByCandidate(profile?.id || '');
+    const { data: applications = [], isLoading: applicationsLoading } = useGetApplicationsByCandidate(user?.id || '');
 
     // Fetch saved jobs
     const { data: savedJobs = [], isLoading: savedJobsLoading } = useGetSavedJobs(user?.id || '');

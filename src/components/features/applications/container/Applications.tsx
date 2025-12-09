@@ -27,7 +27,7 @@ export function Applications() {
     const { data: profile, isLoading: profileLoading } = useGetDoctorProfile(user?.id || '');
 
     // Fetch applications
-    const { data: applications = [], isLoading: applicationsLoading } = useGetApplicationsByCandidate(profile?.id || '');
+    const { data: applications = [], isLoading: applicationsLoading } = useGetApplicationsByCandidate(user?.id || '');
 
     // Filter and sort applications
     const filteredApplications = useMemo(() => {
@@ -53,7 +53,9 @@ export function Applications() {
         total: applications.length,
         applied: applications.filter(a => a.status === ApplicationStatus.applied).length,
         viewed: applications.filter(a => a.status === ApplicationStatus.viewed).length,
+        shortlisted: applications.filter(a => a.status === ApplicationStatus.shortlisted).length,
         interview: applications.filter(a => a.status === ApplicationStatus.interview).length,
+        offer: applications.filter(a => a.status === ApplicationStatus.offer).length,
         hired: applications.filter(a => a.status === ApplicationStatus.hired).length,
         rejected: applications.filter(a => a.status === ApplicationStatus.rejected).length,
     };
@@ -112,8 +114,8 @@ export function Applications() {
                             <MobileApplicationFilterDrawer
                                 statusFilter={statusFilter}
                                 sortBy={sortBy}
-                                onStatusChange={setStatusFilter}
-                                onSortChange={setSortBy}
+                                setStatusFilter={setStatusFilter}
+                                setSortBy={setSortBy}
                                 onClearFilters={handleClearFilters}
                                 showClearButton={showClearButton}
                             />
