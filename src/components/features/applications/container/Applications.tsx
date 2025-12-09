@@ -150,15 +150,6 @@ export function Applications() {
                         statusFilter={statusFilter}
                         setStatusFilter={setStatusFilter}
                     />
-
-                    {/* Back to Dashboard Link */}
-                    {filteredApplications.length > 0 && (
-                        <div className="mt-8 text-center">
-                            <Button variant="outline" asChild>
-                                <Link href={FRONTEND_ROUTES.DASHBOARD.CANDIDATE}>Back to Dashboard</Link>
-                            </Button>
-                        </div>
-                    )}
                 </div>
             </div>
         </div>

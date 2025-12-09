@@ -69,11 +69,6 @@ const getEmployerNavItems = (): NavItem[] => [
         icon: Home,
     },
     {
-        href: FRONTEND_ROUTES.JOBS.BASE,
-        label: "Jobs",
-        icon: Briefcase,
-    },
-    {
         href: FRONTEND_ROUTES.APPLICATIONS.MANAGE,
         label: "Applications",
         icon: User2Icon,
@@ -82,11 +77,6 @@ const getEmployerNavItems = (): NavItem[] => [
         href: FRONTEND_ROUTES.JOBS.MANAGE,
         label: "Manage Jobs",
         icon: Briefcase,
-    },
-    {
-        href: FRONTEND_ROUTES.JOBS.CREATE,
-        label: "Post Job",
-        icon: PlusCircle,
     },
 ]
 

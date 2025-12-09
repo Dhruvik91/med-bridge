@@ -116,7 +116,7 @@ export function CandidateApplicationCard({ application }: CandidateApplicationCa
                 </CardContent>
             )}
             <CardFooter>
-                <Button asChild variant="outline" size="sm">
+                <Button asChild size="sm">
                     <Link href={`/jobs/${application.jobId}`}>
                         View Job Details
                         <ArrowRight className="ml-2 h-4 w-4" />
