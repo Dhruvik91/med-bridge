@@ -15,13 +15,15 @@ import {
     AlertCircle,
     ArrowRight,
     FileText,
-    ExternalLink
+    ExternalLink,
+    File
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ApplicationStatus, Application, Job, DoctorProfile } from '@/types';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 
 interface ApplicationCardProps {
     application: Application;
@@ -166,7 +168,7 @@ export function ApplicationCard({ application, job, candidate, onStatusChange }:
                     </div>
                 )}
             </CardHeader>
-            
+
             <CardFooter className="flex flex-col gap-4 pt-4 border-t bg-muted/20">
                 {/* Status Update Section */}
                 <div className="w-full">
@@ -191,18 +193,18 @@ export function ApplicationCard({ application, job, candidate, onStatusChange }:
                         </SelectContent>
                     </Select>
                 </div>
-                
+
                 {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-2 w-full">
+                <div className="flex flex-col sm:flex-row gap-2 w-full flex-wrap">
                     {(application.resumeUrl || candidate?.resumeUrl) && (
-                        <Button 
-                            asChild 
-                            variant="outline" 
+                        <Button
+                            asChild
+                            variant="outline"
                             className="flex-1 h-10 justify-start gap-2 bg-background hover:bg-accent"
                         >
-                            <a 
-                                href={application.resumeUrl || candidate?.resumeUrl || ''} 
-                                target="_blank" 
+                            <a
+                                href={application.resumeUrl || candidate?.resumeUrl || ''}
+                                target="_blank"
                                 rel="noopener noreferrer"
                             >
                                 <FileText className="h-4 w-4" />
@@ -211,12 +213,23 @@ export function ApplicationCard({ application, job, candidate, onStatusChange }:
                             </a>
                         </Button>
                     )}
-                    <Button 
-                        asChild 
-                        variant="default" 
+                    <Button
+                        asChild
+                        variant="secondary"
                         className="flex-1 h-10 justify-start gap-2"
                     >
-                        <Link href={`/jobs/${application.jobId}`}>
+                        <Link href={`${FRONTEND_ROUTES.APPLICATIONS.BASE}/${application.id}`}>
+                            <File className="h-4 w-4" />
+                            <span>Application Details</span>
+                            <ArrowRight className="h-4 w-4 ml-auto" />
+                        </Link>
+                    </Button>
+                    <Button
+                        asChild
+                        variant="default"
+                        className="flex-1 h-10 justify-start gap-2"
+                    >
+                        <Link href={`${FRONTEND_ROUTES.JOBS.BASE}/${application.jobId}`}>
                             <Briefcase className="h-4 w-4" />
                             <span>View Job Posting</span>
                             <ArrowRight className="h-4 w-4 ml-auto" />

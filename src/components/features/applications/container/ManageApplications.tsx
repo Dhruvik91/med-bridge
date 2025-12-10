@@ -1,10 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
 import { useGetJobsByEmployer } from '@/hooks/get/useGetJobsByEmployer';
@@ -22,7 +19,6 @@ import { DesktopApplicationFilterDrawer } from '../components/DesktopApplication
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { NotAuthorizedUser } from '@/components/NotAuthorized';
-import { FRONTEND_ROUTES } from '@/constants/constants';
 
 export function ManageApplications() {
     const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'all'>('all');
@@ -207,12 +203,6 @@ export function ManageApplications() {
                                 setSortBy={setSortBy}
                                 jobs={jobs}
                             />
-
-                            <Button asChild size="lg" className="w-full md:w-auto">
-                                <Link href={FRONTEND_ROUTES.DASHBOARD.EMPLOYER}>
-                                    Back to Dashboard
-                                </Link>
-                            </Button>
                         </div>
                     </div>
 
