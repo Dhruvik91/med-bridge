@@ -96,10 +96,10 @@ export const JobDetailHeader = ({
                     <Clock className="mr-1 h-4 w-4" aria-hidden="true" />
                     Posted {new Date(postedDate).toLocaleDateString()}
                 </Badge>
-                <Badge variant="outline" className="text-sm">
+                {/* <Badge variant="outline" className="text-sm">
                     <Eye className="mr-1 h-4 w-4" aria-hidden="true" />
                     {viewsCount || 0} views
-                </Badge>
+                </Badge> */}
                 {status && (
                     <Badge variant={status === 'published' ? 'default' : 'secondary'} className="text-sm">
                         {status.charAt(0).toUpperCase() + status.slice(1)}

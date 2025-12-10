@@ -3,9 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Eye, Building2 } from 'lucide-react';
 import { ApplicationStatus } from '@/types';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 
 interface Application {
     id: string;
+    jobId: string;
     status: ApplicationStatus;
     appliedAt: string;
     job?: {
@@ -28,7 +30,7 @@ interface ApplicationCardProps {
 export function ApplicationCard({ application, getStatusIcon, getStatusColor }: ApplicationCardProps) {
     return (
         <Link
-            href={`/applications/${application.id}`}
+            href={`${FRONTEND_ROUTES.JOBS.BASE}/${application.jobId}`}
             className="group block p-4 md:p-5 border rounded-xl hover:border-primary hover:shadow-md transition-all duration-200 bg-gradient-to-r from-background to-muted/20 hover:from-primary/5 hover:to-primary/10"
         >
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
@@ -37,7 +39,7 @@ export function ApplicationCard({ application, getStatusIcon, getStatusColor }: 
                         <h4 className="font-semibold text-base md:text-lg text-foreground group-hover:text-primary transition-colors">
                             {application.job?.title || 'Job Title'}
                         </h4>
-                        <Badge className={`${getStatusColor(application.status)} font-medium`}>
+                        <Badge className={`${getStatusColor(application.status)} capitalize font-medium`}>
                             <span className="flex items-center gap-1">
                                 {getStatusIcon(application.status)}
                                 {application.status.replace('_', ' ')}
@@ -55,7 +57,7 @@ export function ApplicationCard({ application, getStatusIcon, getStatusColor }: 
                 </div>
                 <Button variant="outline" size="sm" className="self-start md:self-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                     <Eye className="h-4 w-4 mr-2" />
-                    View
+                    View Job
                 </Button>
             </div>
         </Link>

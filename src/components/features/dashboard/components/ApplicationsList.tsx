@@ -10,6 +10,7 @@ import { FRONTEND_ROUTES } from '@/constants/constants';
 
 interface Application {
     id: string;
+    jobId: string;
     status: ApplicationStatus;
     appliedAt: string;
     job?: {

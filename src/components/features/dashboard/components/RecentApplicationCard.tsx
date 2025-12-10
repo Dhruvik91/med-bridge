@@ -23,7 +23,7 @@ export function RecentApplicationCard({ application, jobTitle }: RecentApplicati
                         </div>
                         <div className="flex-1">
                             <p className="font-semibold text-base md:text-lg text-foreground group-hover:text-primary transition-colors truncate">
-                                {application.candidate?.displayName || application.candidate?.fullName || 'Candidate'}
+                                {application.candidateProfile?.displayName || application.candidateProfile?.fullName || 'Candidate'}
                             </p>
                             <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                                 <Briefcase className="h-4 w-4 text-primary" />
