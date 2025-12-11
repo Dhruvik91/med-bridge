@@ -26,8 +26,11 @@ export function Applications() {
     // Fetch doctor profile
     const { data: profile, isLoading: profileLoading } = useGetDoctorProfile(user?.id || '');
 
-    // Fetch applications
-    const { data: applications = [], isLoading: applicationsLoading } = useGetApplicationsByCandidate(user?.id || '');
+    // Fetch applications (paginated)
+    const { data: applicationsData, isLoading: applicationsLoading } = useGetApplicationsByCandidate(user?.id || '');
+
+    // Derived applications array from paginated result
+    const applications = applicationsData?.items ?? [];
 
     // Filter and sort applications
     const filteredApplications = useMemo(() => {

@@ -33,15 +33,21 @@ export function ManageApplications() {
     const { data: profile, isLoading: profileLoading } = useGetEmployerProfile(user);
 
     // Fetch employer's jobs
-    const { data: jobs = [], isLoading: jobsLoading } = useGetJobsByEmployer(profile?.id || '');
+    const { data: jobsData, isLoading: jobsLoading } = useGetJobsByEmployer(profile?.id || '');
 
-    // Fetch all applications
-    const { data: allApplications = [] } = useGetApplications();
+    // Fetch all applications (paginated)
+    const { data: applicationsData } = useGetApplications();
+
+    // Derived jobs array from paginated result
+    const jobs: Job[] = (jobsData as any)?.items ?? [];
+
+    // Derived applications array from paginated result
+    const allApplications: Application[] = (applicationsData as any)?.items ?? [];
 
     // Filter applications for this employer's jobs
     const applications = useMemo(() => {
-        return (allApplications as Application[]).filter((app) =>
-            (jobs as Job[]).some((job) => job.id === app.jobId)
+        return allApplications.filter((app: Application) =>
+            jobs.some((job) => job.id === app.jobId)
         );
     }, [allApplications, jobs]);
 

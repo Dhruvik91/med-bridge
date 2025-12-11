@@ -5,3 +5,10 @@ export interface ApiResponse<T> {
     statusCode: number;
     isError: boolean;
 }
+
+export interface Paginated<T> {
+    items: T[];
+    total: number;
+    page: number;
+    limit: number;
+}

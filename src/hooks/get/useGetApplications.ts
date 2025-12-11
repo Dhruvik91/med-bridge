@@ -1,10 +1,10 @@
 import { applicationService } from "@/services/application.service";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetApplications = () => {
+export const useGetApplications = (page = 1, limit = 20) => {
     return useQuery({
-        queryKey: ['allApplications'],
-        queryFn: applicationService.findAll,
+        queryKey: ['allApplications', page, limit],
+        queryFn: () => applicationService.findAll(page, limit),
     });
 };
 

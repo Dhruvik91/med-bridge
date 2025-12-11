@@ -69,7 +69,7 @@ export const JobsManage = () => {
 
     const { data: user } = useGetMe();
     const { data: employerProfile, isLoading: isLoadingEmployerProfile } = useGetEmployerProfile(user);
-    const { data: jobs = [], isLoading } = useGetJobsByEmployer(employerProfile?.id || '');
+    const { data: jobsData, isLoading } = useGetJobsByEmployer(employerProfile?.id || '');
     const { formatSalary, getJobTypeLabel } = useJobFormatters();
     const deleteJobMutation = useDeleteJob();
 
@@ -79,6 +79,8 @@ export const JobsManage = () => {
             router.push(FRONTEND_ROUTES.JOBS.BASE);
         }
     }, [user, router]);
+
+    const jobs = jobsData?.items ?? [];
 
     const filteredJobs = useMemo(() => {
         let filtered = [...jobs];

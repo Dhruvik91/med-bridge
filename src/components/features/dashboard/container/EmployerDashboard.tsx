@@ -9,7 +9,7 @@ import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
 import { useGetJobsByEmployer } from '@/hooks/get/useGetJobsByEmployer';
 import { useGetApplications } from '@/hooks/get/useGetApplications';
-import { JobStatus, ApplicationStatus, UserRole } from '@/types';
+import { JobStatus, ApplicationStatus, UserRole, Application } from '@/types';
 import { DashboardHeader } from '../components/DashboardHeader';
 import { ProfileCompletionAlert } from '../components/ProfileCompletionAlert';
 import { StatsCard } from '../components/StatsCard';
@@ -44,10 +44,10 @@ export function EmployerDashboard() {
     const { data: profile, isLoading: profileLoading } = useGetEmployerProfile(user);
 
     // Fetch jobs
-    const { data: jobs = [], isLoading: jobsLoading } = useGetJobsByEmployer(profile?.id || '');
+    const { data: jobsData, isLoading: jobsLoading } = useGetJobsByEmployer(profile?.id || '');
 
-    // Fetch all applications for this employer
-    const { data: allApplications = [] } = useGetApplications();
+    // Fetch all applications for this employer (paginated)
+    const { data: applicationsData } = useGetApplications();
 
     useEffect(() => {
         if (user && !profileLoading && !profile) {
@@ -56,8 +56,14 @@ export function EmployerDashboard() {
         }
     }, [user, profile, profileLoading, router]);
 
+    // Derived jobs array from paginated result
+    const jobs = jobsData?.items ?? [];
+
+    // Derived applications array from paginated result
+    const allApplications: Application[] = applicationsData?.items ?? [];
+
     // Filter applications for this employer's jobs
-    const applications = allApplications.filter(app =>
+    const applications: Application[] = allApplications.filter((app: Application) =>
         jobs.some(job => job.id === app.jobId)
     );
 

@@ -1,10 +1,16 @@
 import httpService from '@/lib/http-service';
 import { SavedJob, CreateSavedJobDto } from '@/types';
 import { API_CONFIG } from '@/constants/constants';
+import { Paginated } from '@/constants/interface';
 
 export const savedJobService = {
-  async findByUser(userId: string): Promise<SavedJob[]> {
-    const response = await httpService.get<SavedJob[]>(`${API_CONFIG.path.savedJobs.byUser}/${userId}`);
+  async findByUser(userId: string, page = 1, limit = 20): Promise<Paginated<SavedJob>> {
+    const response = await httpService.get<Paginated<SavedJob>>(
+      `${API_CONFIG.path.savedJobs.byUser}/${userId}`,
+      {
+        params: { page, limit },
+      },
+    );
     return response.data;
   },
 

@@ -68,8 +68,8 @@ export const JobDetail = () => {
     const { data: user } = useGetMe();
     const { data: profile } = useGetDoctorProfile(user?.id || '');
     const { data: job, isLoading } = useGetJob(jobId);
-    const { data: savedJobs = [] } = useGetSavedJobs(user?.id || '');
-    const { data: applications = [] } = useGetApplicationsByCandidate(user?.id || '');
+    const { data: savedJobsData } = useGetSavedJobs(user?.id || '');
+    const { data: applicationsData } = useGetApplicationsByCandidate(user?.id || '');
 
     const applyMutation = useApplyToJob();
     const saveJobMutation = useSaveJob();
@@ -77,10 +77,11 @@ export const JobDetail = () => {
     const uploadMutation = useUploadFile();
 
     useEffect(() => {
+        const savedJobs = savedJobsData?.items ?? [];
         if (savedJobs && jobId) {
             setIsSaved(savedJobs.some((sj: any) => sj.jobId === jobId));
         }
-    }, [savedJobs, jobId]);
+    }, [savedJobsData, jobId]);
 
     const onSubmitApplication = async (data: ApplicationFormData) => {
         if (!user) {
@@ -148,6 +149,9 @@ export const JobDetail = () => {
         }
     };
 
+    // Derived applications array from paginated result
+    const applications = applicationsData?.items ?? [];
+
     const handleShare = () => {
         if (navigator.share) {
             navigator.share({
@@ -161,7 +165,10 @@ export const JobDetail = () => {
         }
     };
 
-    const hasApplied = useMemo(() => applications.some(app => app.jobId === jobId), [applications, jobId]);
+    const hasApplied = useMemo(
+        () => applications.some((app) => app.jobId === jobId),
+        [applications, jobId]
+    );
 
     const formatSalary = (min?: string | number, max?: string | number, currency?: string) => {
         const minNum = min ? parseFloat(min.toString()) : null;

@@ -34,10 +34,10 @@ export function CandidateDashboard() {
     const { data: profile, isLoading: profileLoading } = useGetDoctorProfile(user?.id || '');
 
     // Fetch applications
-    const { data: applications = [], isLoading: applicationsLoading } = useGetApplicationsByCandidate(user?.id || '');
+    const { data: applicationsData, isLoading: applicationsLoading } = useGetApplicationsByCandidate(user?.id || '');
 
-    // Fetch saved jobs
-    const { data: savedJobs = [], isLoading: savedJobsLoading } = useGetSavedJobs(user?.id || '');
+    // Fetch saved jobs (paginated)
+    const { data: savedJobsData, isLoading: savedJobsLoading } = useGetSavedJobs(user?.id || '');
 
     useEffect(() => {
         if (user && !profileLoading && !profile) {
@@ -45,6 +45,10 @@ export function CandidateDashboard() {
             router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE);
         }
     }, [user, profile, profileLoading, router]);
+
+    // Derived arrays from paginated results
+    const applications = applicationsData?.items ?? [];
+    const savedJobs = savedJobsData?.items ?? [];
 
     // Calculate statistics
     const stats = {

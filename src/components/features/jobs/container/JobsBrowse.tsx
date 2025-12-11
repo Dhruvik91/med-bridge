@@ -20,10 +20,12 @@ export const JobsBrowse = () => {
     const [jobType, setJobType] = useState<JobType | 'all'>('all');
 
     const { profile } = useAuth();
-    const { data: jobs = [], isLoading } = useGetJobs();
+    const { data: jobsData, isLoading } = useGetJobs();
     const { formatSalary, getJobTypeLabel, formatDate } = useJobFormatters();
 
     const filteredJobs = useMemo(() => {
+        const jobs = jobsData?.items ?? [];
+
         let filtered = jobs.filter(job => job.status === JobStatus.published);
 
         if (searchQuery) {
@@ -49,7 +51,7 @@ export const JobsBrowse = () => {
         }
 
         return filtered;
-    }, [jobs, searchQuery, location, jobType]);
+    }, [jobsData, searchQuery, location, jobType]);
 
     const handleClearFilters = useCallback(() => {
         setSearchQuery('');
