@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Briefcase, User, Users, Home, Building2, BookmarkCheck, PlusCircle, LucideIcon } from "lucide-react"
+import { Briefcase, User, Users, Home, Building2, BookmarkCheck, PlusCircle, LucideIcon, File } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/providers/auth-provider"
 import { UserRole } from "@/types"
@@ -30,6 +30,11 @@ const getCandidateNavItems = (): NavItem[] => [
   {
     href: FRONTEND_ROUTES.APPLICATIONS.BASE,
     label: "Applications",
+    icon: File,
+  },
+  {
+    href: FRONTEND_ROUTES.SAVED_JOBS,
+    label: "Saved",
     icon: BookmarkCheck,
   },
   {
@@ -46,7 +51,7 @@ const getEmployerNavItems = (): NavItem[] => [
     icon: Home,
   },
   {
-    href: FRONTEND_ROUTES.JOBS.MANAGE,
+    href: FRONTEND_ROUTES.JOBS.BASE,
     label: "Jobs",
     icon: Briefcase,
   },
@@ -56,9 +61,9 @@ const getEmployerNavItems = (): NavItem[] => [
     icon: PlusCircle,
   },
   {
-    href: FRONTEND_ROUTES.APPLICATIONS.BASE,
-    label: "Applications",
-    icon: Users,
+    href: FRONTEND_ROUTES.JOBS.MANAGE,
+    label: "Manage",
+    icon: Briefcase,
   },
   {
     href: FRONTEND_ROUTES.PROFILE.BASE,
@@ -78,14 +83,14 @@ export function MobileBottomNav() {
   // Determine navigation items based on user role
   const getNavItems = () => {
     const role = user.role
-    
+
     // Map both role systems: doctor/hospital and candidate/employer
     if (role === UserRole.candidate) {
       return getCandidateNavItems()
     } else if (role === UserRole.employer) {
       return getEmployerNavItems()
     }
-    
+
     // Default to candidate navigation for admin or unknown roles
     return getCandidateNavItems()
   }
@@ -97,7 +102,7 @@ export function MobileBottomNav() {
       <div className="mx-auto flex max-w-md items-center justify-between px-4 py-2">
         {items.map((item) => {
           const Icon = item.icon
-          const active = pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href))
+          const active = pathname === item.href
 
           return (
             <Link

@@ -22,12 +22,14 @@ export const useSavedJobs = () => {
     updatedAt: profile.updatedAt,
   } : undefined;
 
-  // Fetch saved jobs
-  const { data: savedJobs = [], isLoading: savedJobsLoading } = useQuery({
+  // Fetch saved jobs (paginated) and unwrap items
+  const { data: savedJobsData, isLoading: savedJobsLoading } = useQuery({
     queryKey: ['savedJobs', user?.id],
     queryFn: () => savedJobService.findByUser(user!.id),
     enabled: !!user?.id,
   });
+
+  const savedJobs = savedJobsData?.items ?? [];
 
   // Unsave job mutation
   const unsaveJobMutation = useMutation({
@@ -42,8 +44,8 @@ export const useSavedJobs = () => {
     },
     onError: (error: any) => {
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to remove saved job',
+        title: error.response?.data?.message[0] || 'Failed to remove saved job',
+        description: error.response?.data?.message || 'Failed to remove saved job',
         variant: 'destructive',
       });
       setDeletingJobId(null);

@@ -1,20 +1,14 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { FRONTEND_ROUTES } from '@/constants/constants';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { 
-  Stethoscope, 
-  Users, 
-  Briefcase, 
-  Shield, 
-  Search,
-  MapPin,
+import {
+  Stethoscope,
+  Users,
+  Briefcase,
+  Shield,
   Clock,
   Star,
   ArrowRight,
@@ -27,17 +21,6 @@ import {
 } from 'lucide-react';
 
 export default function HomePage() {
-  const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [location, setLocation] = useState('');
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const params = new URLSearchParams();
-    if (searchQuery) params.set('q', searchQuery);
-    if (location) params.set('location', location);
-    router.push(`${FRONTEND_ROUTES.JOBS}?${params.toString()}`);
-  };
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-background via-secondary/10 to-primary/5">
@@ -48,64 +31,21 @@ export default function HomePage() {
             <TrendingUp className="mr-1 h-3 w-3" aria-hidden="true" />
             Trusted by 10,000+ Healthcare Professionals
           </Badge>
-          
+
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
             Connecting Healthcare
             <span className="text-primary block mt-2">Professionals</span>
           </h1>
-          
+
           <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-            The trusted marketplace where qualified doctors find their next opportunity 
+            The trusted marketplace where qualified doctors find their next opportunity
             and hospitals discover exceptional medical talent.
           </p>
-          
-          {/* Search Bar */}
-          <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4 max-w-3xl mx-auto mb-12">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" aria-hidden="true" />
-              <Input
-                type="text"
-                placeholder="Job title, specialty, or keyword"
-                className="pl-12 h-14 text-base"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                aria-label="Search jobs by title, specialty, or keyword"
-              />
-            </div>
-            <div className="relative flex-1">
-              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" aria-hidden="true" />
-              <Input
-                type="text"
-                placeholder="City, state, or zip code"
-                className="pl-12 h-14 text-base"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                aria-label="Location"
-              />
-            </div>
-            <Button type="submit" size="lg" className="h-14 px-8 text-base">
-              Search Jobs
-            </Button>
-          </form>
-
-          {/* Quick Links */}
-          <div className="flex flex-wrap justify-center gap-3 text-sm">
-            <span className="text-muted-foreground">Popular:</span>
-            {['Cardiology', 'Emergency Medicine', 'Pediatrics', 'Surgery'].map((specialty) => (
-              <Link
-                key={specialty}
-                href={`/jobs?specialty=${encodeURIComponent(specialty)}`}
-                className="text-primary hover:underline font-medium"
-              >
-                {specialty}
-              </Link>
-            ))}
-          </div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="container mx-auto px-4 py-16" aria-labelledby="stats-heading">
+      {/* <section className="container mx-auto px-4 py-16" aria-labelledby="stats-heading">
         <h2 id="stats-heading" className="sr-only">Platform Statistics</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
           {[
@@ -121,7 +61,7 @@ export default function HomePage() {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* Features Section */}
       <section className="container mx-auto px-4 py-20" aria-labelledby="features-heading">
@@ -305,9 +245,6 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" variant="secondary" className="text-base">
               <Link href="/auth/signup">Get Started Free</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="text-base border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
-              <Link href="/jobs">Browse Jobs</Link>
             </Button>
           </div>
         </div>

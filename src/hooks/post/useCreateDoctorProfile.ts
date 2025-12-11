@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { doctorProfileService } from '@/services/doctor-profile.service';
 import { useToast } from '@/hooks/use-toast';
 import { CreateDoctorProfileDto } from '@/types';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 
 export const useCreateDoctorProfile = () => {
   const router = useRouter();
@@ -18,11 +19,11 @@ export const useCreateDoctorProfile = () => {
         title: 'Profile created',
         description: 'Your doctor profile has been created successfully.',
       });
-      router.push('/dashboard/candidate');
+      router.push(FRONTEND_ROUTES.DASHBOARD.CANDIDATE);
     },
     onError: () => {
       toast({
-        title: 'Error',
+        title: 'Failed to create doctor profile.',
         description: 'Failed to create doctor profile.',
         variant: 'destructive',
       });

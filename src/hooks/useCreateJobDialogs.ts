@@ -15,9 +15,15 @@ interface NewLocationForm {
   postalCode: string;
 }
 
+interface NewSpecialtyForm {
+  name: string;
+  description: string;
+}
+
 export const useCreateJobDialogs = () => {
   const [showOrgDialog, setShowOrgDialog] = useState(false);
   const [showLocationDialog, setShowLocationDialog] = useState(false);
+  const [showSpecialtyDialog, setShowSpecialtyDialog] = useState(false);
   
   const [newOrg, setNewOrg] = useState<NewOrganizationForm>({
     name: '',
@@ -32,6 +38,11 @@ export const useCreateJobDialogs = () => {
     state: '',
     country: '',
     postalCode: '',
+  });
+
+  const [newSpecialty, setNewSpecialty] = useState<NewSpecialtyForm>({
+    name: '',
+    description: '',
   });
 
   const resetOrgForm = () => {
@@ -49,6 +60,10 @@ export const useCreateJobDialogs = () => {
     });
   };
 
+  const resetSpecialtyForm = () => {
+    setNewSpecialty({ name: '', description: '' });
+  };
+
   const openOrgDialog = () => setShowOrgDialog(true);
   const closeOrgDialog = () => {
     setShowOrgDialog(false);
@@ -59,6 +74,12 @@ export const useCreateJobDialogs = () => {
   const closeLocationDialog = () => {
     setShowLocationDialog(false);
     resetLocationForm();
+  };
+
+  const openSpecialtyDialog = () => setShowSpecialtyDialog(true);
+  const closeSpecialtyDialog = () => {
+    setShowSpecialtyDialog(false);
+    resetSpecialtyForm();
   };
 
   return {
@@ -77,5 +98,13 @@ export const useCreateJobDialogs = () => {
     openLocationDialog,
     closeLocationDialog,
     resetLocationForm,
+
+    // Specialty dialog
+    showSpecialtyDialog,
+    newSpecialty,
+    setNewSpecialty,
+    openSpecialtyDialog,
+    closeSpecialtyDialog,
+    resetSpecialtyForm,
   };
 };

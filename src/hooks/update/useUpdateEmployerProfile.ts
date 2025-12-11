@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { employerProfileService } from '@/services/employer-profile.service';
 import { useToast } from '@/hooks/use-toast';
 import { UpdateEmployerProfileDto } from '@/types';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 
 export const useUpdateEmployerProfile = (profileId: string) => {
   const router = useRouter();
@@ -18,7 +19,7 @@ export const useUpdateEmployerProfile = (profileId: string) => {
         title: 'Profile updated',
         description: 'Your employer profile has been updated successfully.',
       });
-      router.push('/profile');
+      router.push(FRONTEND_ROUTES.PROFILE.BASE);
     },
     onError: () => {
       toast({

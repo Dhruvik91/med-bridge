@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { ThemeProvider } from '@/providers/theme-provider'
 import { AuthProvider } from '@/providers/auth-provider'
-import { Toaster } from '@/components/ui/toaster'
 import { QueryProvider } from '@/providers/query-provider'
 import { AppShell } from '@/components/app-shell'
 
@@ -91,14 +90,13 @@ export default function RootLayout({
           <AuthProvider>
             <ThemeProvider
               attribute="class"
-              defaultTheme="light"
+              defaultTheme="dark"
               enableSystem
               disableTransitionOnChange={false}
             >
               <AppShell>
                 {children}
               </AppShell>
-              <Toaster />
             </ThemeProvider>
           </AuthProvider>
         </QueryProvider>

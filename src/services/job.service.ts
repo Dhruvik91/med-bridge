@@ -1,10 +1,13 @@
 import httpService from '@/lib/http-service';
 import { Job, CreateJobDto, UpdateJobDto } from '@/types';
 import { API_CONFIG } from '@/constants/constants';
+import { Paginated } from '@/constants/interface';
 
 export const jobService = { 
-  async findAll(): Promise<Job[]> {
-    const response = await httpService.get<Job[]>(API_CONFIG.path.jobs.base);
+  async findAll(page = 1, limit = 20): Promise<Paginated<Job>> {
+    const response = await httpService.get<Paginated<Job>>(API_CONFIG.path.jobs.base, {
+      params: { page, limit },
+    });
     return response.data;
   },
 
@@ -13,18 +16,24 @@ export const jobService = {
     return response.data;
   },
 
-  async findByEmployer(employerProfileId: string): Promise<Job[]> {
-    const response = await httpService.get<Job[]>(`${API_CONFIG.path.jobs.byEmployer}/${employerProfileId}`);
+  async findByEmployer(employerProfileId: string, page = 1, limit = 20): Promise<Paginated<Job>> {
+    const response = await httpService.get<Paginated<Job>>(`${API_CONFIG.path.jobs.byEmployer}/${employerProfileId}`, {
+      params: { page, limit },
+    });
     return response.data;
   },
 
-  async findByOrganization(organizationId: string): Promise<Job[]> {  
-    const response = await httpService.get<Job[]>(`${API_CONFIG.path.jobs.byOrganization}/${organizationId}`);
+  async findByOrganization(organizationId: string, page = 1, limit = 20): Promise<Paginated<Job>> {  
+    const response = await httpService.get<Paginated<Job>>(`${API_CONFIG.path.jobs.byOrganization}/${organizationId}`, {
+      params: { page, limit },
+    });
     return response.data;
   },
 
-  async findByLocation(locationId: string): Promise<Job[]> {
-    const response = await httpService.get<Job[]>(`${API_CONFIG.path.jobs.byLocation}/${locationId}`);
+  async findByLocation(locationId: string, page = 1, limit = 20): Promise<Paginated<Job>> {
+    const response = await httpService.get<Paginated<Job>>(`${API_CONFIG.path.jobs.byLocation}/${locationId}`, {
+      params: { page, limit },
+    });
     return response.data;
   },
 

@@ -16,7 +16,7 @@ export const useUpdateApplication = (applicationId: string) => {
       queryClient.invalidateQueries({ queryKey: ['allApplications'] });
       queryClient.invalidateQueries({ queryKey: ['candidateApplications'] });
       queryClient.invalidateQueries({ queryKey: ['employerApplications'] });
-      
+
       toast({
         title: 'Application updated successfully',
         description: 'The application status has been updated.',
@@ -24,7 +24,7 @@ export const useUpdateApplication = (applicationId: string) => {
     },
     onError: (error: any) => {
       toast({
-        title: 'Update failed',
+        title: error.response?.data?.message[0] || 'Failed to update application',
         description: error.response?.data?.message || 'Failed to update application',
         variant: 'destructive',
       });

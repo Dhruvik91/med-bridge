@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { doctorProfileService } from '@/services/doctor-profile.service';
 import { useToast } from '@/hooks/use-toast';
 import { UpdateDoctorProfileDto } from '@/types';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 
 export const useUpdateDoctorProfile = (profileId: string) => {
   const router = useRouter();
@@ -18,12 +19,12 @@ export const useUpdateDoctorProfile = (profileId: string) => {
         title: 'Profile updated',
         description: 'Your doctor profile has been updated successfully.',
       });
-      router.push('/profile');
+      router.push(FRONTEND_ROUTES.PROFILE.BASE);
     },
-    onError: () => {
+    onError: (error: any) => {
       toast({
-        title: 'Error',
-        description: 'Failed to update doctor profile.',
+        title: error.response?.data?.message[0] || 'Failed to update doctor profile.',
+        description: error.response?.data?.message || 'Failed to update doctor profile.',
         variant: 'destructive',
       });
     },

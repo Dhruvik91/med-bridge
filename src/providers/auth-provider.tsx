@@ -218,9 +218,11 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
       setProfile( mapped.profile );
 
       // Redirect to profile completion after successful signup
-      if ( role === UserRole.candidate ) {
+      if ( role === UserRole.candidate )
+      {
         router.push( FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE );
-      } else {
+      } else
+      {
         router.push( FRONTEND_ROUTES.PROFILE.EMPLOYER.COMPLETE );
       }
     } finally
@@ -231,6 +233,7 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
 
   const signOut = async () =>
   {
+    router.push( FRONTEND_ROUTES.AUTH.LOGIN );
     if ( typeof window !== 'undefined' )
     {
       window.localStorage.removeItem( AUTH_TOKEN_KEY );
@@ -243,13 +246,13 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
   {
     if ( typeof window === 'undefined' ) return;
 
-    window.location.href = `${API_CONFIG.baseUrl}${API_CONFIG.path.userAuth.googleLogin}`;
+    window.location.href = `${ API_CONFIG.baseUrl }${ API_CONFIG.path.userAuth.googleLogin }`;
   };
 
   const refreshUser = async () =>
   {
     if ( typeof window === 'undefined' ) return;
-    
+
     const storedToken = window.localStorage.getItem( AUTH_TOKEN_KEY );
     await loadUserFromToken( storedToken );
   };

@@ -13,19 +13,18 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
-import { 
-  Stethoscope, 
-  User, 
-  Settings, 
-  LogOut,
-  Briefcase,
-  MessageSquare,
-  Bell
+import {
+  Stethoscope,
+  User,
+  LogOut
 } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
 import { getDashboardRoute } from '@/lib/dashboard-routes'
+import { UserRole } from '@/types'
+import { FRONTEND_ROUTES } from '@/constants/constants'
 
 export function Navigation() {
-  const { user, profile, signOut } = useAuth()
+  const { user, profile, signOut, loading } = useAuth()
   const logoHref = user ? getDashboardRoute(profile?.role || null) : '/'
 
   const handleSignOut = async () => {
@@ -47,24 +46,53 @@ export function Navigation() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center justify-between flex-1 ml-8">
-            {user ? (
+          <div className="hidden md:flex items-center justify-end flex-1 ml-8">
+            {loading ? (
               <>
-                {/* Logged-in nav links (MVP: only Jobs) */}
                 <div className="flex items-center space-x-6">
-                  <Link href="/jobs" className="text-foreground hover:text-primary transition-colors">
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-4 w-20" />
+                </div>
+                <div className="flex items-center space-x-4">
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                </div>
+              </>
+            ) : user ? (
+              <>
+                {/* Logged-in nav links - Role-based navigation */}
+                <div className="flex items-center space-x-6">
+                  {/* Dashboard - Available to all roles */}
+                  <Link
+                    href={getDashboardRoute(profile?.role || null)}
+                    className="text-foreground hover:text-primary transition-colors"
+                  >
+                    Dashboard
+                  </Link>
+
+                  {/* Jobs - Available to all roles */}
+                  <Link href={FRONTEND_ROUTES.JOBS.BASE} className="text-foreground hover:text-primary transition-colors">
                     Jobs
                   </Link>
-                  {/**
-                   * MVP: hide Doctors and Hospitals navigation links for now
-                   *
-                   * <Link href="/doctors" className="text-foreground hover:text-primary transition-colors">
-                   *   Doctors
-                   * </Link>
-                   * <Link href="/hospitals" className="text-foreground hover:text-primary transition-colors">
-                   *   Hospitals
-                   * </Link>
-                   */}
+
+                  {/* Employer-specific navigation */}
+                  {(profile?.role === UserRole.employer || profile?.role === UserRole.admin) && (
+                    <Link href={FRONTEND_ROUTES.JOBS.MANAGE} className="text-foreground hover:text-primary transition-colors">
+                      Manage Jobs
+                    </Link>
+                  )}
+
+                  {/* Candidate-specific navigation */}
+                  {(profile?.role === UserRole.candidate || profile?.role === UserRole.admin) && (
+                    <>
+                      <Link href={FRONTEND_ROUTES.APPLICATIONS.BASE} className="text-foreground hover:text-primary transition-colors">
+                        Applications
+                      </Link>
+                      <Link href={FRONTEND_ROUTES.SAVED_JOBS} className="text-foreground hover:text-primary transition-colors">
+                        Saved Jobs
+                      </Link>
+                    </>
+                  )}
                 </div>
 
                 {/* Logged-in actions (MVP: only Profile + Sign out) */}
@@ -91,9 +119,9 @@ export function Navigation() {
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={undefined} alt={profile?.name || user.email || ''} />
+                          <AvatarImage src={(profile?.metadata as any)?.avatarUrl as string | undefined} alt={(profile?.metadata as any)?.name || user.email || ''} />
                           <AvatarFallback>
-                            {profile?.name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                            {(profile?.metadata as any)?.name?.charAt(0) || user.email?.charAt(0) || 'U'}
                           </AvatarFallback>
                         </Avatar>
                       </Button>
@@ -102,7 +130,7 @@ export function Navigation() {
                       <DropdownMenuLabel className="font-normal">
                         <div className="flex flex-col space-y-1">
                           <p className="text-sm font-medium leading-none">
-                            {profile?.name || 'User'}
+                            {(profile?.metadata as any)?.name || 'User'}
                           </p>
                           <p className="text-xs leading-none text-muted-foreground">
                             {user.email}
@@ -115,7 +143,7 @@ export function Navigation() {
                       <DropdownMenuSeparator />
                       {/* MVP: keep Profile entry */}
                       <DropdownMenuItem asChild>
-                        <Link href="/profile" className="flex items-center">
+                        <Link href={FRONTEND_ROUTES.PROFILE.BASE} className="flex items-center">
                           <User className="mr-2 h-4 w-4" />
                           Profile
                         </Link>
@@ -149,22 +177,12 @@ export function Navigation() {
               </>
             ) : (
               <>
-                {/* General (logged-out) nav links */}
-                <div className="flex items-center space-x-6">
-                  <Link href="/doctors" className="text-foreground hover:text-primary transition-colors">
-                    Doctors
-                  </Link>
-                  <Link href="/hospitals" className="text-foreground hover:text-primary transition-colors">
-                    Hospitals
-                  </Link>
-                </div>
-
                 {/* Auth actions */}
                 <div className="flex items-center space-x-2">
-                  <Link href="/auth/login">
+                  <Link href={FRONTEND_ROUTES.AUTH.LOGIN}>
                     <Button variant="ghost">Sign In</Button>
                   </Link>
-                  <Link href="/auth/signup">
+                  <Link href={FRONTEND_ROUTES.AUTH.SIGNUP}>
                     <Button>Get Started</Button>
                   </Link>
                 </div>

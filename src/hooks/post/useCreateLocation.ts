@@ -25,7 +25,7 @@ export const useCreateLocation = ({ onSuccess, onDialogClose }: UseCreateLocatio
     },
     onError: () => {
       toast({
-        title: 'Error',
+        title: 'Failed to create location.',
         description: 'Failed to create location.',
         variant: 'destructive',
       });

@@ -1,17 +1,17 @@
 import { applicationService } from "@/services/application.service";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetApplications = () => {
+export const useGetApplications = (page = 1, limit = 20) => {
     return useQuery({
-        queryKey: ['allApplications'],
-        queryFn: applicationService.findAll,
+        queryKey: ['allApplications', page, limit],
+        queryFn: () => applicationService.findAll(page, limit),
     });
 };
 
-export const useGetApplicationsByCandidate = (candidateProfileId: string) => {
+export const useGetApplicationsByCandidate = (candidateId: string) => {
     return useQuery({
-        queryKey: ['candidateApplications', candidateProfileId],
-        queryFn: () => applicationService.findByCandidate(candidateProfileId),
-        enabled: !!candidateProfileId,
+        queryKey: ['candidateApplications', candidateId],
+        queryFn: () => applicationService.findByCandidate(candidateId),
+        enabled: !!candidateId,
     });
 };
