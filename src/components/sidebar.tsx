@@ -16,7 +16,6 @@ import {
     User,
     LogOut,
     LucideIcon,
-    User2Icon,
     File
 } from 'lucide-react'
 import {
@@ -99,6 +98,12 @@ export function Sidebar({ className, ...props }: SidebarProps) {
     const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false)
 
     if (loading || !user) return null
+
+    const isProfileCompletionPage =
+        pathname?.startsWith(FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE) ||
+        pathname?.startsWith(FRONTEND_ROUTES.PROFILE.EMPLOYER.COMPLETE)
+
+    if (isProfileCompletionPage) return null
 
     const items = getNavItems(user.role)
     const dashboardRoute = getDashboardRoute(profile?.role || null)

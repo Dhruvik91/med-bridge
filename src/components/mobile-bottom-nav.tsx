@@ -80,6 +80,12 @@ export function MobileBottomNav() {
     return null
   }
 
+  const isProfileCompletionPage =
+    pathname?.startsWith(FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE) ||
+    pathname?.startsWith(FRONTEND_ROUTES.PROFILE.EMPLOYER.COMPLETE)
+
+  if (isProfileCompletionPage) return null
+
   // Determine navigation items based on user role
   const getNavItems = () => {
     const role = user.role
