@@ -1,10 +1,13 @@
 import httpService from '@/lib/http-service';
 import { Specialty, CreateSpecialtyDto, UpdateSpecialtyDto } from '@/types';
 import { API_CONFIG } from '@/constants/constants';
+import { Paginated } from '@/constants/interface';
 
 export const specialtyService = {
-  async findAll(): Promise<Specialty[]> {
-    const response = await httpService.get<Specialty[]>(API_CONFIG.path.specialties.base);
+  async findAll(page = 1, limit = 100): Promise<Paginated<Specialty>> {
+    const response = await httpService.get<Paginated<Specialty>>(API_CONFIG.path.specialties.base, {
+      params: { page, limit },
+    });
     return response.data;
   },
 

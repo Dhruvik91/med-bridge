@@ -35,7 +35,7 @@ export function ApplicationCard({ application, getStatusIcon, getStatusColor }: 
         >
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                 <div className="flex-1 min-w-0">
-                    <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3 mb-3">
+                    <div className="flex flex-row sm:items-start gap-2 sm:gap-3 mb-3">
                         <h4 className="font-semibold text-base md:text-lg text-foreground group-hover:text-primary transition-colors">
                             {application.job?.title || 'Job Title'}
                         </h4>

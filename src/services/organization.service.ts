@@ -1,6 +1,7 @@
 import httpService from '@/lib/http-service';
 import { Organization, CreateOrganizationDto, UpdateOrganizationDto } from '@/types';
 import { API_CONFIG } from '@/constants/constants';
+import { Paginated } from '@/constants/interface';
 
 export const organizationService = {
   async findAll(): Promise<Organization[]> {
@@ -13,8 +14,17 @@ export const organizationService = {
     return response.data;
   },
 
-  async findByEmployer(employerProfileId: string): Promise<Organization[]> {
-    const response = await httpService.get<Organization[]>(`${API_CONFIG.path.organizations.byEmployer}/${employerProfileId}`);
+  async findByEmployer(
+    employerProfileId: string,
+    page = 1,
+    limit = 20,
+  ): Promise<Paginated<Organization>> {
+    const response = await httpService.get<Paginated<Organization>>(
+      `${API_CONFIG.path.organizations.byEmployer}/${employerProfileId}`,
+      {
+        params: { page, limit },
+      },
+    );
     return response.data;
   },
 

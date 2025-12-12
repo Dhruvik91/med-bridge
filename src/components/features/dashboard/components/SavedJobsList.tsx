@@ -62,11 +62,20 @@ export function SavedJobsList({ savedJobs, isLoading }: SavedJobsListProps) {
                         actionHref={FRONTEND_ROUTES.JOBS.BASE}
                     />
                 ) : (
-                    <div className="space-y-4 h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                        {savedJobs.map((savedJob) => (
-                            <SavedJobCard key={savedJob.id} savedJob={savedJob} />
-                        ))}
-                    </div>
+                    <>
+                        <div className="-mx-4 mb-4 flex gap-4 overflow-x-auto px-4 pb-2 md:hidden">
+                            {savedJobs.map((savedJob) => (
+                                <div key={savedJob.id} className="w-72 flex-shrink-0">
+                                    <SavedJobCard savedJob={savedJob} />
+                                </div>
+                            ))}
+                        </div>
+                        <div className="hidden md:block space-y-4 h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                            {savedJobs.map((savedJob) => (
+                                <SavedJobCard key={savedJob.id} savedJob={savedJob} />
+                            ))}
+                        </div>
+                    </>
                 )}
             </CardContent>
         </Card>

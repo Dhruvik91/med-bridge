@@ -1,11 +1,20 @@
 import httpService from '@/lib/http-service';
 import { Location, CreateLocationDto, UpdateLocationDto } from '@/types';
 import { API_CONFIG } from '@/constants/constants';
+import { Paginated } from '@/constants/interface';
 
 export const locationService = {
-  async findAll(city?: string): Promise<Location[]> {
-    const url = city ? `${API_CONFIG.path.locations}?city=${encodeURIComponent(city)}` : API_CONFIG.path.locations;
-    const response = await httpService.get<Location[]>(url);
+  async findAll(city?: string, page = 1, limit = 20): Promise<Paginated<Location>> {
+    const params: Record<string, string | number> = { page, limit };
+
+    if (city) {
+      params.city = city;
+    }
+
+    const response = await httpService.get<Paginated<Location>>(API_CONFIG.path.locations, {
+      params,
+    });
+
     return response.data;
   },
 

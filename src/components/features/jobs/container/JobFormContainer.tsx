@@ -26,7 +26,7 @@ import { useCreateJobDialogs } from '@/hooks/useCreateJobDialogs';
 import { useJobForm, JobFormData } from '@/hooks/useJobForm';
 import { useJobEditForm } from '@/hooks/useJobEditForm';
 import { useEmployerRoleCheck } from '@/hooks/useEmployerRoleCheck';
-import { JobType, JobStatus, Job, CreateJobDto } from '@/types';
+import { JobType, JobStatus, Job, CreateJobDto, Organization } from '@/types';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 import { NotAuthorizedUser } from '@/components/NotAuthorized';
 import { ProgressIndicator } from '../components/ProgressIndicator';
@@ -55,8 +55,10 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
     const { data: employerProfile } = useGetEmployerProfile(user);
 
     const { data: organizations = [] } = useGetOrganizations(employerProfile?.id);
+    console.log("Organizations:", organizations);
     const { data: locations = [] } = useGetLocations();
-    const { data: specialties = [] } = useGetSpecialties();
+    const { data: specialtiesData} = useGetSpecialties();
+    const specialties = specialtiesData?.items ?? [];
 
     const { selectedSpecialties, addSpecialty, removeSpecialty, setSelectedSpecialties } = useSpecialtySelection();
 
@@ -362,7 +364,7 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                                 <SelectValue placeholder="Select organization" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {organizations.map((org: any) => (
+                                                {organizations?.map((org: Organization) => (
                                                     <SelectItem key={org.id} value={org.id}>
                                                         {org.name}
                                                     </SelectItem>
@@ -392,7 +394,7 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                                 <SelectValue placeholder="Select location" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {locations.map((loc: any) => (
+                                                {locations?.map((loc: any) => (
                                                     <SelectItem key={loc.id} value={loc.id}>
                                                         {loc.city}, {loc.country}
                                                     </SelectItem>

@@ -66,16 +66,29 @@ export function ApplicationsList({ applications, isLoading, getStatusIcon, getSt
                         actionHref={FRONTEND_ROUTES.JOBS.BASE}
                     />
                 ) : (
-                    <div className="space-y-4 h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                        {applications.map((application) => (
-                            <ApplicationCard
-                                key={application.id}
-                                application={application}
-                                getStatusIcon={getStatusIcon}
-                                getStatusColor={getStatusColor}
-                            />
-                        ))}
-                    </div>
+                    <>
+                        <div className="-mx-4 mb-4 flex gap-4 overflow-x-auto px-4 pb-2 md:hidden">
+                            {applications.map((application) => (
+                                <div key={application.id} className="w-72 flex-shrink-0">
+                                    <ApplicationCard
+                                        application={application}
+                                        getStatusIcon={getStatusIcon}
+                                        getStatusColor={getStatusColor}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                        <div className="hidden md:block space-y-4 h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                            {applications.map((application) => (
+                                <ApplicationCard
+                                    key={application.id}
+                                    application={application}
+                                    getStatusIcon={getStatusIcon}
+                                    getStatusColor={getStatusColor}
+                                />
+                            ))}
+                        </div>
+                    </>
                 )}
             </CardContent>
         </Card>
