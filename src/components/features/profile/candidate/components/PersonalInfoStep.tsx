@@ -1,16 +1,39 @@
+import * as React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { Button } from '@/components/ui/button';
+import { Calendar as CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
 import { Gender } from '@/types';
-import { UseFormRegister, FieldErrors, UseFormSetValue } from 'react-hook-form';
+import { UseFormRegister, FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 
 interface PersonalInfoStepProps {
     register: UseFormRegister<any>;
     errors: FieldErrors<any>;
     setValue: UseFormSetValue<any>;
+    watch: UseFormWatch<any>;
 }
 
-export function PersonalInfoStep({ register, errors, setValue }: PersonalInfoStepProps) {
+export function PersonalInfoStep({ register, errors, setValue, watch }: PersonalInfoStepProps) {
+    const [dateOfBirth, setDateOfBirth] = React.useState<Date | undefined>(undefined);
+
+    const watchedDob = watch('dateOfBirth');
+
+    React.useEffect(() => {
+        if (!watchedDob) {
+            setDateOfBirth(undefined);
+            return;
+        }
+
+        const parsed = new Date(watchedDob + 'T00:00:00');
+        if (!isNaN(parsed.getTime())) {
+            setDateOfBirth(parsed);
+        }
+    }, [watchedDob]);
+
     return (
         <>
             <div className="grid md:grid-cols-2 gap-4">
@@ -40,6 +63,18 @@ export function PersonalInfoStep({ register, errors, setValue }: PersonalInfoSte
             </div>
 
             <div className="space-y-2">
+                <Label htmlFor="displayName">Display Name</Label>
+                <Input
+                    id="displayName"
+                    {...register('displayName')}
+                    aria-invalid={!!errors.displayName}
+                />
+                {errors.displayName && (
+                    <p className="text-sm text-destructive">{errors.displayName.message as string}</p>
+                )}
+            </div>
+
+            <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number *</Label>
                 <Input
                     id="phone"
@@ -55,11 +90,31 @@ export function PersonalInfoStep({ register, errors, setValue }: PersonalInfoSte
 
             <div className="space-y-2">
                 <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                <Input
-                    id="dateOfBirth"
-                    type="date"
-                    {...register('dateOfBirth')}
-                />
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="w-full justify-start text-left font-normal"
+                        >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            <span>{dateOfBirth ? format(dateOfBirth, 'PPP') : 'Pick a date'}</span>
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                            mode="single"
+                            selected={dateOfBirth}
+                            onSelect={(date) => {
+                                setDateOfBirth(date);
+                                if (!date) return;
+                                const iso = date.toISOString().split('T')[0];
+                                setValue('dateOfBirth', iso, { shouldValidate: true });
+                            }}
+                        />
+                    </PopoverContent>
+                </Popover>
+                <input type="hidden" id="dateOfBirth" {...register('dateOfBirth')} />
             </div>
 
             <div className="space-y-2">
