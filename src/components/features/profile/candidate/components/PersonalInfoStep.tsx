@@ -2,11 +2,7 @@ import * as React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
-import { Calendar as CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
 import { Gender } from '@/types';
 import { UseFormRegister, FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 
@@ -89,32 +85,75 @@ export function PersonalInfoStep({ register, errors, setValue, watch }: Personal
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            className="w-full justify-start text-left font-normal"
-                        >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            <span>{dateOfBirth ? format(dateOfBirth, 'PPP') : 'Pick a date'}</span>
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                            mode="single"
-                            selected={dateOfBirth}
-                            onSelect={(date) => {
-                                setDateOfBirth(date);
-                                if (!date) return;
-                                const iso = date.toISOString().split('T')[0];
-                                setValue('dateOfBirth', iso, { shouldValidate: true });
-                            }}
-                        />
-                    </PopoverContent>
-                </Popover>
-                <input type="hidden" id="dateOfBirth" {...register('dateOfBirth')} />
+                <Label>Date of Birth</Label>
+                <div className="grid grid-cols-3 gap-2">
+                    <Select
+                        value={dateOfBirth ? dateOfBirth.getMonth().toString() : undefined}
+                        onValueChange={(value) => {
+                            const newDate = dateOfBirth ? new Date(dateOfBirth) : new Date();
+                            newDate.setMonth(parseInt(value));
+                            setDateOfBirth(newDate);
+                            const iso = newDate.toISOString().split('T')[0];
+                            setValue('dateOfBirth', iso, { shouldValidate: true });
+                        }}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Month" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Array.from({ length: 12 }, (_, i) => (
+                                <SelectItem key={i} value={i.toString()}>
+                                    {new Date(0, i).toLocaleString('default', { month: 'long' })}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    <Select
+                        value={dateOfBirth ? dateOfBirth.getFullYear().toString() : undefined}
+                        onValueChange={(value) => {
+                            const newDate = dateOfBirth ? new Date(dateOfBirth) : new Date();
+                            newDate.setFullYear(parseInt(value));
+                            setDateOfBirth(newDate);
+                            const iso = newDate.toISOString().split('T')[0];
+                            setValue('dateOfBirth', iso, { shouldValidate: true });
+                        }}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Year" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map((year) => (
+                                <SelectItem key={year} value={year.toString()}>
+                                    {year}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    <Select
+                        value={dateOfBirth ? dateOfBirth.getDate().toString() : undefined}
+                        onValueChange={(value) => {
+                            const newDate = dateOfBirth ? new Date(dateOfBirth) : new Date();
+                            newDate.setDate(parseInt(value));
+                            setDateOfBirth(newDate);
+                            const iso = newDate.toISOString().split('T')[0];
+                            setValue('dateOfBirth', iso, { shouldValidate: true });
+                        }}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Day" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
+                                <SelectItem key={day} value={day.toString()}>
+                                    {day}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+                <input type="hidden" {...register('dateOfBirth')} />
             </div>
 
             <div className="space-y-2">
