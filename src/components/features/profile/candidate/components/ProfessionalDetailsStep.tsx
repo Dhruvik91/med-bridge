@@ -29,7 +29,12 @@ interface ProfessionalDetailsStepProps {
     onCloseModal: () => void;
 }
 
+import { useState } from 'react';
+
 export function ProfessionalDetailsStep({ register, errors, watch, specialties, selectedSpecialties, onAddSpecialty, onRemoveSpecialty, socialLinks, onSocialLinksChange, onAvatarFileSelected, onResumeFileSelected, avatarUploading, resumeUploading, isModalOpen, onOpenModal, onCloseModal }: ProfessionalDetailsStepProps) {
+    const [newLinkLabel, setNewLinkLabel] = useState('');
+    const [newLinkUrl, setNewLinkUrl] = useState('');
+
     const availableSpecialties = specialties.filter(
         (spec) => !selectedSpecialties.some((selected) => selected.id === spec.id)
     );
@@ -128,8 +133,8 @@ export function ProfessionalDetailsStep({ register, errors, watch, specialties, 
                             <span className="text-xs text-muted-foreground">LinkedIn</span>
                             <Input
                                 placeholder="https://linkedin.com/in/your-profile"
-                                defaultValue={socialLinks.linkedin || ''}
-                                onBlur={(e) => {
+                                value={socialLinks.linkedin || ''}
+                                onChange={(e) => {
                                     const value = e.target.value.trim();
                                     const next = { ...socialLinks };
                                     if (value) {
@@ -149,26 +154,28 @@ export function ProfessionalDetailsStep({ register, errors, watch, specialties, 
                             <Input
                                 placeholder="Label (e.g. Portfolio)"
                                 id="socialLabelTemp"
+                                value={newLinkLabel}
+                                onChange={(e) => setNewLinkLabel(e.target.value)}
                             />
                             <Input
                                 placeholder="https://..."
                                 id="socialUrlTemp"
+                                value={newLinkUrl}
+                                onChange={(e) => setNewLinkUrl(e.target.value)}
                             />
                             <Button
                                 type="button"
                                 variant="outline"
                                 size="icon"
                                 onClick={() => {
-                                    const labelInput = document.getElementById('socialLabelTemp') as HTMLInputElement | null;
-                                    const urlInput = document.getElementById('socialUrlTemp') as HTMLInputElement | null;
-                                    const label = labelInput?.value.trim();
-                                    const url = urlInput?.value.trim();
+                                    const label = newLinkLabel.trim();
+                                    const url = newLinkUrl.trim();
                                     if (!label || !url) return;
                                     const next = { ...socialLinks };
                                     next[label] = url;
                                     onSocialLinksChange(next);
-                                    if (labelInput) labelInput.value = '';
-                                    if (urlInput) urlInput.value = '';
+                                    setNewLinkLabel('');
+                                    setNewLinkUrl('');
                                 }}
                             >
                                 <Plus className="h-4 w-4" />
