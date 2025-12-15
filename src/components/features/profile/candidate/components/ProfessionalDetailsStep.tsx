@@ -1,4 +1,5 @@
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
@@ -6,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { UseFormRegister, FieldErrors, UseFormWatch } from 'react-hook-form';
 import { Specialty } from '@/types';
 import { Plus, X } from 'lucide-react';
+import { AddSpecialtyModal } from './AddSpecialtyModal';
 
 interface ProfessionalDetailsStepProps {
     register: UseFormRegister<any>;
@@ -21,9 +23,13 @@ interface ProfessionalDetailsStepProps {
     onResumeFileSelected: (file: File | null) => void;
     avatarUploading: boolean;
     resumeUploading: boolean;
+    // Modal props
+    isModalOpen: boolean;
+    onOpenModal: () => void;
+    onCloseModal: () => void;
 }
 
-export function ProfessionalDetailsStep({ register, errors, watch, specialties, selectedSpecialties, onAddSpecialty, onRemoveSpecialty, socialLinks, onSocialLinksChange, onAvatarFileSelected, onResumeFileSelected, avatarUploading, resumeUploading }: ProfessionalDetailsStepProps) {
+export function ProfessionalDetailsStep({ register, errors, watch, specialties, selectedSpecialties, onAddSpecialty, onRemoveSpecialty, socialLinks, onSocialLinksChange, onAvatarFileSelected, onResumeFileSelected, avatarUploading, resumeUploading, isModalOpen, onOpenModal, onCloseModal }: ProfessionalDetailsStepProps) {
     const availableSpecialties = specialties.filter(
         (spec) => !selectedSpecialties.some((selected) => selected.id === spec.id)
     );
@@ -194,43 +200,28 @@ export function ProfessionalDetailsStep({ register, errors, watch, specialties, 
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="specialtiesSelect">Specialties</Label>
+                <Label>Specialties</Label>
                 <div className="flex gap-2">
-                    <select
-                        id="specialtiesSelect"
-                        className="border rounded px-2 py-1 flex-1 bg-background"
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            if (value) {
-                                onAddSpecialty(value);
-                                e.target.value = '';
-                            }
-                        }}
-                        defaultValue=""
-                    >
-                        <option value="" disabled>
-                            Select a specialty
-                        </option>
-                        {availableSpecialties.map((spec) => (
-                            <option key={spec.id} value={spec.id}>
-                                {spec.name}
-                            </option>
-                        ))}
-                    </select>
+                    <Select onValueChange={(value) => onAddSpecialty(value)}>
+                        <SelectTrigger className="flex-1">
+                            <SelectValue placeholder="Select a specialty" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {availableSpecialties.map((spec) => (
+                                <SelectItem key={spec.id} value={spec.id}>
+                                    {spec.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                     <Button
                         type="button"
                         variant="outline"
-                        onClick={() => {
-                            const select = document.getElementById('specialtiesSelect') as HTMLSelectElement | null;
-                            if (!select) return;
-                            const value = select.value;
-                            if (value) {
-                                onAddSpecialty(value);
-                                select.value = '';
-                            }
-                        }}
+                        onClick={onOpenModal}
+                        className="shrink-0"
                     >
-                        Add
+                        <Plus className="h-4 w-4 mr-2" />
+                        New
                     </Button>
                 </div>
                 {selectedSpecialties.length > 0 && (
@@ -251,6 +242,12 @@ export function ProfessionalDetailsStep({ register, errors, watch, specialties, 
                     </div>
                 )}
             </div>
+
+            <AddSpecialtyModal
+                isOpen={isModalOpen}
+                onClose={onCloseModal}
+                onSpecialtyCreated={onAddSpecialty}
+            />
         </>
     );
 }

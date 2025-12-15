@@ -18,6 +18,7 @@ import { useUploadFile } from '@/hooks/post/useUploadFile';
 import { Gender, CreateDoctorProfileDto } from '@/types';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 import { useSpecialtySelection } from '@/hooks/useSpecialtySelection';
+import { useAddSpecialtyModal } from '@/hooks/useAddSpecialtyModal';
 import { PersonalInfoStep } from '../components/PersonalInfoStep';
 import { ProfessionalDetailsStep } from '../components/ProfessionalDetailsStep';
 import { LocationStep } from '../components/LocationStep';
@@ -73,6 +74,7 @@ export function DoctorProfileComplete() {
     const specialties = specialtiesData?.items ?? [];
 
     const { selectedSpecialties, addSpecialty, removeSpecialty } = useSpecialtySelection();
+    const { isOpen: isSpecialtyModalOpen, openModal: openSpecialtyModal, closeModal: closeSpecialtyModal } = useAddSpecialtyModal();
 
     // Redirect to dashboard if profile already exists
     useEffect(() => {
@@ -90,9 +92,9 @@ export function DoctorProfileComplete() {
 
         const qualifications = data.qualificationsRaw
             ? data.qualificationsRaw
-                  .split(',')
-                  .map((q) => q.trim())
-                  .filter((q) => q.length > 0)
+                .split(',')
+                .map((q) => q.trim())
+                .filter((q) => q.length > 0)
             : undefined;
 
         const specialtyIds = selectedSpecialties.map((s) => s.id);
@@ -219,6 +221,9 @@ export function DoctorProfileComplete() {
                                     }}
                                     avatarUploading={avatarUploading}
                                     resumeUploading={resumeUploading}
+                                    isModalOpen={isSpecialtyModalOpen}
+                                    onOpenModal={openSpecialtyModal}
+                                    onCloseModal={closeSpecialtyModal}
                                 />
                             )}
 
