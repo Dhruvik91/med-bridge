@@ -49,13 +49,6 @@ export function EmployerDashboard() {
     // Fetch all applications for this employer (paginated)
     const { data: applicationsData } = useGetApplications();
 
-    useEffect(() => {
-        if (user && !profileLoading && !profile) {
-            // If profile doesn't exist and we're done loading, redirect to complete profile
-            router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.COMPLETE);
-        }
-    }, [user, profile, profileLoading, router]);
-
     // Derived jobs array from paginated result
     const jobs = jobsData?.items ?? [];
 
