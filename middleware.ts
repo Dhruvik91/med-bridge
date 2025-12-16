@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { FRONTEND_ROUTES } from '@/constants/constants';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+import { API_CONFIG, FRONTEND_ROUTES } from '@/constants/constants';
+import { UserRole } from '@/types';
 
 const PUBLIC_PATHS = new Set<string>([
   FRONTEND_ROUTES.HOME,
@@ -28,7 +27,7 @@ interface ApiEnvelope<T> {
 interface BackendUser {
   id: string;
   email: string;
-  role: 'candidate' | 'employer' | 'doctor';
+  role: UserRole;
   isActive: boolean;
   isVerified: boolean;
   createdAt: string;
@@ -39,7 +38,7 @@ interface BackendUser {
 
 async function fetchCurrentUser(req: NextRequest): Promise<BackendUser | null> {
   try {
-    const res = await fetch(`${API_BASE_URL}/user-auth/me`, {
+    const res = await fetch(`${API_CONFIG.baseUrl}/${API_CONFIG.path.userAuth.me}`, {
       headers: {
         cookie: req.headers.get('cookie') ?? '',
       },
@@ -58,8 +57,8 @@ async function fetchCurrentUser(req: NextRequest): Promise<BackendUser | null> {
 
 async function hasCompletedProfile(req: NextRequest, user: BackendUser): Promise<boolean> {
   try {
-    if (user.role === 'candidate' || user.role === 'doctor') {
-      const res = await fetch(`${API_BASE_URL}/doctor-profiles/user`, {
+    if (user.role === UserRole.candidate) {
+      const res = await fetch(`${API_CONFIG.baseUrl}/${API_CONFIG.path.doctorProfiles.byUser}/${user.id}`, {
         headers: {
           cookie: req.headers.get('cookie') ?? '',
         },
@@ -69,8 +68,8 @@ async function hasCompletedProfile(req: NextRequest, user: BackendUser): Promise
       return !envelope.isError && !!envelope.data;
     }
 
-    if (user.role === 'employer') {
-      const res = await fetch(`${API_BASE_URL}/employer-profiles/user`, {
+    if (user.role === UserRole.employer) {
+      const res = await fetch(`${API_CONFIG.baseUrl}/${API_CONFIG.path.employerProfiles.byUser}/${user.id}`, {
         headers: {
           cookie: req.headers.get('cookie') ?? '',
         },
@@ -154,14 +153,14 @@ export async function middleware(req: NextRequest) {
     // Basic role-based dashboard access guard (extra safety)
     if (
       pathname.startsWith(FRONTEND_ROUTES.DASHBOARD.CANDIDATE) &&
-      !(user.role === 'candidate' || user.role === 'doctor')
+      user.role !== UserRole.candidate
     ) {
       const url = req.nextUrl.clone();
       url.pathname = getDashboardRoute(user.role);
       return NextResponse.redirect(url);
     }
 
-    if (pathname.startsWith(FRONTEND_ROUTES.DASHBOARD.EMPLOYER) && user.role !== 'employer') {
+    if (pathname.startsWith(FRONTEND_ROUTES.DASHBOARD.EMPLOYER) && user.role !== UserRole.employer) {
       const url = req.nextUrl.clone();
       url.pathname = getDashboardRoute(user.role);
       return NextResponse.redirect(url);
