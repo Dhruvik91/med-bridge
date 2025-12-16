@@ -6,6 +6,7 @@ export const API_CONFIG = {
       signup: "/user-auth/signup",
       googleLogin: "/user-auth/google",
       me: "/user-auth/me",
+      logout: "/user-auth/logout",
     },
     applications: {
       base: "/applications",

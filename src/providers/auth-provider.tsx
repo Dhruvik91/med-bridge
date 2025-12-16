@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { API_CONFIG, AUTH_TOKEN_KEY, FRONTEND_ROUTES } from '@/constants/constants';
+import { API_CONFIG, FRONTEND_ROUTES } from '@/constants/constants';
 import httpService from '@/lib/http-service';
 import { getDashboardRoute } from '@/lib/dashboard-routes';
 import { UserRole } from '@/types';
@@ -92,16 +92,8 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
   const router = useRouter();
   const pathname = usePathname();
 
-  const loadUserFromToken = async ( token: string | null ) =>
+  const loadUser = async () =>
   {
-    if ( !token )
-    {
-      setUser( null );
-      setProfile( null );
-      setLoading( false );
-      return null;
-    }
-
     try
     {
       const { data } = await httpService.get<BackendUser>( API_CONFIG.path.userAuth.me );
@@ -111,10 +103,6 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
       return mapped.authUser;
     } catch
     {
-      if ( typeof window !== 'undefined' )
-      {
-        window.localStorage.removeItem( AUTH_TOKEN_KEY );
-      }
       setUser( null );
       setProfile( null );
       return null;
@@ -135,35 +123,30 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
 
       if ( urlToken )
       {
-        window.localStorage.setItem( AUTH_TOKEN_KEY, urlToken );
         url.searchParams.delete( 'token' );
         window.history.replaceState( {}, '', url.toString() );
-        const userData = await loadUserFromToken( urlToken );
+        const userData = await loadUser();
         const dashboardRoute = getDashboardRoute( userData?.role || null );
         router.replace( dashboardRoute );
         return;
       }
-
-      const storedToken = window.localStorage.getItem( AUTH_TOKEN_KEY );
 
       const publicRoutes = [ FRONTEND_ROUTES.HOME, FRONTEND_ROUTES.AUTH.LOGIN, FRONTEND_ROUTES.AUTH.SIGNUP ];
 
-      if ( !storedToken && !publicRoutes.includes( pathname ) )
+      const userData = await loadUser();
+
+      if ( !userData && !publicRoutes.includes( pathname ) )
       {
         router.replace( FRONTEND_ROUTES.AUTH.LOGIN );
-        setLoading( false );
         return;
       }
 
-      if ( storedToken && publicRoutes.includes( pathname ) )
+      if ( userData && publicRoutes.includes( pathname ) )
       {
-        const userData = await loadUserFromToken( storedToken );
-        const dashboardRoute = getDashboardRoute( userData?.role || null );
+        const dashboardRoute = getDashboardRoute( userData.role );
         router.replace( dashboardRoute );
         return;
       }
-
-      await loadUserFromToken( storedToken );
     };
 
     void init();
@@ -178,11 +161,6 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
         email,
         password,
       } );
-
-      if ( typeof window !== 'undefined' )
-      {
-        window.localStorage.setItem( AUTH_TOKEN_KEY, data.access_token );
-      }
 
       const mapped = mapBackendUser( data.user );
       setUser( mapped.authUser );
@@ -208,11 +186,6 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
         role,
       } );
 
-      if ( typeof window !== 'undefined' )
-      {
-        window.localStorage.setItem( AUTH_TOKEN_KEY, data.access_token );
-      }
-
       const mapped = mapBackendUser( data.user );
       setUser( mapped.authUser );
       setProfile( mapped.profile );
@@ -233,13 +206,15 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
 
   const signOut = async () =>
   {
-    router.push( FRONTEND_ROUTES.AUTH.LOGIN );
-    if ( typeof window !== 'undefined' )
+    try
     {
-      window.localStorage.removeItem( AUTH_TOKEN_KEY );
+      await httpService.post( API_CONFIG.path.userAuth.logout );
+    } finally
+    {
+      setUser( null );
+      setProfile( null );
+      router.push( FRONTEND_ROUTES.AUTH.LOGIN );
     }
-    setUser( null );
-    setProfile( null );
   };
 
   const signInWithGoogle = async () =>
@@ -252,9 +227,7 @@ export function AuthProvider ( { children }: { children: React.ReactNode; } )
   const refreshUser = async () =>
   {
     if ( typeof window === 'undefined' ) return;
-
-    const storedToken = window.localStorage.getItem( AUTH_TOKEN_KEY );
-    await loadUserFromToken( storedToken );
+    await loadUser();
   };
 
   const value = {
