@@ -7,6 +7,8 @@ export const API_CONFIG = {
       googleLogin: "/user-auth/google",
       me: "/user-auth/me",
       logout: "/user-auth/logout",
+      forgotPassword: "/user-auth/forgot-password",
+      resetPassword: "/user-auth/reset-password",
     },
     applications: {
       base: "/applications",
@@ -69,6 +71,8 @@ export const FRONTEND_ROUTES = {
     LOGIN: '/auth/login',
     SIGNUP: '/auth/signup',
     CALLBACK: '/auth/callback',
+    FORGOT_PASSWORD: '/auth/forgot-password',
+    RESET_PASSWORD: '/auth/reset-password',
   },
   DASHBOARD: {
     BASE: '/dashboard',
