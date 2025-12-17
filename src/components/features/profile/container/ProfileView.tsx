@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
 import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
+import { useGetSpecialties } from '@/hooks/get/useGetSpecialties';
 import { useAuth } from '@/providers/auth-provider';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
@@ -35,6 +36,13 @@ export function ProfileView() {
     const { data: user, isLoading: userLoading } = useGetMe();
     const { data: doctorProfile, isLoading: doctorProfileLoading } = useGetDoctorProfile(user?.id || '');
     const { data: employerProfile, isLoading: employerProfileLoading } = useGetEmployerProfile(user);
+    const { data: specialtiesData } = useGetSpecialties();
+
+    const specialties = specialtiesData?.items ?? [];
+    const specialtyNames = doctorProfile?.specialties?.map((id) => {
+        const specialty = specialties.find((s) => s.id === id);
+        return specialty?.name || id;
+    }) || [];
 
     const isLoading = userLoading || doctorProfileLoading || employerProfileLoading;
 
@@ -78,6 +86,7 @@ export function ProfileView() {
                 <CandidateProfileHeader
                     displayName={doctorProfile.displayName || ''}
                     fullName={doctorProfile.fullName}
+                    avatarUrl={doctorProfile.avatarUrl ?? undefined}
                     onEditClick={() => router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.EDIT)}
                 />
 
@@ -87,6 +96,8 @@ export function ProfileView() {
                     experienceYears={doctorProfile.experienceYears ?? undefined}
                     city={doctorProfile.city ?? undefined}
                     country={doctorProfile.country ?? undefined}
+                    socialLinks={doctorProfile.socialLinks ?? undefined}
+                    resumeUrl={doctorProfile.resumeUrl ?? undefined}
                 />
 
                 <div className="grid gap-6 md:grid-cols-2">
@@ -98,6 +109,8 @@ export function ProfileView() {
 
                     <ProfessionalCredentialsCard
                         licenseNumbers={doctorProfile.licenseNumbers}
+                        qualifications={doctorProfile.qualifications ?? undefined}
+                        specialties={specialtyNames}
                     />
                 </div>
 

@@ -7,14 +7,17 @@ import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Loader2, CheckCircle2 } from 'lucide-react';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
+import { useGetSpecialties } from '@/hooks/get/useGetSpecialties';
 import { useCreateDoctorProfile } from '@/hooks/post/useCreateDoctorProfile';
+import { useUploadFile } from '@/hooks/post/useUploadFile';
 import { Gender, CreateDoctorProfileDto } from '@/types';
 import { FRONTEND_ROUTES } from '@/constants/constants';
+import { useSpecialtySelection } from '@/hooks/useSpecialtySelection';
+import { useAddSpecialtyModal } from '@/hooks/useAddSpecialtyModal';
 import { PersonalInfoStep } from '../components/PersonalInfoStep';
 import { ProfessionalDetailsStep } from '../components/ProfessionalDetailsStep';
 import { LocationStep } from '../components/LocationStep';
@@ -22,12 +25,22 @@ import { LocationStep } from '../components/LocationStep';
 const profileSchema = z.object({
     firstName: z.string().min(2, 'First name must be at least 2 characters'),
     lastName: z.string().min(2, 'Last name must be at least 2 characters'),
+    displayName: z.string().optional(),
     phone: z.string().min(10, 'Please enter a valid phone number'),
     dateOfBirth: z.string().optional(),
     gender: z.nativeEnum(Gender).optional(),
     bio: z.string().max(500, 'Bio must be less than 500 characters').optional(),
-    licenseNumber: z.string().min(5, 'Please enter a valid license number'),
-    yearsOfExperience: z.string().transform(val => val ? parseInt(val) : 0),
+    // License is optional to support fresh graduates without licenses yet
+    licenseNumber: z.string().optional(),
+    yearsOfExperience: z
+        .string()
+        .optional()
+        .transform((val) => (val ? parseInt(val, 10) : 0)),
+    qualificationsRaw: z.string().optional(),
+    avatarUrl: z.string().optional(),
+    resumeUrl: z.string().optional(),
+    // Social links are entered via simple UI, we serialize to JSON before sending
+    socialLinksJson: z.string().optional(),
     address: z.string().optional(),
     city: z.string().min(2, 'City is required'),
     state: z.string().optional(),
@@ -45,12 +58,21 @@ const steps = [
 
 export function DoctorProfileComplete() {
     const [currentStep, setCurrentStep] = useState(0);
-    const [error, setError] = useState('');
+    const [socialLinks, setSocialLinks] = useState<Record<string, string>>({});
+    const [avatarUploading, setAvatarUploading] = useState(false);
+    const [resumeUploading, setResumeUploading] = useState(false);
     const router = useRouter();
 
     const { data: user } = useGetMe();
     const { data: profile, isLoading: profileLoading } = useGetDoctorProfile(user?.id || '');
     const createProfileMutation = useCreateDoctorProfile();
+    const uploadMutation = useUploadFile();
+
+    const { data: specialtiesData } = useGetSpecialties();
+    const specialties = specialtiesData?.items ?? [];
+
+    const { selectedSpecialties, addSpecialty, removeSpecialty } = useSpecialtySelection();
+    const { isOpen: isSpecialtyModalOpen, openModal: openSpecialtyModal, closeModal: closeSpecialtyModal } = useAddSpecialtyModal();
 
     // Redirect to dashboard if profile already exists
     useEffect(() => {
@@ -66,18 +88,36 @@ export function DoctorProfileComplete() {
     const onSubmit = (data: ProfileForm) => {
         if (!user) return;
 
+        const qualifications = data.qualificationsRaw
+            ? data.qualificationsRaw
+                .split(',')
+                .map((q) => q.trim())
+                .filter((q) => q.length > 0)
+            : undefined;
+
+        const specialtyIds = selectedSpecialties.map((s) => s.id);
+
+        // Use social links built from the social links UI state
+        const socialLinksValue = Object.keys(socialLinks).length > 0 ? socialLinks : undefined;
+
         const profileData: CreateDoctorProfileDto = {
             userId: user.id,
             fullName: `${data.firstName} ${data.lastName}`,
+            displayName: data.displayName || undefined,
             phone: data.phone,
             dob: data.dateOfBirth,
             gender: data.gender,
             summary: data.bio,
             licenseNumbers: data.licenseNumber ? [data.licenseNumber] : undefined,
             experienceYears: data.yearsOfExperience,
+            qualifications,
+            specialties: specialtyIds.length > 0 ? specialtyIds : undefined,
             address: data.address,
             city: data.city,
             country: data.country,
+            avatarUrl: data.avatarUrl || undefined,
+            resumeUrl: data.resumeUrl || undefined,
+            socialLinks: socialLinksValue,
         };
 
         createProfileMutation.mutate(profileData);
@@ -111,12 +151,6 @@ export function DoctorProfileComplete() {
                     <Progress value={progress} className="h-2" />
                 </div>
 
-                {error && (
-                    <Alert variant="destructive" className="mb-6">
-                        <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                )}
-
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <Card>
                         <CardHeader>
@@ -131,6 +165,7 @@ export function DoctorProfileComplete() {
                                     register={register}
                                     errors={errors}
                                     setValue={setValue}
+                                    watch={watch}
                                 />
                             )}
 
@@ -139,6 +174,48 @@ export function DoctorProfileComplete() {
                                     register={register}
                                     errors={errors}
                                     watch={watch}
+                                    specialties={specialties}
+                                    selectedSpecialties={selectedSpecialties}
+                                    onAddSpecialty={(id: string) => {
+                                        const spec = specialties.find((s) => s.id === id);
+                                        if (spec) {
+                                            addSpecialty(spec);
+                                        }
+                                    }}
+                                    onRemoveSpecialty={removeSpecialty}
+                                    socialLinks={socialLinks}
+                                    onSocialLinksChange={setSocialLinks}
+                                    onAvatarFileSelected={async (file: File | null) => {
+                                        if (!file) {
+                                            setValue('avatarUrl', '');
+                                            return;
+                                        }
+                                        setAvatarUploading(true);
+                                        try {
+                                            const url = await uploadMutation.mutateAsync(file);
+                                            setValue('avatarUrl', url);
+                                        } finally {
+                                            setAvatarUploading(false);
+                                        }
+                                    }}
+                                    onResumeFileSelected={async (file: File | null) => {
+                                        if (!file) {
+                                            setValue('resumeUrl', '');
+                                            return;
+                                        }
+                                        setResumeUploading(true);
+                                        try {
+                                            const url = await uploadMutation.mutateAsync(file);
+                                            setValue('resumeUrl', url);
+                                        } finally {
+                                            setResumeUploading(false);
+                                        }
+                                    }}
+                                    avatarUploading={avatarUploading}
+                                    resumeUploading={resumeUploading}
+                                    isModalOpen={isSpecialtyModalOpen}
+                                    onOpenModal={openSpecialtyModal}
+                                    onCloseModal={closeSpecialtyModal}
                                 />
                             )}
 

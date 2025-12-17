@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useAuth } from '@/providers/auth-provider'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -26,6 +27,14 @@ import { FRONTEND_ROUTES } from '@/constants/constants'
 export function Navigation() {
   const { user, profile, signOut, loading } = useAuth()
   const logoHref = user ? getDashboardRoute(profile?.role || null) : '/'
+  const pathname = usePathname()
+
+  const getNavLinkClass = (isActive: boolean) =>
+    `text-sm font-medium transition-colors ${
+      isActive
+        ? 'text-primary border-b-2 border-primary pb-1'
+        : 'text-foreground/80 hover:text-primary'
+    }`
 
   const handleSignOut = async () => {
     try {
@@ -46,38 +55,44 @@ export function Navigation() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center justify-end flex-1 ml-8">
+          <div className="hidden md:flex items-center flex-1 ml-8">
             {loading ? (
-              <>
-                <div className="flex items-center space-x-6">
+              <div className="flex items-center justify-between w-full gap-4">
+                <div className="flex items-center justify-center flex-1 space-x-6">
                   <Skeleton className="h-4 w-20" />
                   <Skeleton className="h-4 w-20" />
                   <Skeleton className="h-4 w-20" />
                 </div>
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center justify-end">
                   <Skeleton className="h-8 w-8 rounded-full" />
                 </div>
-              </>
+              </div>
             ) : user ? (
-              <>
+              <div className="flex items-center justify-between w-full gap-4">
                 {/* Logged-in nav links - Role-based navigation */}
-                <div className="flex items-center space-x-6">
+                <div className="flex items-center justify-center flex-1 space-x-6">
                   {/* Dashboard - Available to all roles */}
                   <Link
                     href={getDashboardRoute(profile?.role || null)}
-                    className="text-foreground hover:text-primary transition-colors"
+                    className={getNavLinkClass(pathname === getDashboardRoute(profile?.role || null))}
                   >
                     Dashboard
                   </Link>
 
                   {/* Jobs - Available to all roles */}
-                  <Link href={FRONTEND_ROUTES.JOBS.BASE} className="text-foreground hover:text-primary transition-colors">
+                  <Link
+                    href={FRONTEND_ROUTES.JOBS.BASE}
+                    className={getNavLinkClass(pathname === FRONTEND_ROUTES.JOBS.BASE)}
+                  >
                     Jobs
                   </Link>
 
                   {/* Employer-specific navigation */}
                   {(profile?.role === UserRole.employer || profile?.role === UserRole.admin) && (
-                    <Link href={FRONTEND_ROUTES.JOBS.MANAGE} className="text-foreground hover:text-primary transition-colors">
+                    <Link
+                      href={FRONTEND_ROUTES.JOBS.MANAGE}
+                      className={getNavLinkClass(pathname === FRONTEND_ROUTES.JOBS.MANAGE)}
+                    >
                       Manage Jobs
                     </Link>
                   )}
@@ -85,10 +100,16 @@ export function Navigation() {
                   {/* Candidate-specific navigation */}
                   {(profile?.role === UserRole.candidate || profile?.role === UserRole.admin) && (
                     <>
-                      <Link href={FRONTEND_ROUTES.APPLICATIONS.BASE} className="text-foreground hover:text-primary transition-colors">
+                      <Link
+                        href={FRONTEND_ROUTES.APPLICATIONS.BASE}
+                        className={getNavLinkClass(pathname === FRONTEND_ROUTES.APPLICATIONS.BASE)}
+                      >
                         Applications
                       </Link>
-                      <Link href={FRONTEND_ROUTES.SAVED_JOBS} className="text-foreground hover:text-primary transition-colors">
+                      <Link
+                        href={FRONTEND_ROUTES.SAVED_JOBS}
+                        className={getNavLinkClass(pathname === FRONTEND_ROUTES.SAVED_JOBS)}
+                      >
                         Saved Jobs
                       </Link>
                     </>
@@ -96,24 +117,7 @@ export function Navigation() {
                 </div>
 
                 {/* Logged-in actions (MVP: only Profile + Sign out) */}
-                <div className="flex items-center space-x-4">
-                  {/**
-                   * MVP: hide Notifications and Messages for now
-                   *
-                   * <Button variant="ghost" size="sm" className="relative">
-                   *   <Bell className="h-5 w-5" />
-                   *   <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                   *     3
-                   *   </Badge>
-                   * </Button>
-                   *
-                   * <Link href="/messages">
-                   *   <Button variant="ghost" size="sm">
-                   *     <MessageSquare className="h-5 w-5" />
-                   *   </Button>
-                   * </Link>
-                   */}
-
+                <div className="flex items-center justify-end space-x-4">
                   {/* User Menu */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -174,7 +178,7 @@ export function Navigation() {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-              </>
+              </div>
             ) : (
               <>
                 {/* Auth actions */}

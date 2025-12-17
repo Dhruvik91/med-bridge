@@ -39,13 +39,6 @@ export function CandidateDashboard() {
     // Fetch saved jobs (paginated)
     const { data: savedJobsData, isLoading: savedJobsLoading } = useGetSavedJobs(user?.id || '');
 
-    useEffect(() => {
-        if (user && !profileLoading && !profile) {
-            // If profile doesn't exist and we're done loading, redirect to complete profile
-            router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE);
-        }
-    }, [user, profile, profileLoading, router]);
-
     // Derived arrays from paginated results
     const applications = applicationsData?.items ?? [];
     const savedJobs = savedJobsData?.items ?? [];

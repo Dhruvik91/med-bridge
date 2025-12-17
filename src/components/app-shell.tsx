@@ -1,7 +1,7 @@
 'use client'
 
 import { ReactNode } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useAuth } from '@/providers/auth-provider'
 import { ToastContainer } from 'react-toastify';
 
@@ -9,6 +9,7 @@ import { MobileBottomNav } from '@/components/mobile-bottom-nav'
 import { Navigation } from '@/components/navigation'
 import { Sidebar } from '@/components/sidebar'
 import { useTheme } from 'next-themes';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 
 interface AppShellProps {
   children: ReactNode
@@ -16,42 +17,38 @@ interface AppShellProps {
 
 // MVP app routes: dashboard, jobs, profile, applications, and saved-jobs
 const APP_ROUTES_PREFIXES = [
-  '/dashboard',
-  '/jobs',
-  '/profile',
-  '/applications',
-  '/saved-jobs',
-  // '/messages',
-  // '/settings',
-  // '/post-job',
+  FRONTEND_ROUTES.DASHBOARD.BASE,
+  FRONTEND_ROUTES.JOBS.BASE,
+  FRONTEND_ROUTES.APPLICATIONS.BASE,
+  FRONTEND_ROUTES.SAVED_JOBS,
+  FRONTEND_ROUTES.PROFILE.BASE,
 ]
 
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname()
-  const router = useRouter()
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
   const { theme } = useTheme()
 
   const isAppRoute = APP_ROUTES_PREFIXES.some((prefix) => pathname?.startsWith(prefix))
 
-  // Don't show back button on main dashboard pages
-  const isDashboardHome = pathname === '/dashboard' ||
-    pathname === '/dashboard/candidate' ||
-    pathname === '/dashboard/employer'
-
-  const handleBack = () => {
-    router.back()
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      </div>
+    )
   }
 
+  // Authenticated users on app routes -> full app layout
   if (user && isAppRoute) {
     return (
-      <div className="flex min-h-screen pb-16 md:pb-0">
-        <Sidebar className="hidden md:flex w-64 flex-col border-r fixed left-0 top-0 bottom-0 z-50" />
-        <div className="flex-1 md:pl-64 flex flex-col min-h-screen">
-          <div className="md:hidden">
+      <div className="flex min-h-screen pb-16 lg:pb-0">
+        <Sidebar className="hidden lg:flex w-64 flex-col border-r fixed left-0 top-0 bottom-0 z-50" />
+        <div className="flex-1 lg:pl-64 flex flex-col min-h-screen">
+          <div className="lg:hidden">
             <Navigation />
           </div>
-          <main className="pt-16 md:pt-0 flex-1">
+          <main className="pt-16 lg:pt-0 flex-1">
             {children}
           </main>
           <ToastContainer
@@ -72,6 +69,17 @@ export function AppShell({ children }: AppShellProps) {
     )
   }
 
+  // Unauthenticated users on app routes (e.g., during logout redirect)
+  // Show a neutral loading state instead of public navigation to avoid flicker
+  if (!user && isAppRoute) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      </div>
+    )
+  }
+
+  // Public routes (auth, home, etc.) -> public navigation layout
   return (
     <div className="min-h-screen">
       <Navigation />

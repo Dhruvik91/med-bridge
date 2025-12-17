@@ -45,7 +45,7 @@ export function LoginContainer() {
                 description: 'Welcome back to MedBridge',
             });
         } catch (err: any) {
-            setError(err.message || 'Invalid email or password');
+            setError(err.response?.data?.message || 'Invalid email or password');
         } finally {
             setIsLoading(false);
         }

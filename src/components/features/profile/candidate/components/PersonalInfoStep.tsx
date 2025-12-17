@@ -1,16 +1,35 @@
+import * as React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import { Gender } from '@/types';
-import { UseFormRegister, FieldErrors, UseFormSetValue } from 'react-hook-form';
+import { UseFormRegister, FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 
 interface PersonalInfoStepProps {
     register: UseFormRegister<any>;
     errors: FieldErrors<any>;
     setValue: UseFormSetValue<any>;
+    watch: UseFormWatch<any>;
 }
 
-export function PersonalInfoStep({ register, errors, setValue }: PersonalInfoStepProps) {
+export function PersonalInfoStep({ register, errors, setValue, watch }: PersonalInfoStepProps) {
+    const [dateOfBirth, setDateOfBirth] = React.useState<Date | undefined>(undefined);
+
+    const watchedDob = watch('dateOfBirth');
+
+    React.useEffect(() => {
+        if (!watchedDob) {
+            setDateOfBirth(undefined);
+            return;
+        }
+
+        const parsed = new Date(watchedDob + 'T00:00:00');
+        if (!isNaN(parsed.getTime())) {
+            setDateOfBirth(parsed);
+        }
+    }, [watchedDob]);
+
     return (
         <>
             <div className="grid md:grid-cols-2 gap-4">
@@ -40,6 +59,18 @@ export function PersonalInfoStep({ register, errors, setValue }: PersonalInfoSte
             </div>
 
             <div className="space-y-2">
+                <Label htmlFor="displayName">Display Name</Label>
+                <Input
+                    id="displayName"
+                    {...register('displayName')}
+                    aria-invalid={!!errors.displayName}
+                />
+                {errors.displayName && (
+                    <p className="text-sm text-destructive">{errors.displayName.message as string}</p>
+                )}
+            </div>
+
+            <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number *</Label>
                 <Input
                     id="phone"
@@ -54,12 +85,75 @@ export function PersonalInfoStep({ register, errors, setValue }: PersonalInfoSte
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                <Input
-                    id="dateOfBirth"
-                    type="date"
-                    {...register('dateOfBirth')}
-                />
+                <Label>Date of Birth</Label>
+                <div className="grid grid-cols-3 gap-2">
+                    <Select
+                        value={dateOfBirth ? dateOfBirth.getMonth().toString() : undefined}
+                        onValueChange={(value) => {
+                            const newDate = dateOfBirth ? new Date(dateOfBirth) : new Date();
+                            newDate.setMonth(parseInt(value));
+                            setDateOfBirth(newDate);
+                            const iso = newDate.toISOString().split('T')[0];
+                            setValue('dateOfBirth', iso, { shouldValidate: true });
+                        }}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Month" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Array.from({ length: 12 }, (_, i) => (
+                                <SelectItem key={i} value={i.toString()}>
+                                    {new Date(0, i).toLocaleString('default', { month: 'long' })}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    <Select
+                        value={dateOfBirth ? dateOfBirth.getFullYear().toString() : undefined}
+                        onValueChange={(value) => {
+                            const newDate = dateOfBirth ? new Date(dateOfBirth) : new Date();
+                            newDate.setFullYear(parseInt(value));
+                            setDateOfBirth(newDate);
+                            const iso = newDate.toISOString().split('T')[0];
+                            setValue('dateOfBirth', iso, { shouldValidate: true });
+                        }}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Year" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map((year) => (
+                                <SelectItem key={year} value={year.toString()}>
+                                    {year}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    <Select
+                        value={dateOfBirth ? dateOfBirth.getDate().toString() : undefined}
+                        onValueChange={(value) => {
+                            const newDate = dateOfBirth ? new Date(dateOfBirth) : new Date();
+                            newDate.setDate(parseInt(value));
+                            setDateOfBirth(newDate);
+                            const iso = newDate.toISOString().split('T')[0];
+                            setValue('dateOfBirth', iso, { shouldValidate: true });
+                        }}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Day" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
+                                <SelectItem key={day} value={day.toString()}>
+                                    {day}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+                <input type="hidden" {...register('dateOfBirth')} />
             </div>
 
             <div className="space-y-2">

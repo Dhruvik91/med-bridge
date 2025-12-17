@@ -4,14 +4,12 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Stethoscope } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/providers/auth-provider';
 import { useToast } from '@/hooks/use-toast';
-import { FRONTEND_ROUTES } from '@/constants/constants';
 import { UserRole } from '@/types';
 import { SignupHeader } from '../components/SignupHeader';
 import { SignupFooter } from '../components/SignupFooter';
@@ -35,7 +33,6 @@ export function SignupContainer() {
     const [isLoading, setIsLoading] = useState(false);
     const { signUp, signInWithGoogle } = useAuth();
     const { toast } = useToast();
-    const router = useRouter();
 
     const form = useForm<SignupFormValues>({
         resolver: zodResolver(signupSchema),
@@ -55,20 +52,8 @@ export function SignupContainer() {
                 title: 'Account created successfully',
                 description: 'Welcome to MedBridge! Please complete your profile.',
             });
-
-            // Redirect to profile completion based on role
-            if (data.role === UserRole.candidate) {
-                router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE);
-            } else {
-                router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.COMPLETE);
-            }
         } catch (err: any) {
-            setError(err.message || 'Failed to create account. Please try again.');
-            toast({
-                title: 'Signup failed',
-                description: err.message || 'Failed to create account',
-                variant: 'destructive',
-            });
+            setError(err?.response?.data?.message || 'Failed to create account. Please try again.');
         } finally {
             setIsLoading(false);
         }
