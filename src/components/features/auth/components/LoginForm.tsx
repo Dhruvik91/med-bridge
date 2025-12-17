@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LoginFormValues } from '../container/LoginContainer';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 
 interface LoginFormProps {
     form: UseFormReturn<LoginFormValues>;
@@ -43,7 +44,7 @@ export function LoginForm({ form, onSubmit, isLoading }: LoginFormProps) {
             <div className="space-y-2">
                 <div className="flex justify-between items-center">
                     <Label htmlFor="password">Password</Label>
-                    <Link href="/auth/forgot-password" className="text-sm text-primary hover:underline">
+                    <Link href={FRONTEND_ROUTES.AUTH.FORGOT_PASSWORD} className="text-sm text-primary hover:underline">
                         Forgot password?
                     </Link>
                 </div>

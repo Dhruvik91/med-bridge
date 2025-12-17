@@ -121,16 +121,22 @@ export function AuthProvider({ children }: { children: React.ReactNode; }) {
         return;
       }
 
-      const publicRoutes = [FRONTEND_ROUTES.HOME, FRONTEND_ROUTES.AUTH.LOGIN, FRONTEND_ROUTES.AUTH.SIGNUP];
+      // Check if current path is public - all /auth/* routes are public
+      const isAuthRoute = pathname.startsWith('/auth');
+      const isHomePage = pathname === FRONTEND_ROUTES.HOME;
+      const isPublicRoute = isAuthRoute || isHomePage;
 
       const userData = await loadUser();
 
-      if (!userData && !publicRoutes.includes(pathname)) {
+      if (!userData && !isPublicRoute) {
         router.replace(FRONTEND_ROUTES.AUTH.LOGIN);
         return;
       }
 
-      if (userData && publicRoutes.includes(pathname)) {
+      // Only redirect authenticated users from home/login/signup pages
+      // Allow access to forgot-password and reset-password even when authenticated
+      const authRoutesToRedirect = [FRONTEND_ROUTES.HOME, FRONTEND_ROUTES.AUTH.LOGIN, FRONTEND_ROUTES.AUTH.SIGNUP];
+      if (userData && authRoutesToRedirect.includes(pathname)) {
         const dashboardRoute = getDashboardRoute(userData.role);
         router.replace(dashboardRoute);
         return;
