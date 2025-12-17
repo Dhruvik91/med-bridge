@@ -2,14 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import * as z from 'zod';
-import { Loader2, Save, CheckCircle2 } from 'lucide-react';
+import { Loader2, Save } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { NotAuthorizedUser } from '@/components/NotAuthorized';
@@ -27,7 +24,6 @@ import { useUploadFile } from '@/hooks/post/useUploadFile';
 import { useSpecialtySelection } from '@/hooks/useSpecialtySelection';
 import { useAddSpecialtyModal } from '@/hooks/useAddSpecialtyModal';
 
-import { FRONTEND_ROUTES } from '@/constants/constants';
 import { Gender, UpdateDoctorProfileDto, UserRole } from '@/types';
 
 const profileSchema = z.object({
@@ -40,9 +36,13 @@ const profileSchema = z.object({
     bio: z.string().max(500, 'Bio must be less than 500 characters').optional(),
     licenseNumber: z.string().optional(),
     yearsOfExperience: z
-        .string()
+        .union([z.string(), z.number()])
         .optional()
-        .transform((val) => (val ? parseInt(val, 10) : 0)),
+        .transform((val) => {
+            if (val === undefined || val === null || val === '') return 0;
+            const num = typeof val === 'number' ? val : parseInt(val, 10);
+            return Number.isNaN(num) ? 0 : num;
+        }),
     qualificationsRaw: z.string().optional(),
     avatarUrl: z.string().optional(),
     resumeUrl: z.string().optional(),
@@ -64,7 +64,6 @@ const steps = [
 export function DoctorProfileEdit() {
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState(0);
-    const [error, setError] = useState('');
     const [socialLinks, setSocialLinks] = useState<Record<string, string>>({});
     const [avatarUploading, setAvatarUploading] = useState(false);
     const [resumeUploading, setResumeUploading] = useState(false);
@@ -117,11 +116,14 @@ export function DoctorProfileEdit() {
             }
         }
     }, [profile, reset, specialties]);
-
-
-
     const onSubmit = (data: ProfileForm) => {
         if (!profile) return;
+
+        // If user submits (e.g. presses Enter) before final step, just move to next step
+        if (currentStep < steps.length - 1) {
+            setCurrentStep(currentStep + 1);
+            return;
+        }
 
         const qualifications = data.qualificationsRaw
             ? data.qualificationsRaw
@@ -155,11 +157,11 @@ export function DoctorProfileEdit() {
         updateProfileMutation.mutate(profileData);
     };
 
-    const nextStep = () => {
+    const nextStep = handleSubmit(() => {
         if (currentStep < steps.length - 1) {
-            setCurrentStep(currentStep + 1);
+            setCurrentStep((prev) => (prev < steps.length - 1 ? prev + 1 : prev));
         }
-    };
+    });
 
     const prevStep = () => {
         if (currentStep > 0) {
@@ -190,12 +192,6 @@ export function DoctorProfileEdit() {
                     </div>
                     <Progress value={progress} className="h-2" />
                 </div>
-
-                {error && (
-                    <Alert variant="destructive" className="mb-6">
-                        <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                )}
 
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <Card>

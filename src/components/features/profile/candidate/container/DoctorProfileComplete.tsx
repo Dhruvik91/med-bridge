@@ -7,7 +7,6 @@ import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Loader2, CheckCircle2 } from 'lucide-react';
 import { useGetMe } from '@/hooks/get/useGetMe';
@@ -59,7 +58,6 @@ const steps = [
 
 export function DoctorProfileComplete() {
     const [currentStep, setCurrentStep] = useState(0);
-    const [error, setError] = useState('');
     const [socialLinks, setSocialLinks] = useState<Record<string, string>>({});
     const [avatarUploading, setAvatarUploading] = useState(false);
     const [resumeUploading, setResumeUploading] = useState(false);
@@ -152,12 +150,6 @@ export function DoctorProfileComplete() {
                     </div>
                     <Progress value={progress} className="h-2" />
                 </div>
-
-                {error && (
-                    <Alert variant="destructive" className="mb-6">
-                        <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                )}
 
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <Card>
