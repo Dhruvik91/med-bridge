@@ -112,7 +112,7 @@ export function AuthProvider({ children }: { children: React.ReactNode; }) {
       const url = new URL(window.location.href);
       const urlToken = url.searchParams.get('token');
 
-      if (urlToken) {
+      if (urlToken && pathname !== FRONTEND_ROUTES.AUTH.RESET_PASSWORD) {
         url.searchParams.delete('token');
         window.history.replaceState({}, '', url.toString());
         const userData = await loadUser();
@@ -187,7 +187,7 @@ export function AuthProvider({ children }: { children: React.ReactNode; }) {
     } catch (err) {
       console.error('Signup failed:', err);
       throw err;
-    } 
+    }
   };
 
   const signOut = async () => {
