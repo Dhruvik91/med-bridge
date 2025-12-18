@@ -88,7 +88,7 @@ export function PersonalInfoStep({ register, errors, setValue, watch }: Personal
                 <Label>Date of Birth</Label>
                 <div className="grid grid-cols-3 gap-2">
                     <Select
-                        value={dateOfBirth ? dateOfBirth.getMonth().toString() : undefined}
+                        value={dateOfBirth ? dateOfBirth.getMonth().toString() : ''}
                         onValueChange={(value) => {
                             const newDate = dateOfBirth ? new Date(dateOfBirth) : new Date();
                             newDate.setMonth(parseInt(value));
@@ -110,7 +110,7 @@ export function PersonalInfoStep({ register, errors, setValue, watch }: Personal
                     </Select>
 
                     <Select
-                        value={dateOfBirth ? dateOfBirth.getFullYear().toString() : undefined}
+                        value={dateOfBirth ? dateOfBirth.getFullYear().toString() : ''}
                         onValueChange={(value) => {
                             const newDate = dateOfBirth ? new Date(dateOfBirth) : new Date();
                             newDate.setFullYear(parseInt(value));
@@ -132,7 +132,7 @@ export function PersonalInfoStep({ register, errors, setValue, watch }: Personal
                     </Select>
 
                     <Select
-                        value={dateOfBirth ? dateOfBirth.getDate().toString() : undefined}
+                        value={dateOfBirth ? dateOfBirth.getDate().toString() : ''}
                         onValueChange={(value) => {
                             const newDate = dateOfBirth ? new Date(dateOfBirth) : new Date();
                             newDate.setDate(parseInt(value));

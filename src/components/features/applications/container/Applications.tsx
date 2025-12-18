@@ -1,11 +1,8 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
 import { useGetMe } from '@/hooks/get/useGetMe';
-import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
 import { useGetApplicationsByCandidate } from '@/hooks/get/useGetApplications';
 import { ApplicationStatus, UserRole } from '@/types';
 import { CandidateApplicationStats } from '../components/CandidateApplicationStats';
@@ -14,7 +11,6 @@ import { MobileApplicationFilterDrawer } from '../components/MobileApplicationFi
 import { MobileApplicationStatsDrawer } from '../components/MobileApplicationStatsDrawer';
 import { CandidateApplicationList } from '../components/CandidateApplicationList';
 import { NotAuthorizedUser } from '@/components/NotAuthorized';
-import { FRONTEND_ROUTES } from '@/constants/constants';
 
 export function Applications() {
     const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'all'>('all');
@@ -22,9 +18,6 @@ export function Applications() {
 
     // Fetch current user
     const { data: user, isLoading: userLoading } = useGetMe();
-
-    // Fetch doctor profile
-    const { data: profile, isLoading: profileLoading } = useGetDoctorProfile(user?.id || '');
 
     // Fetch applications (paginated)
     const { data: applicationsData, isLoading: applicationsLoading } = useGetApplicationsByCandidate(user?.id || '');
@@ -70,7 +63,7 @@ export function Applications() {
 
     const showClearButton = !!(statusFilter !== 'all' || sortBy !== 'recent');
 
-    if (userLoading || profileLoading) {
+    if (userLoading || applicationsLoading) {
         return (
             <main className="pt-16 min-h-screen bg-background">
                 <div className="container mx-auto px-4 py-8">
