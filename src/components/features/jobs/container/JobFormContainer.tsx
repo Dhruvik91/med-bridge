@@ -158,9 +158,21 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
         });
     }, [newSpecialty, createSpecialtyMutation, closeSpecialtyDialog, resetSpecialtyForm, toast]);
 
-    const handleNext = () => {
-        if (currentStep < STEPS.length) {
-            setCurrentStep(currentStep + 1);
+    const handleNext = async () => {
+        let fieldsToValidate: any[] = [];
+        if (currentStep === 1) {
+            fieldsToValidate = ['title', 'jobType', 'description'];
+        } else if (currentStep === 2) {
+            fieldsToValidate = ['salaryMin', 'salaryMax', 'requirements', 'benefits', 'closingDate'];
+        } else if (currentStep === 3) {
+            fieldsToValidate = ['organizationId', 'locationId', 'specialtyIds'];
+        }
+
+        const isValid = await form.trigger(fieldsToValidate);
+        if (isValid) {
+            if (currentStep < STEPS.length) {
+                setCurrentStep(currentStep + 1);
+            }
         }
     };
 
@@ -353,7 +365,7 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                     <div className="flex gap-2">
                                         <Select
                                             value={form.watch('organizationId')}
-                                            onValueChange={(value) => form.setValue('organizationId', value)}
+                                            onValueChange={(value) => form.setValue('organizationId', value, { shouldValidate: true })}
                                         >
                                             <SelectTrigger className="flex-1">
                                                 <SelectValue placeholder="Select organization" />
@@ -371,6 +383,9 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                             New
                                         </Button>
                                     </div>
+                                    {form.formState.errors.organizationId && (
+                                        <p className="text-sm text-destructive">{form.formState.errors.organizationId.message}</p>
+                                    )}
                                 </CardContent>
                             </Card>
 
@@ -383,7 +398,7 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                     <div className="flex gap-2">
                                         <Select
                                             value={form.watch('locationId')}
-                                            onValueChange={(value) => form.setValue('locationId', value)}
+                                            onValueChange={(value) => form.setValue('locationId', value, { shouldValidate: true })}
                                         >
                                             <SelectTrigger className="flex-1">
                                                 <SelectValue placeholder="Select location" />
@@ -401,6 +416,9 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                             New
                                         </Button>
                                     </div>
+                                    {form.formState.errors.locationId && (
+                                        <p className="text-sm text-destructive">{form.formState.errors.locationId.message}</p>
+                                    )}
                                 </CardContent>
                             </Card>
 
@@ -409,11 +427,20 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                 selectedSpecialties={selectedSpecialties}
                                 onAddSpecialty={(specialtyId: string) => {
                                     const specialty = specialties.find(s => s.id === specialtyId);
-                                    if (specialty) addSpecialty(specialty);
+                                    if (specialty) {
+                                        addSpecialty(specialty);
+                                        form.setValue('specialtyIds', [...selectedSpecialties, specialty].map(s => s.id), { shouldValidate: true });
+                                    }
                                 }}
-                                onRemoveSpecialty={removeSpecialty}
+                                onRemoveSpecialty={(specialtyId: string) => {
+                                    removeSpecialty(specialtyId);
+                                    form.setValue('specialtyIds', selectedSpecialties.filter(s => s.id !== specialtyId).map(s => s.id), { shouldValidate: true });
+                                }}
                                 onCreateNew={openSpecialtyDialog}
                             />
+                            {form.formState.errors.specialtyIds && (
+                                <p className="text-sm text-destructive">{form.formState.errors.specialtyIds.message}</p>
+                            )}
 
                             <Card>
                                 <CardFooter className="flex justify-between pt-6">

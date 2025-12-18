@@ -2,6 +2,8 @@ import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import { JobType, JobStatus, UpdateJobDto, Specialty, Job } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { jobSchema } from '@/lib/schemas';
 
 export interface JobEditFormData {
   title: string;
@@ -30,6 +32,7 @@ export const useJobEditForm = ({ job, employerProfileId, selectedSpecialties, on
   const [isFormReady, setIsFormReady] = useState(false);
 
   const form = useForm<JobEditFormData>({
+    resolver: zodResolver(jobSchema),
     defaultValues: {
       title: '',
       description: '',
