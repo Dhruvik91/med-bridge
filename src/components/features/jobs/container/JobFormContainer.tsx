@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,7 +25,6 @@ import { useJobForm, JobFormData } from '@/hooks/useJobForm';
 import { useJobEditForm } from '@/hooks/useJobEditForm';
 import { useEmployerRoleCheck } from '@/hooks/useEmployerRoleCheck';
 import { JobType, JobStatus, Job, CreateJobDto, Organization } from '@/types';
-import { FRONTEND_ROUTES } from '@/constants/constants';
 import { NotAuthorizedUser } from '@/components/NotAuthorized';
 import { ProgressIndicator } from '../components/ProgressIndicator';
 import { CreateResourceDialog } from '../components/CreateResourceDialog';
@@ -46,7 +43,6 @@ interface JobFormContainerProps {
 }
 
 export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) => {
-    const router = useRouter();
     const { toast } = useToast();
     const [currentStep, setCurrentStep] = useState(1);
 
@@ -55,9 +51,8 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
     const { data: employerProfile } = useGetEmployerProfile(user);
 
     const { data: organizations = [] } = useGetOrganizations(employerProfile?.id);
-    console.log("Organizations:", organizations);
     const { data: locations = [] } = useGetLocations();
-    const { data: specialtiesData} = useGetSpecialties();
+    const { data: specialtiesData } = useGetSpecialties();
     const specialties = specialtiesData?.items ?? [];
 
     const { selectedSpecialties, addSpecialty, removeSpecialty, setSelectedSpecialties } = useSpecialtySelection();
