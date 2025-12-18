@@ -6,5 +6,6 @@ export const useGetJobsByEmployer = (employerProfileId: string) => {
         queryKey: ['employerJobs', employerProfileId],
         queryFn: () => jobService.findByEmployer(employerProfileId),
         enabled: !!employerProfileId,
+        refetchOnMount: true,
     });
 };
