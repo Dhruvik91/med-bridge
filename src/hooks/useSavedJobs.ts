@@ -29,7 +29,9 @@ export const useSavedJobs = () => {
     enabled: !!user?.id,
   });
 
-  const savedJobs = savedJobsData?.items ?? [];
+  const savedJobs = (savedJobsData?.items ?? []).filter(
+    (savedJob) => savedJob.job && !savedJob.job.deletedAt
+  );
 
   // Unsave job mutation
   const unsaveJobMutation = useMutation({

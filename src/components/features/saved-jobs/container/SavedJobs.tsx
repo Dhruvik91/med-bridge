@@ -75,7 +75,7 @@ export function SavedJobs() {
         return <SavedJobsUnauthenticated />;
     }
 
-    // If user has no saved jobs at all (before filtering)
+    // If user has no saved jobs at all (after filtering out deleted ones)
     if (savedJobs.length === 0) {
         return (
             <div className="container mx-auto px-4 py-8">
