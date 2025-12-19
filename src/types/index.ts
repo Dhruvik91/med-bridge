@@ -104,6 +104,14 @@ export interface Specialty {
   updatedAt: string;
 }
 
+export interface Qualification {
+  id: string;
+  name: string;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Organization {
   id: string;
   employerProfileId: string;
@@ -347,6 +355,12 @@ export interface CreateSpecialtyDto {
 }
 
 export interface UpdateSpecialtyDto extends Partial<CreateSpecialtyDto> { }
+
+export interface CreateQualificationDto {
+  name: string;
+}
+
+export interface UpdateQualificationDto extends Partial<CreateQualificationDto> { }
 
 export interface CreateOrganizationDto {
   employerProfileId: string;

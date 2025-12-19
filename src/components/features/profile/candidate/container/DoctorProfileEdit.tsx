@@ -20,8 +20,10 @@ import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
 import { useUpdateDoctorProfile } from '@/hooks/update/useUpdateDoctorProfile';
 import { useGetSpecialties } from '@/hooks/get/useGetSpecialties';
+import { useGetQualifications } from '@/hooks/get/useGetQualifications';
 import { useUploadFile } from '@/hooks/post/useUploadFile';
 import { useSpecialtySelection } from '@/hooks/useSpecialtySelection';
+import { useQualificationSelection } from '@/hooks/useQualificationSelection';
 import { useAddSpecialtyModal } from '@/hooks/useAddSpecialtyModal';
 
 import { Gender, UpdateDoctorProfileDto, UserRole } from '@/types';
@@ -76,8 +78,13 @@ export function DoctorProfileEdit() {
     const { data: specialtiesData } = useGetSpecialties();
     const specialties = specialtiesData?.items ?? [];
 
+    const { data: qualificationsData } = useGetQualifications();
+    const qualifications = qualificationsData?.items ?? [];
+
     const { selectedSpecialties, addSpecialty, removeSpecialty, setSelectedSpecialties } = useSpecialtySelection();
+    const { selectedQualifications, addQualification, removeQualification, setSelectedQualifications } = useQualificationSelection();
     const { isOpen: isSpecialtyModalOpen, openModal: openSpecialtyModal, closeModal: closeSpecialtyModal } = useAddSpecialtyModal();
+    const [isQualModalOpen, setIsQualModalOpen] = useState(false);
 
     const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<ProfileForm>({
         resolver: zodResolver(profileSchema),
@@ -114,8 +121,13 @@ export function DoctorProfileEdit() {
                 const profileSpecialties = specialties.filter(s => profile.specialties?.includes(s.id));
                 setSelectedSpecialties(profileSpecialties);
             }
+
+            if (profile.qualifications && qualifications.length > 0) {
+                const profileQualifications = qualifications.filter(q => profile.qualifications?.includes(q.id));
+                setSelectedQualifications(profileQualifications);
+            }
         }
-    }, [profile, reset, specialties]);
+    }, [profile, reset, specialties, qualifications, setSelectedSpecialties, setSelectedQualifications]);
     const onSubmit = (data: ProfileForm) => {
         if (!profile) return;
 
@@ -125,14 +137,8 @@ export function DoctorProfileEdit() {
             return;
         }
 
-        const qualifications = data.qualificationsRaw
-            ? data.qualificationsRaw
-                .split(',')
-                .map((q) => q.trim())
-                .filter((q) => q.length > 0)
-            : undefined;
-
         const specialtyIds = selectedSpecialties.map((s) => s.id);
+        const qualificationIds = selectedQualifications.map((q) => q.id);
         const socialLinksValue = Object.keys(socialLinks).length > 0 ? socialLinks : undefined;
 
         const profileData: UpdateDoctorProfileDto = {
@@ -144,7 +150,7 @@ export function DoctorProfileEdit() {
             summary: data.bio,
             licenseNumbers: data.licenseNumber ? [data.licenseNumber] : undefined,
             experienceYears: data.yearsOfExperience,
-            qualifications,
+            qualifications: qualificationIds.length > 0 ? qualificationIds : undefined,
             specialties: specialtyIds.length > 0 ? specialtyIds : undefined,
             address: data.address,
             city: data.city,
@@ -255,6 +261,18 @@ export function DoctorProfileEdit() {
                                     isModalOpen={isSpecialtyModalOpen}
                                     onOpenModal={openSpecialtyModal}
                                     onCloseModal={closeSpecialtyModal}
+                                    qualifications={qualifications}
+                                    selectedQualifications={selectedQualifications}
+                                    onAddQualification={(id: string) => {
+                                        const qual = qualifications.find((q) => q.id === id);
+                                        if (qual) {
+                                            addQualification(qual);
+                                        }
+                                    }}
+                                    onRemoveQualification={removeQualification}
+                                    isQualModalOpen={isQualModalOpen}
+                                    onOpenQualModal={() => setIsQualModalOpen(true)}
+                                    onCloseQualModal={() => setIsQualModalOpen(false)}
                                 />
                             )}
 
