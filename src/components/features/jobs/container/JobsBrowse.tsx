@@ -18,48 +18,42 @@ export const JobsBrowse = () => {
     const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
     const [location, setLocation] = useState(searchParams.get('location') || '');
     const [jobType, setJobType] = useState<JobType | 'all'>('all');
+    const [salaryMin, setSalaryMin] = useState<number | ''>('');
+    const [salaryMax, setSalaryMax] = useState<number | ''>('');
+    const [experienceMin, setExperienceMin] = useState<number | ''>('');
+    const [experienceMax, setExperienceMax] = useState<number | ''>('');
+    const [specialtyIds, setSpecialtyIds] = useState<string[]>([]);
+    const [postedWithin, setPostedWithin] = useState<string | 'all'>('all');
 
     const { profile } = useAuth();
-    const { data: jobsData, isLoading } = useGetJobs();
+    const { data: jobsData, isLoading } = useGetJobs({
+        q: searchQuery || undefined,
+        location: location || undefined,
+        jobType: jobType !== 'all' ? jobType : undefined,
+        salaryMin: salaryMin || undefined,
+        salaryMax: salaryMax || undefined,
+        experienceMin: experienceMin || undefined,
+        experienceMax: experienceMax || undefined,
+        specialtyIds: specialtyIds.length > 0 ? specialtyIds : undefined,
+        postedWithin: postedWithin !== 'all' ? postedWithin : undefined,
+    });
     const { formatSalary, getJobTypeLabel, formatDate } = useJobFormatters();
 
-    const filteredJobs = useMemo(() => {
-        const jobs = jobsData?.items ?? [];
-
-        let filtered = jobs.filter(job => job.status === JobStatus.published);
-
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
-            filtered = filtered.filter(job =>
-                job.title.toLowerCase().includes(query) ||
-                job.description.toLowerCase().includes(query) ||
-                job.specialties?.some(s => s.name.toLowerCase().includes(query))
-            );
-        }
-
-        if (location) {
-            const loc = location.toLowerCase();
-            filtered = filtered.filter(job =>
-                job.location?.city.toLowerCase().includes(loc) ||
-                job.location?.state?.toLowerCase().includes(loc) ||
-                job.location?.country.toLowerCase().includes(loc)
-            );
-        }
-
-        if (jobType !== 'all') {
-            filtered = filtered.filter(job => job.jobType === jobType);
-        }
-
-        return filtered;
-    }, [jobsData, searchQuery, location, jobType]);
+    const filteredJobs = jobsData?.items ?? [];
 
     const handleClearFilters = useCallback(() => {
         setSearchQuery('');
         setLocation('');
         setJobType('all');
+        setSalaryMin('');
+        setSalaryMax('');
+        setExperienceMin('');
+        setExperienceMax('');
+        setSpecialtyIds([]);
+        setPostedWithin('all');
     }, []);
 
-    const showClearButton = !!(searchQuery || location || jobType !== 'all');
+    const showClearButton = !!(searchQuery || location || jobType !== 'all' || salaryMin || salaryMax || experienceMin || experienceMax || specialtyIds.length > 0 || postedWithin !== 'all');
 
     return (
         <div className="flex flex-col h-[calc(100vh-4rem)]">
@@ -82,9 +76,21 @@ export const JobsBrowse = () => {
                                 searchQuery={searchQuery}
                                 location={location}
                                 jobType={jobType}
+                                salaryMin={salaryMin}
+                                salaryMax={salaryMax}
+                                experienceMin={experienceMin}
+                                experienceMax={experienceMax}
+                                specialtyIds={specialtyIds}
+                                postedWithin={postedWithin}
                                 onSearchChange={setSearchQuery}
                                 onLocationChange={setLocation}
                                 onJobTypeChange={setJobType}
+                                onSalaryMinChange={setSalaryMin}
+                                onSalaryMaxChange={setSalaryMax}
+                                onExperienceMinChange={setExperienceMin}
+                                onExperienceMaxChange={setExperienceMax}
+                                onSpecialtyIdsChange={setSpecialtyIds}
+                                onPostedWithinChange={setPostedWithin}
                                 onClearFilters={handleClearFilters}
                                 showClearButton={showClearButton}
                             />
@@ -97,9 +103,21 @@ export const JobsBrowse = () => {
                             searchQuery={searchQuery}
                             location={location}
                             jobType={jobType}
+                            salaryMin={salaryMin}
+                            salaryMax={salaryMax}
+                            experienceMin={experienceMin}
+                            experienceMax={experienceMax}
+                            specialtyIds={specialtyIds}
+                            postedWithin={postedWithin}
                             onSearchChange={setSearchQuery}
                             onLocationChange={setLocation}
                             onJobTypeChange={setJobType}
+                            onSalaryMinChange={setSalaryMin}
+                            onSalaryMaxChange={setSalaryMax}
+                            onExperienceMinChange={setExperienceMin}
+                            onExperienceMaxChange={setExperienceMax}
+                            onSpecialtyIdsChange={setSpecialtyIds}
+                            onPostedWithinChange={setPostedWithin}
                             onClearFilters={handleClearFilters}
                             showClearButton={showClearButton}
                         />

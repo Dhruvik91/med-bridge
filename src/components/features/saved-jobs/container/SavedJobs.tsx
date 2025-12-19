@@ -28,6 +28,12 @@ export function SavedJobs() {
     const [searchQuery, setSearchQuery] = useState('');
     const [location, setLocation] = useState('');
     const [jobType, setJobType] = useState<JobType | 'all'>('all');
+    const [salaryMin, setSalaryMin] = useState<number | ''>('');
+    const [salaryMax, setSalaryMax] = useState<number | ''>('');
+    const [experienceMin, setExperienceMin] = useState<number | ''>('');
+    const [experienceMax, setExperienceMax] = useState<number | ''>('');
+    const [specialtyIds, setSpecialtyIds] = useState<string[]>([]);
+    const [postedWithin, setPostedWithin] = useState<string | 'all'>('all');
 
     const filteredSavedJobs = useMemo(() => {
         let filtered = savedJobs;
@@ -54,16 +60,61 @@ export function SavedJobs() {
             filtered = filtered.filter(savedJob => savedJob.job?.jobType === jobType);
         }
 
+        if (salaryMin !== '') {
+            filtered = filtered.filter(savedJob => Number(savedJob.job?.salaryMin ?? 0) >= salaryMin);
+        }
+
+        if (salaryMax !== '') {
+            filtered = filtered.filter(savedJob => Number(savedJob.job?.salaryMax ?? Infinity) <= salaryMax);
+        }
+
+        if (experienceMin !== '') {
+            filtered = filtered.filter(savedJob => Number(savedJob.job?.experienceMin ?? 0) >= experienceMin);
+        }
+
+        if (experienceMax !== '') {
+            filtered = filtered.filter(savedJob => Number(savedJob.job?.experienceMax ?? Infinity) <= experienceMax);
+        }
+
+        if (specialtyIds.length > 0) {
+            filtered = filtered.filter(savedJob =>
+                savedJob.job?.specialties?.some(s => specialtyIds.includes(s.id))
+            );
+        }
+
+        if (postedWithin !== 'all') {
+            const now = new Date();
+            const hours = postedWithin === '24h' ? 24 : postedWithin === '7d' ? 24 * 7 : 24 * 30;
+            const cutoff = new Date(now.getTime() - hours * 60 * 60 * 1000);
+            filtered = filtered.filter(savedJob => new Date(savedJob.job?.createdAt || '') >= cutoff);
+        }
+
         return filtered;
-    }, [savedJobs, searchQuery, location, jobType]);
+    }, [savedJobs, searchQuery, location, jobType, salaryMin, salaryMax, experienceMin, experienceMax, specialtyIds, postedWithin]);
 
     const handleClearFilters = useCallback(() => {
         setSearchQuery('');
         setLocation('');
         setJobType('all');
+        setSalaryMin('');
+        setSalaryMax('');
+        setExperienceMin('');
+        setExperienceMax('');
+        setSpecialtyIds([]);
+        setPostedWithin('all');
     }, []);
 
-    const showClearButton = !!(searchQuery || location || jobType !== 'all');
+    const showClearButton = !!(
+        searchQuery ||
+        location ||
+        jobType !== 'all' ||
+        salaryMin !== '' ||
+        salaryMax !== '' ||
+        experienceMin !== '' ||
+        experienceMax !== '' ||
+        specialtyIds.length > 0 ||
+        postedWithin !== 'all'
+    );
 
     // Loading state
     if (userLoading || savedJobsLoading) {
@@ -105,9 +156,21 @@ export function SavedJobs() {
                                 searchQuery={searchQuery}
                                 location={location}
                                 jobType={jobType}
+                                salaryMin={salaryMin}
+                                salaryMax={salaryMax}
+                                experienceMin={experienceMin}
+                                experienceMax={experienceMax}
+                                specialtyIds={specialtyIds}
+                                postedWithin={postedWithin}
                                 onSearchChange={setSearchQuery}
                                 onLocationChange={setLocation}
                                 onJobTypeChange={setJobType}
+                                onSalaryMinChange={setSalaryMin}
+                                onSalaryMaxChange={setSalaryMax}
+                                onExperienceMinChange={setExperienceMin}
+                                onExperienceMaxChange={setExperienceMax}
+                                onSpecialtyIdsChange={setSpecialtyIds}
+                                onPostedWithinChange={setPostedWithin}
                                 onClearFilters={handleClearFilters}
                                 showClearButton={showClearButton}
                             />
@@ -120,9 +183,21 @@ export function SavedJobs() {
                             searchQuery={searchQuery}
                             location={location}
                             jobType={jobType}
+                            salaryMin={salaryMin}
+                            salaryMax={salaryMax}
+                            experienceMin={experienceMin}
+                            experienceMax={experienceMax}
+                            specialtyIds={specialtyIds}
+                            postedWithin={postedWithin}
                             onSearchChange={setSearchQuery}
                             onLocationChange={setLocation}
                             onJobTypeChange={setJobType}
+                            onSalaryMinChange={setSalaryMin}
+                            onSalaryMaxChange={setSalaryMax}
+                            onExperienceMinChange={setExperienceMin}
+                            onExperienceMaxChange={setExperienceMax}
+                            onSpecialtyIdsChange={setSpecialtyIds}
+                            onPostedWithinChange={setPostedWithin}
                             onClearFilters={handleClearFilters}
                             showClearButton={showClearButton}
                         />

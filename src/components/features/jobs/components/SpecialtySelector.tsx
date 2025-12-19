@@ -1,81 +1,86 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { X, Plus } from 'lucide-react';
+'use client';
 
-interface Specialty {
-    id: string;
-    name: string;
-}
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+import { useState } from "react";
+import { useGetSpecialties } from "@/hooks/get/useGetSpecialties";
+import { Badge } from "@/components/ui/badge";
 
 interface SpecialtySelectorProps {
-    availableSpecialties: Specialty[];
-    selectedSpecialties: Specialty[];
-    onAddSpecialty: (specialtyId: string) => void;
-    onRemoveSpecialty: (specialtyId: string) => void;
-    onCreateNew: () => void;
+    selectedIds: string[];
+    onChange: (ids: string[]) => void;
 }
 
-export const SpecialtySelector = ({
-    availableSpecialties,
-    selectedSpecialties,
-    onAddSpecialty,
-    onRemoveSpecialty,
-    onCreateNew,
-}: SpecialtySelectorProps) => {
-    const unselectedSpecialties = availableSpecialties.filter(
-        (spec) => !selectedSpecialties.some((selected) => selected.id === spec.id)
-    );
+export function SpecialtySelector({ selectedIds, onChange }: SpecialtySelectorProps) {
+    const [open, setOpen] = useState(false);
+    const { data: specialtiesData } = useGetSpecialties();
+    const specialties = specialtiesData?.items ?? [];
+
+    const toggleSpecialty = (id: string) => {
+        const newIds = selectedIds.includes(id)
+            ? selectedIds.filter((i) => i !== id)
+            : [...selectedIds, id];
+        onChange(newIds);
+    };
 
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Specialties</CardTitle>
-                <CardDescription>Select the medical specialties relevant to this position</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                <div className="flex gap-2">
-                    <Select onValueChange={onAddSpecialty}>
-                        <SelectTrigger className="flex-1">
-                            <SelectValue placeholder="Select a specialty" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {unselectedSpecialties.map((specialty) => (
-                                <SelectItem key={specialty.id} value={specialty.id}>
-                                    {specialty.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                    <Button type="button" variant="outline" onClick={onCreateNew}>
-                        <Plus className="h-4 w-4 mr-2" />
-                        New
-                    </Button>
-                </div>
-
-                {selectedSpecialties.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                        {selectedSpecialties.map((specialty) => (
-                            <Badge key={specialty.id} variant="secondary" className="text-sm">
-                                {specialty.name}
-                                <button
-                                    type="button"
-                                    onClick={() => onRemoveSpecialty(specialty.id)}
-                                    className="ml-2 hover:text-destructive"
-                                    aria-label={`Remove ${specialty.name}`}
+        <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+                <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="w-full md:w-[200px] justify-between h-10"
+                >
+                    <span className="truncate">
+                        {selectedIds.length === 0
+                            ? "Select Specialties"
+                            : `${selectedIds.length} selected`}
+                    </span>
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[200px] p-0">
+                <Command>
+                    <CommandInput placeholder="Search specialty..." />
+                    <CommandList>
+                        <CommandEmpty>No specialty found.</CommandEmpty>
+                        <CommandGroup>
+                            {specialties.map((specialty) => (
+                                <CommandItem
+                                    key={specialty.id}
+                                    value={specialty.name}
+                                    onSelect={() => {
+                                        toggleSpecialty(specialty.id);
+                                    }}
                                 >
-                                    <X className="h-3 w-3" />
-                                </button>
-                            </Badge>
-                        ))}
-                    </div>
-                )}
-
-                {selectedSpecialties.length === 0 && (
-                    <p className="text-sm text-muted-foreground">No specialties selected</p>
-                )}
-            </CardContent>
-        </Card>
+                                    <Check
+                                        className={cn(
+                                            "mr-2 h-4 w-4",
+                                            selectedIds.includes(specialty.id) ? "opacity-100" : "opacity-0"
+                                        )}
+                                    />
+                                    {specialty.name}
+                                </CommandItem>
+                            ))}
+                        </CommandGroup>
+                    </CommandList>
+                </Command>
+            </PopoverContent>
+        </Popover>
     );
-};
+}

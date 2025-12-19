@@ -166,6 +166,8 @@ export interface Job {
   publishedAt?: string | null;
   applicationDeadline?: string | null;
   maxApplications?: number | null;
+  experienceMin?: number | null;
+  experienceMax?: number | null;
   postedDate?: string;
   closingDate?: string;
   viewCount?: number;
@@ -316,6 +318,8 @@ export interface CreateJobDto {
   status?: JobStatus;
   applicationDeadline?: string;
   maxApplications?: number;
+  experienceMin?: number;
+  experienceMax?: number;
   specialtyIds?: string[];
   responsibilities?: string[];
 }
