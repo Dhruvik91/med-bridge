@@ -225,7 +225,6 @@ export const JobDetail = () => {
                                 organizationName={job.organization?.name || job.employerProfile?.name || 'Healthcare Facility'}
                                 location={job.location}
                                 jobType={job.jobType}
-                                remote={job.remote}
                                 postedDate={job.createdAt || job.publishedAt || new Date().toISOString()}
                                 viewsCount={typeof job.viewsCount === 'number' ? job.viewsCount : undefined}
                                 status={job.status ?? undefined}
@@ -313,7 +312,6 @@ export const JobDetail = () => {
                             country={job.location.country}
                             latitude={job.location.latitude}
                             longitude={job.location.longitude}
-                            remote={job.remote}
                         />
                     )}
                 </div>

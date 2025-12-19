@@ -7,7 +7,6 @@ interface LocationInfoCardProps {
     country: string;
     latitude?: number;
     longitude?: number;
-    remote?: boolean;
 }
 
 export const LocationInfoCard = ({
@@ -16,7 +15,6 @@ export const LocationInfoCard = ({
     country,
     latitude,
     longitude,
-    remote,
 }: LocationInfoCardProps) => {
     return (
         <Card>
@@ -25,9 +23,6 @@ export const LocationInfoCard = ({
             </CardHeader>
             <CardContent>
                 <div className="space-y-2 text-sm">
-                    {remote && (
-                        <Badge variant="secondary" className="mb-2">Remote Position</Badge>
-                    )}
                     <p className="font-medium">
                         {city}
                         {state && `, ${state}`}

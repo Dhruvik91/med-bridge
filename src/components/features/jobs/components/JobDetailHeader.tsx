@@ -13,7 +13,6 @@ interface JobDetailHeaderProps {
         country: string;
     };
     jobType: JobType;
-    remote?: boolean;
     postedDate: string;
     viewsCount?: number;
     status?: string;
@@ -30,7 +29,6 @@ export const JobDetailHeader = ({
     organizationName,
     location,
     jobType,
-    remote,
     postedDate,
     viewsCount,
     status,
@@ -91,11 +89,6 @@ export const JobDetailHeader = ({
                     <Briefcase className="mr-1 h-4 w-4" aria-hidden="true" />
                     {getJobTypeLabel(jobType)}
                 </Badge>
-                {remote && (
-                    <Badge variant="secondary" className="text-sm">
-                        Remote
-                    </Badge>
-                )}
                 <Badge variant="outline" className="text-sm">
                     <Clock className="mr-1 h-4 w-4" aria-hidden="true" />
                     Posted {new Date(postedDate).toLocaleDateString()}

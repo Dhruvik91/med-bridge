@@ -264,7 +264,6 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                             <SelectItem value={JobType.part_time}>Part Time</SelectItem>
                                             <SelectItem value={JobType.contract}>Contract</SelectItem>
                                             <SelectItem value={JobType.temporary}>Temporary</SelectItem>
-                                            <SelectItem value={JobType.remote}>Remote</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>

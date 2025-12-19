@@ -11,7 +11,6 @@ export enum JobType {
   contract = 'contract',
   temporary = 'temporary',
   internship = 'internship',
-  remote = 'remote',
 }
 
 export enum JobStatus {
@@ -161,7 +160,6 @@ export interface Job {
   salaryMin?: string | number;
   salaryMax?: string | number;
   currency?: string;
-  remote?: boolean;
   jobType: JobType;
   status: JobStatus;
   postedByUserId?: string | null;
