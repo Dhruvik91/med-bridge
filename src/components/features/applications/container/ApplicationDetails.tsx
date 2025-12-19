@@ -36,9 +36,5 @@ export function ApplicationDetailsContainer({ applicationId }: ApplicationDetail
         );
     }
 
-    return (
-        <div className="container mx-auto px-4 py-8">
-            <ApplicationDetailsView application={application} />
-        </div>
-    );
+    return <ApplicationDetailsView application={application} />;
 }

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Application } from '@/types';
 import { ApplicationStatusBadge } from './ApplicationStatusBadge';
-import { Building2, MapPin, Calendar } from 'lucide-react';
+import { Building2, MapPin, Calendar, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 interface ApplicationHeaderProps {
     application: Application;
@@ -14,31 +16,39 @@ export function ApplicationHeader({ application }: ApplicationHeaderProps) {
     if (!job) return null;
 
     return (
-        <div>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h1 className="text-xl md:text-2xl font-bold mb-2">{job.title}</h1>
-                    <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
+        <div className="space-y-6">
+            <Button variant="ghost" size="sm" asChild className="-ml-2 text-muted-foreground hover:text-foreground">
+                <Link href="/applications" className="flex items-center gap-2">
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to Applications
+                </Link>
+            </Button>
+
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-3xl font-extrabold tracking-tight">{job.title}</h1>
+                        <ApplicationStatusBadge status={status} />
+                    </div>
+
+                    <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-muted-foreground">
                         {job.organization?.name && (
-                            <div className="flex items-center gap-1">
-                                <Building2 className="w-4 h-4" />
+                            <div className="flex items-center gap-2">
+                                <Building2 className="h-4 w-4 text-primary" />
                                 <span>{job.organization.name}</span>
                             </div>
                         )}
                         {job.location && (
-                            <div className="flex items-center gap-1">
-                                <MapPin className="w-4 h-4" />
+                            <div className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4 text-primary" />
                                 <span>{job.location.city}, {job.location.country}</span>
                             </div>
                         )}
-                        <div className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            <span>Applied on {format(new Date(appliedAt), 'MMM d, yyyy')}</span>
+                        <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-primary" />
+                            <span>Applied {format(new Date(appliedAt), 'MMM d, yyyy')}</span>
                         </div>
                     </div>
-                </div>
-                <div className="flex items-center gap-3">
-                    <ApplicationStatusBadge status={status} />
                 </div>
             </div>
         </div>

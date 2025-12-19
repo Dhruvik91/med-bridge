@@ -199,6 +199,7 @@ export interface Application {
   job?: Job;
   candidate?: User;
   candidateProfile?: DoctorProfile;
+  expectedSalary?: string | null;
 }
 
 export interface SavedJob {

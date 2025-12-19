@@ -142,22 +142,6 @@ export function ApplicationCard({ application, job, candidate, onStatusChange }:
                     </div>
                 )}
 
-                {/* Specialties */}
-                {candidate?.specialties && candidate.specialties.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-4">
-                        {candidate.specialties.slice(0, 3).map((specialty: string, idx: number) => (
-                            <Badge key={idx} variant="outline" className="text-xs">
-                                {specialty}
-                            </Badge>
-                        ))}
-                        {candidate.specialties.length > 3 && (
-                            <Badge variant="outline" className="text-xs">
-                                +{candidate.specialties.length - 3} more
-                            </Badge>
-                        )}
-                    </div>
-                )}
-
                 {/* Cover Letter */}
                 {application.coverLetter && (
                     <div className="bg-muted/50 p-3 rounded-md border border-border/50">
