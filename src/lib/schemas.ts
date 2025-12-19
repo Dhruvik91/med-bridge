@@ -5,7 +5,9 @@ export const jobSchema = z.object({
     title: z.string().min(1, 'Job title is required').max(100, 'Job title must be less than 100 characters'),
     description: z.string().min(10, 'Description must be at least 10 characters'),
     requirements: z.string().min(1, 'Requirements are required'),
+    responsibilities: z.string().optional(),
     benefits: z.string().min(1, 'Benefits are required'),
+    maxApplications: z.coerce.number().optional().nullable(),
     salaryMin: z.coerce.number()
         .refine(val => !Number.isNaN(val), { message: "Minimum salary is required" })
         .refine(val => val >= 0, { message: "Minimum salary must be positive" }),

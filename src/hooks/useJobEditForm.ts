@@ -9,7 +9,9 @@ export interface JobEditFormData {
   title: string;
   description: string;
   requirements: string;
+  responsibilities: string;
   benefits: string;
+  maxApplications: string;
   salaryMin: string;
   salaryMax: string;
   jobType: JobType;
@@ -37,7 +39,9 @@ export const useJobEditForm = ({ job, employerProfileId, selectedSpecialties, on
       title: '',
       description: '',
       requirements: '',
+      responsibilities: '',
       benefits: '',
+      maxApplications: '',
       salaryMin: '',
       salaryMax: '',
       status: JobStatus.draft,
@@ -57,6 +61,10 @@ export const useJobEditForm = ({ job, employerProfileId, selectedSpecialties, on
         ? job.requirements.join('\n')
         : job.requirements || '';
 
+      const responsibilitiesString = Array.isArray(job.responsibilities)
+        ? job.responsibilities.join('\n')
+        : job.responsibilities || '';
+
       // Handle benefits/perks mapping
       let benefitsString = job.benefits || '';
       if (!benefitsString && job.perks && Array.isArray(job.perks)) {
@@ -74,7 +82,9 @@ export const useJobEditForm = ({ job, employerProfileId, selectedSpecialties, on
         title: job.title,
         description: job.description,
         requirements: requirementsString,
+        responsibilities: responsibilitiesString,
         benefits: benefitsString,
+        maxApplications: job.maxApplications?.toString() || '',
         salaryMin: job.salaryMin?.toString() || '',
         salaryMax: job.salaryMax?.toString() || '',
         jobType: job.jobType,
@@ -112,6 +122,9 @@ export const useJobEditForm = ({ job, employerProfileId, selectedSpecialties, on
     const requirementsArray = data.requirements && typeof data.requirements === 'string'
       ? data.requirements.split('\n').filter((line) => line.trim())
       : undefined;
+    const responsibilitiesArray = data.responsibilities && typeof data.responsibilities === 'string'
+      ? data.responsibilities.split('\n').filter((line) => line.trim())
+      : undefined;
     const perksArray = data.benefits && typeof data.benefits === 'string'
       ? data.benefits.split('\n').filter((line) => line.trim())
       : undefined;
@@ -120,12 +133,14 @@ export const useJobEditForm = ({ job, employerProfileId, selectedSpecialties, on
       title: data.title,
       description: data.description,
       requirements: requirementsArray,
+      responsibilities: responsibilitiesArray,
       perks: perksArray,
       salaryMin: String(data.salaryMin) || undefined,
       salaryMax: String(data.salaryMax) || undefined,
       jobType: data.jobType,
       status: data.status,
       applicationDeadline: data.closingDate || undefined,
+      maxApplications: data.maxApplications ? Number(data.maxApplications) : undefined,
       organizationId: data.organizationId || undefined,
       locationId: data.locationId || undefined,
       specialtyIds: selectedSpecialties.map((s) => s.id),

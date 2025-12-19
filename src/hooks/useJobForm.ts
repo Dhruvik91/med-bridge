@@ -8,7 +8,9 @@ export interface JobFormData {
   title: string;
   description: string;
   requirements: string;
+  responsibilities: string;
   benefits: string;
+  maxApplications: string;
   salaryMin: string;
   salaryMax: string;
   jobType: JobType;
@@ -51,6 +53,9 @@ export const useJobForm = ({ employerProfileId, selectedSpecialties, onSubmit }:
     const requirementsArray = data.requirements
       ? data.requirements.split('\n').filter((line) => line.trim())
       : undefined;
+    const responsibilitiesArray = data.responsibilities
+      ? data.responsibilities.split('\n').filter((line) => line.trim())
+      : undefined;
     const perksArray = data.benefits
       ? data.benefits.split('\n').filter((line) => line.trim())
       : undefined;
@@ -60,12 +65,14 @@ export const useJobForm = ({ employerProfileId, selectedSpecialties, onSubmit }:
       title: data.title,
       description: data.description,
       requirements: requirementsArray,
+      responsibilities: responsibilitiesArray,
       perks: perksArray,
       salaryMin: String(data.salaryMin) || undefined,
       salaryMax: String(data.salaryMax) || undefined,
       jobType: data.jobType,
       status: data.status,
       applicationDeadline: data.closingDate || undefined,
+      maxApplications: data.maxApplications ? Number(data.maxApplications) : undefined,
       organizationId: data.organizationId || undefined,
       locationId: data.locationId || undefined,
       specialtyIds: selectedSpecialties.map((s) => s.id),

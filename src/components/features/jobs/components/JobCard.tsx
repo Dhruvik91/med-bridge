@@ -45,13 +45,13 @@ export const JobCard = ({
                                 <CardTitle className="text-lg md:text-xl font-semibold leading-tight">{job.title}</CardTitle>
                             </div>
                             <div className="flex flex-wrap items-center gap-2 text-sm">{getStatusColor && getStatusIcon && (
-                                    <Badge className={`${getStatusColor(job.status)} text-xs font-medium shrink-0`}>
-                                        <span className="flex items-center gap-1">
-                                            {getStatusIcon(job.status)}
-                                            {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
-                                        </span>
-                                    </Badge>
-                                )}
+                                <Badge className={`${getStatusColor(job.status)} text-xs font-medium shrink-0`}>
+                                    <span className="flex items-center gap-1">
+                                        {getStatusIcon(job.status)}
+                                        {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
+                                    </span>
+                                </Badge>
+                            )}
                                 <Badge variant="secondary" className="font-medium">{getJobTypeLabel(job.jobType)}</Badge>
                                 {job.location && (
                                     <span className="flex items-center gap-1 text-muted-foreground">
@@ -128,6 +128,12 @@ export const JobCard = ({
                             <Clock className="h-4 w-4" />
                             Posted {new Date(job.postedDate || job.createdAt || job.publishedAt || new Date()).toLocaleDateString()}
                         </span>
+                        {job.maxApplications && (
+                            <span className="flex items-center gap-1.5 text-muted-foreground">
+                                <Users className="h-4 w-4" />
+                                Max {job.maxApplications} apps
+                            </span>
+                        )}
                     </div>
                 </CardContent>
             </Card>

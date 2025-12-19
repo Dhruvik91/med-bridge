@@ -316,7 +316,9 @@ export interface CreateJobDto {
   jobType: JobType;
   status?: JobStatus;
   applicationDeadline?: string;
+  maxApplications?: number;
   specialtyIds?: string[];
+  responsibilities?: string[];
 }
 
 export interface UpdateJobDto extends Partial<CreateJobDto> { }

@@ -172,7 +172,7 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
         if (currentStep === 1) {
             fieldsToValidate = ['title', 'jobType', 'description'];
         } else if (currentStep === 2) {
-            fieldsToValidate = ['salaryMin', 'salaryMax', 'requirements', 'benefits', 'closingDate'];
+            fieldsToValidate = ['salaryMin', 'salaryMax', 'requirements', 'responsibilities', 'benefits', 'closingDate', 'maxApplications'];
         } else if (currentStep === 3) {
             fieldsToValidate = ['organizationId', 'locationId', 'specialtyIds'];
         }
@@ -344,6 +344,23 @@ Bachelor's degree
                                 </div>
 
                                 <div className="space-y-2">
+                                    <Label htmlFor="responsibilities">Responsibilities</Label>
+                                    <Textarea
+                                        id="responsibilities"
+                                        {...form.register('responsibilities')}
+                                        rows={4}
+                                        placeholder={`List the key responsibilities and duties. Please add each item on a new line.
+
+Example:
+Diagnose and treat patients
+Collaborate with medical team`}
+                                    />
+                                    {form.formState.errors.responsibilities && (
+                                        <p className="text-sm text-destructive">{form.formState.errors.responsibilities.message}</p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
                                     <Label htmlFor="benefits">Benefits</Label>
                                     <Textarea
                                         id="benefits"
@@ -360,42 +377,57 @@ Health insurance
                                     )}
                                 </div>
 
-                                <div className="space-y-2 flex flex-col">
-                                    <Label htmlFor="closingDate">Application Deadline</Label>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant={"outline"}
-                                                className={cn(
-                                                    "w-full pl-3 text-left font-normal",
-                                                    !form.watch('closingDate') && "text-muted-foreground"
-                                                )}
-                                            >
-                                                {form.watch('closingDate') ? (
-                                                    format(new Date(form.watch('closingDate')), "PPP")
-                                                ) : (
-                                                    <span>Pick a date</span>
-                                                )}
-                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar
-                                                mode="single"
-                                                selected={form.watch('closingDate') ? new Date(form.watch('closingDate')) : undefined}
-                                                onSelect={(date) => {
-                                                    form.setValue('closingDate', date ? format(date, 'yyyy-MM-dd') : '', { shouldValidate: true });
-                                                }}
-                                                disabled={(date) =>
-                                                    date < new Date() || date < new Date("1900-01-01")
-                                                }
-                                                initialFocus
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    {form.formState.errors.closingDate && (
-                                        <p className="text-sm text-destructive">{form.formState.errors.closingDate.message}</p>
-                                    )}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-2 flex flex-col">
+                                        <Label htmlFor="closingDate">Application Deadline</Label>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    variant={"outline"}
+                                                    className={cn(
+                                                        "w-full pl-3 text-left font-normal",
+                                                        !form.watch('closingDate') && "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    {form.watch('closingDate') ? (
+                                                        format(new Date(form.watch('closingDate')), "PPP")
+                                                    ) : (
+                                                        <span>Pick a date</span>
+                                                    )}
+                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={form.watch('closingDate') ? new Date(form.watch('closingDate')) : undefined}
+                                                    onSelect={(date) => {
+                                                        form.setValue('closingDate', date ? format(date, 'yyyy-MM-dd') : '', { shouldValidate: true });
+                                                    }}
+                                                    disabled={(date) =>
+                                                        date < new Date() || date < new Date("1900-01-01")
+                                                    }
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                        {form.formState.errors.closingDate && (
+                                            <p className="text-sm text-destructive">{form.formState.errors.closingDate.message}</p>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="maxApplications">Max Applications</Label>
+                                        <Input
+                                            id="maxApplications"
+                                            type="number"
+                                            {...form.register('maxApplications')}
+                                            placeholder="e.g., 50"
+                                        />
+                                        {form.formState.errors.maxApplications && (
+                                            <p className="text-sm text-destructive">{form.formState.errors.maxApplications.message}</p>
+                                        )}
+                                    </div>
                                 </div>
                             </CardContent>
                             <CardFooter className="flex justify-between">
