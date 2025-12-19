@@ -2,6 +2,8 @@ import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import { JobType, JobStatus, UpdateJobDto, Specialty, Job } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { jobSchema } from '@/lib/schemas';
 
 export interface JobEditFormData {
   title: string;
@@ -30,6 +32,7 @@ export const useJobEditForm = ({ job, employerProfileId, selectedSpecialties, on
   const [isFormReady, setIsFormReady] = useState(false);
 
   const form = useForm<JobEditFormData>({
+    resolver: zodResolver(jobSchema),
     defaultValues: {
       title: '',
       description: '',
@@ -53,11 +56,18 @@ export const useJobEditForm = ({ job, employerProfileId, selectedSpecialties, on
       const requirementsString = Array.isArray(job.requirements)
         ? job.requirements.join('\n')
         : job.requirements || '';
-      const benefitsString = job.benefits || '';
+
+      // Handle benefits/perks mapping
+      let benefitsString = job.benefits || '';
+      if (!benefitsString && job.perks && Array.isArray(job.perks)) {
+        benefitsString = job.perks.join('\n');
+      }
 
       // Format date for input field
-      const formattedClosingDate = job.closingDate
-        ? new Date(job.closingDate).toISOString().split('T')[0]
+      // Check both closingDate and applicationDeadline
+      const dateToFormat = job.closingDate || job.applicationDeadline;
+      const formattedClosingDate = dateToFormat
+        ? new Date(dateToFormat).toISOString().split('T')[0]
         : '';
 
       form.reset({

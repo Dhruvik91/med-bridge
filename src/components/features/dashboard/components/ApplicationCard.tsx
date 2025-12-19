@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Eye, Building2 } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import { ApplicationStatus } from '@/types';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 
@@ -46,10 +46,6 @@ export function ApplicationCard({ application, getStatusIcon, getStatusColor }: 
                             </span>
                         </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground mb-3 bg-muted/30 rounded-md px-2 py-1 w-fit">
-                        <Building2 className="h-4 w-4 text-primary inline mr-2" aria-hidden="true" />
-                        {application.job?.organization?.name || application.job?.employerProfile?.name || 'Company Name'}
-                    </p>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 rounded-md px-2 py-1 w-fit">
                         <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
                         <span>Applied {new Date(application.appliedAt).toLocaleDateString()}</span>

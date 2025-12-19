@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { BookmarkPlus, Building2, Eye } from 'lucide-react';
+import { BookmarkPlus, Eye } from 'lucide-react';
 
 interface SavedJob {
     id: string;
@@ -37,12 +37,6 @@ export function SavedJobCard({ savedJob }: SavedJobCardProps) {
                             <h4 className="font-semibold text-base md:text-lg text-foreground group-hover:text-primary transition-colors truncate">
                                 {savedJob.job?.title || 'Job Title'}
                             </h4>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                                <Building2 className="h-4 w-4 text-primary" />
-                                <span className="font-medium">
-                                    {savedJob.job?.organization?.name || savedJob.job?.employerProfile?.name || 'Company Name'}
-                                </span>
-                            </div>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 rounded-md px-2 py-1 w-fit">

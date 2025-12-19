@@ -1,16 +1,18 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, ArrowRight, Save, Send, Plus } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Save, Send, Plus, CalendarIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
 import { useGetOrganizations } from '@/hooks/get/useGetOrganizations';
@@ -27,7 +29,6 @@ import { useJobForm, JobFormData } from '@/hooks/useJobForm';
 import { useJobEditForm } from '@/hooks/useJobEditForm';
 import { useEmployerRoleCheck } from '@/hooks/useEmployerRoleCheck';
 import { JobType, JobStatus, Job, CreateJobDto, Organization } from '@/types';
-import { FRONTEND_ROUTES } from '@/constants/constants';
 import { NotAuthorizedUser } from '@/components/NotAuthorized';
 import { ProgressIndicator } from '../components/ProgressIndicator';
 import { CreateResourceDialog } from '../components/CreateResourceDialog';
@@ -46,7 +47,6 @@ interface JobFormContainerProps {
 }
 
 export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) => {
-    const router = useRouter();
     const { toast } = useToast();
     const [currentStep, setCurrentStep] = useState(1);
 
@@ -55,9 +55,8 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
     const { data: employerProfile } = useGetEmployerProfile(user);
 
     const { data: organizations = [] } = useGetOrganizations(employerProfile?.id);
-    console.log("Organizations:", organizations);
     const { data: locations = [] } = useGetLocations();
-    const { data: specialtiesData} = useGetSpecialties();
+    const { data: specialtiesData } = useGetSpecialties();
     const specialties = specialtiesData?.items ?? [];
 
     const { selectedSpecialties, addSpecialty, removeSpecialty, setSelectedSpecialties } = useSpecialtySelection();
@@ -110,10 +109,15 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
     const { form, handleFormSubmit } = mode === 'create' ? createFormHook : editFormHook;
     const isFormReady = mode === 'edit' ? editFormHook.isFormReady : true;
 
+    const initializedRef = useRef(false);
+
     // Initialize selected specialties for edit mode
-    if (mode === 'edit' && existingJob?.specialties && selectedSpecialties.length === 0) {
-        setSelectedSpecialties(existingJob.specialties);
-    }
+    useEffect(() => {
+        if (mode === 'edit' && existingJob?.specialties && !initializedRef.current) {
+            setSelectedSpecialties(existingJob.specialties);
+            initializedRef.current = true;
+        }
+    }, [mode, existingJob, setSelectedSpecialties]);
 
     const handleCreateOrganization = useCallback(() => {
         if (!newOrg.name) {
@@ -163,9 +167,21 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
         });
     }, [newSpecialty, createSpecialtyMutation, closeSpecialtyDialog, resetSpecialtyForm, toast]);
 
-    const handleNext = () => {
-        if (currentStep < STEPS.length) {
-            setCurrentStep(currentStep + 1);
+    const handleNext = async () => {
+        let fieldsToValidate: any[] = [];
+        if (currentStep === 1) {
+            fieldsToValidate = ['title', 'jobType', 'description'];
+        } else if (currentStep === 2) {
+            fieldsToValidate = ['salaryMin', 'salaryMax', 'requirements', 'benefits', 'closingDate'];
+        } else if (currentStep === 3) {
+            fieldsToValidate = ['organizationId', 'locationId', 'specialtyIds'];
+        }
+
+        const isValid = await form.trigger(fieldsToValidate);
+        if (isValid) {
+            if (currentStep < STEPS.length) {
+                setCurrentStep(currentStep + 1);
+            }
         }
     };
 
@@ -292,6 +308,9 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                             {...form.register('salaryMin', { valueAsNumber: true })}
                                             placeholder="50000"
                                         />
+                                        {form.formState.errors.salaryMin && (
+                                            <p className="text-sm text-destructive">{form.formState.errors.salaryMin.message}</p>
+                                        )}
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="salaryMax">Maximum Salary</Label>
@@ -301,6 +320,9 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                             {...form.register('salaryMax', { valueAsNumber: true })}
                                             placeholder="100000"
                                         />
+                                        {form.formState.errors.salaryMax && (
+                                            <p className="text-sm text-destructive">{form.formState.errors.salaryMax.message}</p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -310,8 +332,15 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                         id="requirements"
                                         {...form.register('requirements')}
                                         rows={4}
-                                        placeholder="List the qualifications, certifications, and experience required..."
+                                        placeholder={`List the qualifications, certifications, and experience required. Please add each item on a new line.
+
+Example:
+Bachelor's degree
+5 years of experience`}
                                     />
+                                    {form.formState.errors.requirements && (
+                                        <p className="text-sm text-destructive">{form.formState.errors.requirements.message}</p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
@@ -320,17 +349,53 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                         id="benefits"
                                         {...form.register('benefits')}
                                         rows={4}
-                                        placeholder="Describe the benefits package, perks, and other advantages..."
+                                        placeholder={`Describe the benefits package, perks, and other advantages. Please add each item on a new line.
+
+Example:
+Health insurance
+401k matching`}
                                     />
+                                    {form.formState.errors.benefits && (
+                                        <p className="text-sm text-destructive">{form.formState.errors.benefits.message}</p>
+                                    )}
                                 </div>
 
-                                <div className="space-y-2">
+                                <div className="space-y-2 flex flex-col">
                                     <Label htmlFor="closingDate">Application Deadline</Label>
-                                    <Input
-                                        id="closingDate"
-                                        type="date"
-                                        {...form.register('closingDate')}
-                                    />
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant={"outline"}
+                                                className={cn(
+                                                    "w-full pl-3 text-left font-normal",
+                                                    !form.watch('closingDate') && "text-muted-foreground"
+                                                )}
+                                            >
+                                                {form.watch('closingDate') ? (
+                                                    format(new Date(form.watch('closingDate')), "PPP")
+                                                ) : (
+                                                    <span>Pick a date</span>
+                                                )}
+                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0" align="start">
+                                            <Calendar
+                                                mode="single"
+                                                selected={form.watch('closingDate') ? new Date(form.watch('closingDate')) : undefined}
+                                                onSelect={(date) => {
+                                                    form.setValue('closingDate', date ? format(date, 'yyyy-MM-dd') : '', { shouldValidate: true });
+                                                }}
+                                                disabled={(date) =>
+                                                    date < new Date() || date < new Date("1900-01-01")
+                                                }
+                                                initialFocus
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                    {form.formState.errors.closingDate && (
+                                        <p className="text-sm text-destructive">{form.formState.errors.closingDate.message}</p>
+                                    )}
                                 </div>
                             </CardContent>
                             <CardFooter className="flex justify-between">
@@ -358,7 +423,7 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                     <div className="flex gap-2">
                                         <Select
                                             value={form.watch('organizationId')}
-                                            onValueChange={(value) => form.setValue('organizationId', value)}
+                                            onValueChange={(value) => form.setValue('organizationId', value, { shouldValidate: true })}
                                         >
                                             <SelectTrigger className="flex-1">
                                                 <SelectValue placeholder="Select organization" />
@@ -376,6 +441,9 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                             New
                                         </Button>
                                     </div>
+                                    {form.formState.errors.organizationId && (
+                                        <p className="text-sm text-destructive">{form.formState.errors.organizationId.message}</p>
+                                    )}
                                 </CardContent>
                             </Card>
 
@@ -388,7 +456,7 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                     <div className="flex gap-2">
                                         <Select
                                             value={form.watch('locationId')}
-                                            onValueChange={(value) => form.setValue('locationId', value)}
+                                            onValueChange={(value) => form.setValue('locationId', value, { shouldValidate: true })}
                                         >
                                             <SelectTrigger className="flex-1">
                                                 <SelectValue placeholder="Select location" />
@@ -406,6 +474,9 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                             New
                                         </Button>
                                     </div>
+                                    {form.formState.errors.locationId && (
+                                        <p className="text-sm text-destructive">{form.formState.errors.locationId.message}</p>
+                                    )}
                                 </CardContent>
                             </Card>
 
@@ -414,11 +485,20 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                 selectedSpecialties={selectedSpecialties}
                                 onAddSpecialty={(specialtyId: string) => {
                                     const specialty = specialties.find(s => s.id === specialtyId);
-                                    if (specialty) addSpecialty(specialty);
+                                    if (specialty) {
+                                        addSpecialty(specialty);
+                                        form.setValue('specialtyIds', [...selectedSpecialties, specialty].map(s => s.id), { shouldValidate: true });
+                                    }
                                 }}
-                                onRemoveSpecialty={removeSpecialty}
+                                onRemoveSpecialty={(specialtyId: string) => {
+                                    removeSpecialty(specialtyId);
+                                    form.setValue('specialtyIds', selectedSpecialties.filter(s => s.id !== specialtyId).map(s => s.id), { shouldValidate: true });
+                                }}
                                 onCreateNew={openSpecialtyDialog}
                             />
+                            {form.formState.errors.specialtyIds && (
+                                <p className="text-sm text-destructive">{form.formState.errors.specialtyIds.message}</p>
+                            )}
 
                             <Card>
                                 <CardFooter className="flex justify-between pt-6">

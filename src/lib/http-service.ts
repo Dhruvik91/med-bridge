@@ -66,6 +66,9 @@ class HttpService {
               FRONTEND_ROUTES.HOME,
               FRONTEND_ROUTES.AUTH.LOGIN,
               FRONTEND_ROUTES.AUTH.SIGNUP,
+              FRONTEND_ROUTES.AUTH.FORGOT_PASSWORD,
+              FRONTEND_ROUTES.AUTH.RESET_PASSWORD,
+              FRONTEND_ROUTES.AUTH.CALLBACK,
             ];
 
             if (!publicRoutes.includes(currentPath)) {

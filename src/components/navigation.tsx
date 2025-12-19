@@ -30,10 +30,9 @@ export function Navigation() {
   const pathname = usePathname()
 
   const getNavLinkClass = (isActive: boolean) =>
-    `text-sm font-medium transition-colors ${
-      isActive
-        ? 'text-primary border-b-2 border-primary pb-1'
-        : 'text-foreground/80 hover:text-primary'
+    `text-sm font-medium transition-colors ${isActive
+      ? 'text-primary border-b-2 border-primary pb-1'
+      : 'text-foreground/80 hover:text-primary'
     }`
 
   const handleSignOut = async () => {
@@ -180,8 +179,7 @@ export function Navigation() {
                 </div>
               </div>
             ) : (
-              <>
-                {/* Auth actions */}
+              <div className="flex items-center justify-end w-full gap-4">
                 <div className="flex items-center space-x-2">
                   <Link href={FRONTEND_ROUTES.AUTH.LOGIN}>
                     <Button variant="ghost">Sign In</Button>
@@ -190,7 +188,7 @@ export function Navigation() {
                     <Button>Get Started</Button>
                   </Link>
                 </div>
-              </>
+              </div>
             )}
           </div>
         </div>

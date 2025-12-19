@@ -8,6 +8,8 @@ const PUBLIC_PATHS = new Set<string>([
   FRONTEND_ROUTES.AUTH.LOGIN,
   FRONTEND_ROUTES.AUTH.SIGNUP,
   FRONTEND_ROUTES.AUTH.CALLBACK,
+  FRONTEND_ROUTES.AUTH.FORGOT_PASSWORD,
+  FRONTEND_ROUTES.AUTH.RESET_PASSWORD,
 ]);
 
 const DASHBOARD_ROUTES: Record<string, string> = {
@@ -121,8 +123,10 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Authenticated users on public auth routes -> redirect to dashboard
-  if (isPublic && (pathname === FRONTEND_ROUTES.HOME || pathname.startsWith('/auth'))) {
+  // Authenticated users on login/signup routes -> redirect to dashboard
+  // But allow access to forgot-password and reset-password even when authenticated
+  const authRoutesToRedirect = [FRONTEND_ROUTES.AUTH.LOGIN, FRONTEND_ROUTES.AUTH.SIGNUP];
+  if (isPublic && (pathname === FRONTEND_ROUTES.HOME || authRoutesToRedirect.includes(pathname))) {
     const url = req.nextUrl.clone();
     url.pathname = getDashboardRoute(user.role);
     url.searchParams.delete('next');

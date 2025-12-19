@@ -1,6 +1,8 @@
 import { useForm } from 'react-hook-form';
 import { JobType, JobStatus, CreateJobDto, Specialty } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { jobSchema } from '@/lib/schemas';
 
 export interface JobFormData {
   title: string;
@@ -27,6 +29,7 @@ export const useJobForm = ({ employerProfileId, selectedSpecialties, onSubmit }:
   const { toast } = useToast();
 
   const form = useForm<JobFormData>({
+    resolver: zodResolver(jobSchema),
     defaultValues: {
       status: JobStatus.draft,
       jobType: JobType.full_time,
