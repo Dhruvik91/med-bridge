@@ -5,6 +5,7 @@ import { Building2, MapPin, Calendar, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 
 interface ApplicationHeaderProps {
     application: Application;
@@ -18,7 +19,7 @@ export function ApplicationHeader({ application }: ApplicationHeaderProps) {
     return (
         <div className="space-y-6">
             <Button variant="ghost" size="sm" asChild className="-ml-2 text-muted-foreground hover:text-foreground">
-                <Link href="/applications" className="flex items-center gap-2">
+                <Link href={FRONTEND_ROUTES.APPLICATIONS.MANAGE} className="flex items-center gap-2">
                     <ArrowLeft className="h-4 w-4" />
                     Back to Applications
                 </Link>

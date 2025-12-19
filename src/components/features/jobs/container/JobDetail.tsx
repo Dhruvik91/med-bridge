@@ -10,7 +10,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ArrowLeft } from 'lucide-react';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetJob } from '@/hooks/get/useGetJob';
 import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
@@ -235,6 +234,7 @@ export const JobDetail = () => {
                                 onShare={handleShare}
                                 isSaving={saveJobMutation.isPending}
                                 getJobTypeLabel={getJobTypeLabel}
+                                role={user?.role}
                             />
                         </CardHeader>
 
