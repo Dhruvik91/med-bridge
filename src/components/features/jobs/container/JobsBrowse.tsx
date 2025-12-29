@@ -8,7 +8,7 @@ import { Briefcase } from 'lucide-react';
 import { useGetJobs } from '@/hooks/get/useGetJobs';
 import { useAuth } from '@/providers/auth-provider';
 import { useJobFormatters } from '@/hooks/useJobFormatters';
-import { JobType, JobStatus } from '@/types';
+import { JobType } from '@/types';
 import { MobileFilterDrawer } from '../components/MobileFilterDrawer';
 import { JobCard } from '../components/JobCard';
 import { EmptyState } from '../components/EmptyState';
