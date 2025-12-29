@@ -23,9 +23,11 @@ import { Badge } from "@/components/ui/badge";
 interface SpecialtySelectorProps {
     selectedIds: string[];
     onChange: (ids: string[]) => void;
+    className?: string;
+    fullWidth?: boolean;
 }
 
-export function SpecialtySelector({ selectedIds, onChange }: SpecialtySelectorProps) {
+export function SpecialtySelector({ selectedIds, onChange, className, fullWidth }: SpecialtySelectorProps) {
     const [open, setOpen] = useState(false);
     const { data: specialtiesData } = useGetSpecialties();
     const specialties = specialtiesData?.items ?? [];
@@ -44,7 +46,11 @@ export function SpecialtySelector({ selectedIds, onChange }: SpecialtySelectorPr
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-full md:w-[200px] justify-between h-10"
+                    className={cn(
+                        "justify-between h-10",
+                        fullWidth ? "w-full" : "w-full md:w-[200px]",
+                        className,
+                    )}
                 >
                     <span className="truncate">
                         {selectedIds.length === 0

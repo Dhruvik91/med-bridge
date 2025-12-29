@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -31,6 +31,7 @@ interface MobileFilterDrawerProps {
     onPostedWithinChange: (value: string | 'all') => void;
     onClearFilters: () => void;
     showClearButton: boolean;
+    onApply?: () => void;
 }
 
 export const MobileFilterDrawer = ({
@@ -54,8 +55,32 @@ export const MobileFilterDrawer = ({
     onPostedWithinChange,
     onClearFilters,
     showClearButton,
+    onApply,
 }: MobileFilterDrawerProps) => {
     const [open, setOpen] = useState(false);
+    const [isDesktop, setIsDesktop] = useState(false);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        const mediaQuery = window.matchMedia('(min-width: 768px)');
+
+        const updateMatch = (event: MediaQueryListEvent | MediaQueryList) => {
+            setIsDesktop(event.matches);
+        };
+
+        // Set initial value
+        updateMatch(mediaQuery);
+
+        // Listen for changes
+        const handler = (event: MediaQueryListEvent) => updateMatch(event);
+
+        mediaQuery.addEventListener('change', handler);
+
+        return () => {
+            mediaQuery.removeEventListener('change', handler);
+        };
+    }, []);
 
     // Count active filters
     const activeFilterCount = [
@@ -71,6 +96,9 @@ export const MobileFilterDrawer = ({
     ].filter(Boolean).length;
 
     const handleApplyFilters = () => {
+        if (onApply) {
+            onApply();
+        }
         setOpen(false);
     };
 
@@ -90,7 +118,10 @@ export const MobileFilterDrawer = ({
                     )}
                 </Button>
             </SheetTrigger>
-            <SheetContent side="top" className="h-auto max-h-[80vh] overflow-y-auto">
+            <SheetContent
+                side={isDesktop ? 'right' : 'top'}
+                className="h-auto max-h-[80vh] overflow-y-auto md:max-w-[50vw] lg:max-w-[40vw] xl:max-w-[20vw] w-full mx-auto my-0"
+            >
                 <SheetHeader>
                     <SheetTitle>Filter Jobs</SheetTitle>
                 </SheetHeader>
@@ -137,6 +168,7 @@ export const MobileFilterDrawer = ({
                         <SpecialtySelector
                             selectedIds={specialtyIds}
                             onChange={onSpecialtyIdsChange}
+                            fullWidth
                         />
                     </div>
 

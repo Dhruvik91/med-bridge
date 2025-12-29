@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Briefcase } from 'lucide-react';
@@ -8,13 +8,13 @@ import { useGetJobs } from '@/hooks/get/useGetJobs';
 import { useAuth } from '@/providers/auth-provider';
 import { useJobFormatters } from '@/hooks/useJobFormatters';
 import { JobType, JobStatus } from '@/types';
-import { JobSearchFilters } from '../components/JobSearchFilters';
 import { MobileFilterDrawer } from '../components/MobileFilterDrawer';
 import { JobCard } from '../components/JobCard';
 import { EmptyState } from '../components/EmptyState';
 
 export const JobsBrowse = () => {
     const searchParams = useSearchParams();
+    // Draft filter state (used in the UI while the drawer is open)
     const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
     const [location, setLocation] = useState(searchParams.get('location') || '');
     const [jobType, setJobType] = useState<JobType | 'all'>('all');
@@ -25,23 +25,58 @@ export const JobsBrowse = () => {
     const [specialtyIds, setSpecialtyIds] = useState<string[]>([]);
     const [postedWithin, setPostedWithin] = useState<string | 'all'>('all');
 
+    // Applied filter state (used to query the API)
+    const [appliedSearchQuery, setAppliedSearchQuery] = useState(searchParams.get('q') || '');
+    const [appliedLocation, setAppliedLocation] = useState(searchParams.get('location') || '');
+    const [appliedJobType, setAppliedJobType] = useState<JobType | 'all'>('all');
+    const [appliedSalaryMin, setAppliedSalaryMin] = useState<number | ''>('');
+    const [appliedSalaryMax, setAppliedSalaryMax] = useState<number | ''>('');
+    const [appliedExperienceMin, setAppliedExperienceMin] = useState<number | ''>('');
+    const [appliedExperienceMax, setAppliedExperienceMax] = useState<number | ''>('');
+    const [appliedSpecialtyIds, setAppliedSpecialtyIds] = useState<string[]>([]);
+    const [appliedPostedWithin, setAppliedPostedWithin] = useState<string | 'all'>('all');
+
     const { profile } = useAuth();
     const { data: jobsData, isLoading } = useGetJobs({
-        q: searchQuery || undefined,
-        location: location || undefined,
-        jobType: jobType !== 'all' ? jobType : undefined,
-        salaryMin: salaryMin || undefined,
-        salaryMax: salaryMax || undefined,
-        experienceMin: experienceMin || undefined,
-        experienceMax: experienceMax || undefined,
-        specialtyIds: specialtyIds.length > 0 ? specialtyIds : undefined,
-        postedWithin: postedWithin !== 'all' ? postedWithin : undefined,
+        q: appliedSearchQuery || undefined,
+        location: appliedLocation || undefined,
+        jobType: appliedJobType !== 'all' ? appliedJobType : undefined,
+        salaryMin: appliedSalaryMin || undefined,
+        salaryMax: appliedSalaryMax || undefined,
+        experienceMin: appliedExperienceMin || undefined,
+        experienceMax: appliedExperienceMax || undefined,
+        specialtyIds: appliedSpecialtyIds.length > 0 ? appliedSpecialtyIds : undefined,
+        postedWithin: appliedPostedWithin !== 'all' ? appliedPostedWithin : undefined,
     });
     const { formatSalary, getJobTypeLabel, formatDate } = useJobFormatters();
 
     const filteredJobs = jobsData?.items ?? [];
 
+    const handleApplyFilters = useCallback(() => {
+        // Apply the current draft filter values to trigger the API call
+        setAppliedSearchQuery(searchQuery || '');
+        setAppliedLocation(location || '');
+        setAppliedJobType(jobType);
+        setAppliedSalaryMin(salaryMin || '');
+        setAppliedSalaryMax(salaryMax || '');
+        setAppliedExperienceMin(experienceMin || '');
+        setAppliedExperienceMax(experienceMax || '');
+        setAppliedSpecialtyIds([...specialtyIds]);
+        setAppliedPostedWithin(postedWithin);
+    }, [
+        searchQuery,
+        location,
+        jobType,
+        salaryMin,
+        salaryMax,
+        experienceMin,
+        experienceMax,
+        specialtyIds,
+        postedWithin,
+    ]);
+
     const handleClearFilters = useCallback(() => {
+        // Reset draft filters
         setSearchQuery('');
         setLocation('');
         setJobType('all');
@@ -51,6 +86,17 @@ export const JobsBrowse = () => {
         setExperienceMax('');
         setSpecialtyIds([]);
         setPostedWithin('all');
+
+        // Reset applied filters (this will trigger the API with cleared filters)
+        setAppliedSearchQuery('');
+        setAppliedLocation('');
+        setAppliedJobType('all');
+        setAppliedSalaryMin('');
+        setAppliedSalaryMax('');
+        setAppliedExperienceMin('');
+        setAppliedExperienceMax('');
+        setAppliedSpecialtyIds([]);
+        setAppliedPostedWithin('all');
     }, []);
 
     const showClearButton = !!(searchQuery || location || jobType !== 'all' || salaryMin || salaryMax || experienceMin || experienceMax || specialtyIds.length > 0 || postedWithin !== 'all');
@@ -70,8 +116,8 @@ export const JobsBrowse = () => {
                             </p>
                         </div>
 
-                        {/* Mobile Filter Button */}
-                        <div className="md:hidden">
+                        {/* Filters Button - opens drawer on all screen sizes */}
+                        <div>
                             <MobileFilterDrawer
                                 searchQuery={searchQuery}
                                 location={location}
@@ -93,35 +139,12 @@ export const JobsBrowse = () => {
                                 onPostedWithinChange={setPostedWithin}
                                 onClearFilters={handleClearFilters}
                                 showClearButton={showClearButton}
+                                onApply={handleApplyFilters}
                             />
                         </div>
                     </div>
 
-                    {/* Desktop Filters - Inline */}
-                    <div className="mt-4">
-                        <JobSearchFilters
-                            searchQuery={searchQuery}
-                            location={location}
-                            jobType={jobType}
-                            salaryMin={salaryMin}
-                            salaryMax={salaryMax}
-                            experienceMin={experienceMin}
-                            experienceMax={experienceMax}
-                            specialtyIds={specialtyIds}
-                            postedWithin={postedWithin}
-                            onSearchChange={setSearchQuery}
-                            onLocationChange={setLocation}
-                            onJobTypeChange={setJobType}
-                            onSalaryMinChange={setSalaryMin}
-                            onSalaryMaxChange={setSalaryMax}
-                            onExperienceMinChange={setExperienceMin}
-                            onExperienceMaxChange={setExperienceMax}
-                            onSpecialtyIdsChange={setSpecialtyIds}
-                            onPostedWithinChange={setPostedWithin}
-                            onClearFilters={handleClearFilters}
-                            showClearButton={showClearButton}
-                        />
-                    </div>
+                    {/* All filters are now inside the Filters drawer */}
                 </div>
             </div>
 
