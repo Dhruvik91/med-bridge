@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 import { Briefcase } from 'lucide-react';
 import { useGetJobs } from '@/hooks/get/useGetJobs';
 import { useAuth } from '@/providers/auth-provider';
@@ -87,7 +88,7 @@ export const JobsBrowse = () => {
                         </div>
 
                         {/* Filters Button - opens drawer on all screen sizes */}
-                        <div>
+                        <div className="flex items-center gap-2">
                             <MobileFilterDrawer
                                 searchQuery={draftFilters.searchQuery}
                                 location={draftFilters.location}
@@ -129,6 +130,16 @@ export const JobsBrowse = () => {
                                 showClearButton={showClearButton}
                                 onApply={handleApplyFilters}
                             />
+                            {showClearButton && (
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={handleClearFilters}
+                                >
+                                    Clear
+                                </Button>
+                            )}
                         </div>
                     </div>
 
