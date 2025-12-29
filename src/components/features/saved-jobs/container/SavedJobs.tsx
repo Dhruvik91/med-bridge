@@ -129,8 +129,29 @@ export function SavedJobs() {
     // If user has no saved jobs at all (after filtering out deleted ones)
     if (savedJobs.length === 0) {
         return (
-            <div className="container mx-auto px-4 py-8">
-                <SavedJobsEmptyState />
+            <div className="flex flex-col h-[calc(100vh-4rem)]">
+                {/* Fixed Header - Sticky on Desktop */}
+                <div className="sticky top-0 z-10 bg-background border-b">
+                    <div className="container mx-auto px-4 py-4 md:py-6">
+                        <div className="flex items-center justify-between mb-4 md:mb-0">
+                            <div>
+                                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-1">
+                                    Saved Jobs
+                                </h1>
+                                <p className="text-sm md:text-base text-muted-foreground">
+                                    0 jobs saved
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Empty State Content */}
+                <div className="flex-1 overflow-y-auto">
+                    <div className="container mx-auto px-4 py-8">
+                        <SavedJobsEmptyState />
+                    </div>
+                </div>
             </div>
         );
     }

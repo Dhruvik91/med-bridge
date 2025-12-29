@@ -101,6 +101,18 @@ export const JobsBrowse = () => {
 
     const showClearButton = !!(searchQuery || location || jobType !== 'all' || salaryMin || salaryMax || experienceMin || experienceMax || specialtyIds.length > 0 || postedWithin !== 'all');
 
+    const hasAppliedFilters = !!(
+        appliedSearchQuery ||
+        appliedLocation ||
+        appliedJobType !== 'all' ||
+        appliedSalaryMin ||
+        appliedSalaryMax ||
+        appliedExperienceMin ||
+        appliedExperienceMax ||
+        appliedSpecialtyIds.length > 0 ||
+        appliedPostedWithin !== 'all'
+    );
+
     return (
         <div className="flex flex-col h-[calc(100vh-4rem)]">
             {/* Fixed Header - Sticky on Desktop */}
@@ -158,13 +170,21 @@ export const JobsBrowse = () => {
                             ))}
                         </div>
                     ) : filteredJobs.length === 0 ? (
-                        <EmptyState
-                            icon={Briefcase}
-                            title="No jobs found"
-                            description="Try adjusting your search criteria or clearing filters"
-                            actionLabel="Clear Filters"
-                            onAction={handleClearFilters}
-                        />
+                        hasAppliedFilters ? (
+                            <EmptyState
+                                icon={Briefcase}
+                                title="No jobs found"
+                                description="Try adjusting your search criteria or clearing filters"
+                                actionLabel="Clear Filters"
+                                onAction={handleClearFilters}
+                            />
+                        ) : (
+                            <EmptyState
+                                icon={Briefcase}
+                                title="Coming soon"
+                                description="We are working hard to bring you opportunities. Please check back later."
+                            />
+                        )
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                             {filteredJobs.map((job) => (
