@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Badge } from '@/components/ui/badge';
 import { Search, MapPin, Filter, SlidersHorizontal } from 'lucide-react';
 import { JobType } from '@/types';
-import { SpecialtySelector } from './SpecialtySelector';
+import { useGetSpecialties } from '@/hooks/get/useGetSpecialties';
 
 interface MobileFilterDrawerProps {
     searchQuery: string;
@@ -59,6 +59,8 @@ export const MobileFilterDrawer = ({
 }: MobileFilterDrawerProps) => {
     const [open, setOpen] = useState(false);
     const [isDesktop, setIsDesktop] = useState(false);
+    const { data: specialtiesData } = useGetSpecialties();
+    const specialties = specialtiesData?.items ?? [];
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -164,12 +166,31 @@ export const MobileFilterDrawer = ({
 
                     {/* Specialty Selector */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Specialties</label>
-                        <SpecialtySelector
-                            selectedIds={specialtyIds}
-                            onChange={onSpecialtyIdsChange}
-                            fullWidth
-                        />
+                        <label htmlFor="mobile-specialty" className="text-sm font-medium">
+                            Specialty
+                        </label>
+                        <Select
+                            value={specialtyIds[0] ?? 'all'}
+                            onValueChange={(value) => {
+                                if (value === 'all') {
+                                    onSpecialtyIdsChange([]);
+                                } else {
+                                    onSpecialtyIdsChange([value]);
+                                }
+                            }}
+                        >
+                            <SelectTrigger id="mobile-specialty">
+                                <SelectValue placeholder="Select specialty" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Specialties</SelectItem>
+                                {specialties.map((specialty) => (
+                                    <SelectItem key={specialty.id} value={specialty.id}>
+                                        {specialty.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
 
                     {/* Job Type Select */}

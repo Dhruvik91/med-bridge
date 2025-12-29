@@ -4,11 +4,14 @@ import { API_CONFIG } from '@/constants/constants';
 import { Paginated } from '@/constants/interface';
 
 export const savedJobService = {
-  async findByUser(userId: string, page = 1, limit = 20): Promise<Paginated<SavedJob>> {
+  async findByUser(
+    userId: string,
+    params: Record<string, any> = {},
+  ): Promise<Paginated<SavedJob>> {
     const response = await httpService.get<Paginated<SavedJob>>(
       `${API_CONFIG.path.savedJobs.byUser}/${userId}`,
       {
-        params: { page, limit },
+        params,
       },
     );
     return response.data;

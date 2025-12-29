@@ -4,8 +4,9 @@ import { useAuth } from '@/providers/auth-provider';
 import { savedJobService } from '@/services/saved-job.service';
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@/types';
+import { JobFilters } from '@/components/features/jobs/hooks/useJobFilters';
 
-export const useSavedJobs = () => {
+export const useSavedJobs = (filters?: JobFilters) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [deletingJobId, setDeletingJobId] = useState<string | null>(null);
@@ -22,10 +23,33 @@ export const useSavedJobs = () => {
     updatedAt: profile.updatedAt,
   } : undefined;
 
-  // Fetch saved jobs (paginated) and unwrap items
+  // Fetch saved jobs (paginated) with optional filters, and unwrap items
   const { data: savedJobsData, isLoading: savedJobsLoading } = useQuery({
-    queryKey: ['savedJobs', user?.id],
-    queryFn: () => savedJobService.findByUser(user!.id),
+    queryKey: ['savedJobs', user?.id, filters],
+    queryFn: () => {
+      const params: Record<string, any> = {
+        page: 1,
+        limit: 50,
+      };
+
+      if (filters) {
+        if (filters.searchQuery) params.q = filters.searchQuery;
+        if (filters.location) params.location = filters.location;
+        if (filters.jobType && filters.jobType !== 'all') params.jobType = filters.jobType;
+        if (filters.salaryMin !== '') params.salaryMin = filters.salaryMin;
+        if (filters.salaryMax !== '') params.salaryMax = filters.salaryMax;
+        if (filters.experienceMin !== '') params.experienceMin = filters.experienceMin;
+        if (filters.experienceMax !== '') params.experienceMax = filters.experienceMax;
+        if (filters.specialtyIds && filters.specialtyIds.length > 0) {
+          params.specialtyIds = filters.specialtyIds;
+        }
+        if (filters.postedWithin && filters.postedWithin !== 'all') {
+          params.postedWithin = filters.postedWithin;
+        }
+      }
+
+      return savedJobService.findByUser(user!.id, params);
+    },
     enabled: !!user?.id,
   });
 
