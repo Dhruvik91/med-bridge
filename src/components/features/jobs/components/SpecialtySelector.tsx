@@ -32,10 +32,12 @@ export function SpecialtySelector({ selectedIds, onChange, className, fullWidth 
     const { data: specialtiesData } = useGetSpecialties();
     const specialties = specialtiesData?.items ?? [];
 
+    const safeSelectedIds = selectedIds ?? [];
+
     const toggleSpecialty = (id: string) => {
-        const newIds = selectedIds.includes(id)
-            ? selectedIds.filter((i) => i !== id)
-            : [...selectedIds, id];
+        const newIds = safeSelectedIds.includes(id)
+            ? safeSelectedIds.filter((i) => i !== id)
+            : [...safeSelectedIds, id];
         onChange(newIds);
     };
 
@@ -53,9 +55,9 @@ export function SpecialtySelector({ selectedIds, onChange, className, fullWidth 
                     )}
                 >
                     <span className="truncate">
-                        {selectedIds.length === 0
+                        {safeSelectedIds.length === 0
                             ? "Select Specialties"
-                            : `${selectedIds.length} selected`}
+                            : `${safeSelectedIds.length} selected`}
                     </span>
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -77,7 +79,7 @@ export function SpecialtySelector({ selectedIds, onChange, className, fullWidth 
                                     <Check
                                         className={cn(
                                             "mr-2 h-4 w-4",
-                                            selectedIds.includes(specialty.id) ? "opacity-100" : "opacity-0"
+                                            safeSelectedIds.includes(specialty.id) ? "opacity-100" : "opacity-0"
                                         )}
                                     />
                                     {specialty.name}

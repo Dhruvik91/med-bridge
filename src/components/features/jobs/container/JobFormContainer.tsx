@@ -25,14 +25,13 @@ import { useCreateLocation } from '@/hooks/post/useCreateLocation';
 import { useCreateSpecialty } from '@/hooks/post/useCreateSpecialty';
 import { useSpecialtySelection } from '@/hooks/useSpecialtySelection';
 import { useCreateJobDialogs } from '@/hooks/useCreateJobDialogs';
-import { useJobForm, JobFormData } from '@/hooks/useJobForm';
+import { useJobForm } from '@/hooks/useJobForm';
 import { useJobEditForm } from '@/hooks/useJobEditForm';
 import { useEmployerRoleCheck } from '@/hooks/useEmployerRoleCheck';
 import { JobType, JobStatus, Job, CreateJobDto, Organization } from '@/types';
 import { NotAuthorizedUser } from '@/components/NotAuthorized';
 import { ProgressIndicator } from '../components/ProgressIndicator';
 import { CreateResourceDialog } from '../components/CreateResourceDialog';
-import { SpecialtySelector } from '../components/SpecialtySelector';
 import { JobFormSkeleton } from '../components/JobFormSkeleton';
 
 const STEPS = [
@@ -59,7 +58,7 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
     const { data: specialtiesData } = useGetSpecialties();
     const specialties = specialtiesData?.items ?? [];
 
-    const { selectedSpecialties, addSpecialty, removeSpecialty, setSelectedSpecialties } = useSpecialtySelection();
+    const { selectedSpecialties, setSelectedSpecialties } = useSpecialtySelection();
 
     const {
         showOrgDialog,
@@ -511,25 +510,42 @@ Health insurance
                                 </CardContent>
                             </Card>
 
-                            <SpecialtySelector
-                                availableSpecialties={specialties}
-                                selectedSpecialties={selectedSpecialties}
-                                onAddSpecialty={(specialtyId: string) => {
-                                    const specialty = specialties.find(s => s.id === specialtyId);
-                                    if (specialty) {
-                                        addSpecialty(specialty);
-                                        form.setValue('specialtyIds', [...selectedSpecialties, specialty].map(s => s.id), { shouldValidate: true });
-                                    }
-                                }}
-                                onRemoveSpecialty={(specialtyId: string) => {
-                                    removeSpecialty(specialtyId);
-                                    form.setValue('specialtyIds', selectedSpecialties.filter(s => s.id !== specialtyId).map(s => s.id), { shouldValidate: true });
-                                }}
-                                onCreateNew={openSpecialtyDialog}
-                            />
-                            {form.formState.errors.specialtyIds && (
-                                <p className="text-sm text-destructive">{form.formState.errors.specialtyIds.message}</p>
-                            )}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Specialties</CardTitle>
+                                    <CardDescription>Select or create specialties</CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="flex gap-2">
+                                        <Select
+                                            value={form.watch('specialtyIds')?.[0] || ''}
+                                            onValueChange={(value) => {
+                                                const selected = specialties.find((s: any) => s.id === value);
+                                                setSelectedSpecialties(selected ? [selected] : []);
+                                                form.setValue('specialtyIds', value ? [value] : [], { shouldValidate: true });
+                                            }}
+                                        >
+                                            <SelectTrigger className="flex-1">
+                                                <SelectValue placeholder="Select specialty" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {specialties?.map((spec: any) => (
+                                                    <SelectItem key={spec.id} value={spec.id}>
+                                                        {spec.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <Button type="button" variant="outline" onClick={openSpecialtyDialog}>
+                                            <Plus className="h-4 w-4 mr-2" />
+                                            New
+                                        </Button>
+                                    </div>
+                                    {form.formState.errors.specialtyIds && (
+                                        <p className="text-sm text-destructive">{form.formState.errors.specialtyIds.message}</p>
+                                    )}
+                                </CardContent>
+                            </Card>
 
                             <Card>
                                 <CardFooter className="flex justify-between pt-6">
