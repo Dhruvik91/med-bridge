@@ -9,8 +9,29 @@ export const useSaveJob = () => {
 
   return useMutation({
     mutationFn: (data: CreateSavedJobDto) => savedJobService.save(data),
-    onSuccess: () => {
-      // Invalidate saved jobs queries
+    onSuccess: (data) => {
+      queryClient.setQueriesData(
+        { queryKey: ['savedJobs'] },
+        (oldData: any) => {
+          if (!oldData) {
+            return oldData;
+          }
+
+          if (Array.isArray(oldData)) {
+            return [...oldData, data];
+          }
+
+          if (Array.isArray(oldData.items)) {
+            return {
+              ...oldData,
+              items: [...oldData.items, data],
+            };
+          }
+
+          return oldData;
+        }
+      );
+
       queryClient.invalidateQueries({ queryKey: ['savedJobs'] });
       
       toast({

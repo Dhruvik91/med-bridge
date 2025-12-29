@@ -51,6 +51,10 @@ export const useSavedJobs = (filters?: JobFilters) => {
       return savedJobService.findByUser(user!.id, params);
     },
     enabled: !!user?.id,
+    // Ensure we always refetch when a component using this hook mounts
+    // so pages like Saved Jobs see the latest server state after saves.
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: 'always',
   });
 
   const savedJobs = (savedJobsData?.items ?? []).filter(
@@ -60,8 +64,34 @@ export const useSavedJobs = (filters?: JobFilters) => {
   // Unsave job mutation
   const unsaveJobMutation = useMutation({
     mutationFn: ({ jobId }: { jobId: string }) => savedJobService.unsave(user!.id, jobId),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
+      const { jobId } = variables;
+
+      // Optimistically remove the job from all savedJobs query caches
+      queryClient.setQueriesData(
+        { queryKey: ['savedJobs'] },
+        (oldData: any) => {
+          if (!oldData) return oldData;
+
+          // Handle both paginated (with items) and simple array shapes safely
+          if (Array.isArray(oldData)) {
+            return oldData.filter((savedJob) => savedJob.job?.id !== jobId);
+          }
+
+          if (Array.isArray(oldData.items)) {
+            return {
+              ...oldData,
+              items: oldData.items.filter((savedJob: any) => savedJob.job?.id !== jobId),
+            };
+          }
+
+          return oldData;
+        }
+      );
+
+      // Also trigger a refetch for any components that rely on server state
       queryClient.invalidateQueries({ queryKey: ['savedJobs'] });
+
       toast({
         title: 'Job removed',
         description: 'Job has been removed from your saved jobs',
