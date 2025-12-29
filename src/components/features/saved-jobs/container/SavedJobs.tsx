@@ -12,6 +12,7 @@ import { MobileFilterDrawer } from '../../jobs/components/MobileFilterDrawer';
 import { EmptyState } from '../../jobs/components/EmptyState';
 import { Briefcase } from 'lucide-react';
 import { JobType } from '@/types';
+import { JobFilters, createInitialJobFilters, hasActiveFilters } from '../../jobs/hooks/useJobFilters';
 
 export function SavedJobs() {
     const {
@@ -25,21 +26,13 @@ export function SavedJobs() {
 
     const { formatSalary, getJobTypeLabel, formatDate } = useJobFormatters();
 
-    const [searchQuery, setSearchQuery] = useState('');
-    const [location, setLocation] = useState('');
-    const [jobType, setJobType] = useState<JobType | 'all'>('all');
-    const [salaryMin, setSalaryMin] = useState<number | ''>('');
-    const [salaryMax, setSalaryMax] = useState<number | ''>('');
-    const [experienceMin, setExperienceMin] = useState<number | ''>('');
-    const [experienceMax, setExperienceMax] = useState<number | ''>('');
-    const [specialtyIds, setSpecialtyIds] = useState<string[]>([]);
-    const [postedWithin, setPostedWithin] = useState<string | 'all'>('all');
+    const [filters, setFilters] = useState<JobFilters>(() => createInitialJobFilters());
 
     const filteredSavedJobs = useMemo(() => {
         let filtered = savedJobs;
 
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
+        if (filters.searchQuery) {
+            const query = filters.searchQuery.toLowerCase();
             filtered = filtered.filter(savedJob =>
                 savedJob.job?.title.toLowerCase().includes(query) ||
                 savedJob.job?.description.toLowerCase().includes(query) ||
@@ -47,8 +40,8 @@ export function SavedJobs() {
             );
         }
 
-        if (location) {
-            const loc = location.toLowerCase();
+        if (filters.location) {
+            const loc = filters.location.toLowerCase();
             filtered = filtered.filter(savedJob =>
                 savedJob.job?.location?.city.toLowerCase().includes(loc) ||
                 savedJob.job?.location?.state?.toLowerCase().includes(loc) ||
@@ -56,65 +49,51 @@ export function SavedJobs() {
             );
         }
 
-        if (jobType !== 'all') {
-            filtered = filtered.filter(savedJob => savedJob.job?.jobType === jobType);
+        if (filters.jobType !== 'all') {
+            filtered = filtered.filter(savedJob => savedJob.job?.jobType === filters.jobType);
         }
 
-        if (salaryMin !== '') {
-            filtered = filtered.filter(savedJob => Number(savedJob.job?.salaryMin ?? 0) >= salaryMin);
+        if (filters.salaryMin !== '') {
+            const min = filters.salaryMin;
+            filtered = filtered.filter(savedJob => Number(savedJob.job?.salaryMin ?? 0) >= min);
         }
 
-        if (salaryMax !== '') {
-            filtered = filtered.filter(savedJob => Number(savedJob.job?.salaryMax ?? Infinity) <= salaryMax);
+        if (filters.salaryMax !== '') {
+            const max = filters.salaryMax;
+            filtered = filtered.filter(savedJob => Number(savedJob.job?.salaryMax ?? Infinity) <= max);
         }
 
-        if (experienceMin !== '') {
-            filtered = filtered.filter(savedJob => Number(savedJob.job?.experienceMin ?? 0) >= experienceMin);
+        if (filters.experienceMin !== '') {
+            const minExp = filters.experienceMin;
+            filtered = filtered.filter(savedJob => Number(savedJob.job?.experienceMin ?? 0) >= minExp);
         }
 
-        if (experienceMax !== '') {
-            filtered = filtered.filter(savedJob => Number(savedJob.job?.experienceMax ?? Infinity) <= experienceMax);
+        if (filters.experienceMax !== '') {
+            const maxExp = filters.experienceMax;
+            filtered = filtered.filter(savedJob => Number(savedJob.job?.experienceMax ?? Infinity) <= maxExp);
         }
 
-        if (specialtyIds.length > 0) {
+        if (filters.specialtyIds.length > 0) {
             filtered = filtered.filter(savedJob =>
-                savedJob.job?.specialties?.some(s => specialtyIds.includes(s.id))
+                savedJob.job?.specialties?.some(s => filters.specialtyIds.includes(s.id))
             );
         }
 
-        if (postedWithin !== 'all') {
+        if (filters.postedWithin !== 'all') {
             const now = new Date();
-            const hours = postedWithin === '24h' ? 24 : postedWithin === '7d' ? 24 * 7 : 24 * 30;
+            const hours = filters.postedWithin === '24h' ? 24 : filters.postedWithin === '7d' ? 24 * 7 : 24 * 30;
             const cutoff = new Date(now.getTime() - hours * 60 * 60 * 1000);
             filtered = filtered.filter(savedJob => new Date(savedJob.job?.createdAt || '') >= cutoff);
         }
 
         return filtered;
-    }, [savedJobs, searchQuery, location, jobType, salaryMin, salaryMax, experienceMin, experienceMax, specialtyIds, postedWithin]);
+    }, [savedJobs, filters]);
 
     const handleClearFilters = useCallback(() => {
-        setSearchQuery('');
-        setLocation('');
-        setJobType('all');
-        setSalaryMin('');
-        setSalaryMax('');
-        setExperienceMin('');
-        setExperienceMax('');
-        setSpecialtyIds([]);
-        setPostedWithin('all');
+        setFilters(createInitialJobFilters());
     }, []);
 
-    const showClearButton = !!(
-        searchQuery ||
-        location ||
-        jobType !== 'all' ||
-        salaryMin !== '' ||
-        salaryMax !== '' ||
-        experienceMin !== '' ||
-        experienceMax !== '' ||
-        specialtyIds.length > 0 ||
-        postedWithin !== 'all'
-    );
+    const showClearButton = hasActiveFilters(filters);
 
     // Loading state
     if (userLoading || savedJobsLoading) {
@@ -174,24 +153,24 @@ export function SavedJobs() {
                         {/* Mobile Filter Button */}
                         <div className="md:hidden">
                             <MobileFilterDrawer
-                                searchQuery={searchQuery}
-                                location={location}
-                                jobType={jobType}
-                                salaryMin={salaryMin}
-                                salaryMax={salaryMax}
-                                experienceMin={experienceMin}
-                                experienceMax={experienceMax}
-                                specialtyIds={specialtyIds}
-                                postedWithin={postedWithin}
-                                onSearchChange={setSearchQuery}
-                                onLocationChange={setLocation}
-                                onJobTypeChange={setJobType}
-                                onSalaryMinChange={setSalaryMin}
-                                onSalaryMaxChange={setSalaryMax}
-                                onExperienceMinChange={setExperienceMin}
-                                onExperienceMaxChange={setExperienceMax}
-                                onSpecialtyIdsChange={setSpecialtyIds}
-                                onPostedWithinChange={setPostedWithin}
+                                searchQuery={filters.searchQuery}
+                                location={filters.location}
+                                jobType={filters.jobType}
+                                salaryMin={filters.salaryMin}
+                                salaryMax={filters.salaryMax}
+                                experienceMin={filters.experienceMin}
+                                experienceMax={filters.experienceMax}
+                                specialtyIds={filters.specialtyIds}
+                                postedWithin={filters.postedWithin}
+                                onSearchChange={(value) => setFilters(prev => ({ ...prev, searchQuery: value }))}
+                                onLocationChange={(value) => setFilters(prev => ({ ...prev, location: value }))}
+                                onJobTypeChange={(value) => setFilters(prev => ({ ...prev, jobType: value }))}
+                                onSalaryMinChange={(value) => setFilters(prev => ({ ...prev, salaryMin: value }))}
+                                onSalaryMaxChange={(value) => setFilters(prev => ({ ...prev, salaryMax: value }))}
+                                onExperienceMinChange={(value) => setFilters(prev => ({ ...prev, experienceMin: value }))}
+                                onExperienceMaxChange={(value) => setFilters(prev => ({ ...prev, experienceMax: value }))}
+                                onSpecialtyIdsChange={(value) => setFilters(prev => ({ ...prev, specialtyIds: value }))}
+                                onPostedWithinChange={(value) => setFilters(prev => ({ ...prev, postedWithin: value }))}
                                 onClearFilters={handleClearFilters}
                                 showClearButton={showClearButton}
                             />
@@ -201,24 +180,24 @@ export function SavedJobs() {
                     {/* Desktop Filters - Inline */}
                     <div className="mt-4">
                         <JobSearchFilters
-                            searchQuery={searchQuery}
-                            location={location}
-                            jobType={jobType}
-                            salaryMin={salaryMin}
-                            salaryMax={salaryMax}
-                            experienceMin={experienceMin}
-                            experienceMax={experienceMax}
-                            specialtyIds={specialtyIds}
-                            postedWithin={postedWithin}
-                            onSearchChange={setSearchQuery}
-                            onLocationChange={setLocation}
-                            onJobTypeChange={setJobType}
-                            onSalaryMinChange={setSalaryMin}
-                            onSalaryMaxChange={setSalaryMax}
-                            onExperienceMinChange={setExperienceMin}
-                            onExperienceMaxChange={setExperienceMax}
-                            onSpecialtyIdsChange={setSpecialtyIds}
-                            onPostedWithinChange={setPostedWithin}
+                            searchQuery={filters.searchQuery}
+                            location={filters.location}
+                            jobType={filters.jobType}
+                            salaryMin={filters.salaryMin}
+                            salaryMax={filters.salaryMax}
+                            experienceMin={filters.experienceMin}
+                            experienceMax={filters.experienceMax}
+                            specialtyIds={filters.specialtyIds}
+                            postedWithin={filters.postedWithin}
+                            onSearchChange={(value) => setFilters(prev => ({ ...prev, searchQuery: value }))}
+                            onLocationChange={(value) => setFilters(prev => ({ ...prev, location: value }))}
+                            onJobTypeChange={(value) => setFilters(prev => ({ ...prev, jobType: value }))}
+                            onSalaryMinChange={(value) => setFilters(prev => ({ ...prev, salaryMin: value }))}
+                            onSalaryMaxChange={(value) => setFilters(prev => ({ ...prev, salaryMax: value }))}
+                            onExperienceMinChange={(value) => setFilters(prev => ({ ...prev, experienceMin: value }))}
+                            onExperienceMaxChange={(value) => setFilters(prev => ({ ...prev, experienceMax: value }))}
+                            onSpecialtyIdsChange={(value) => setFilters(prev => ({ ...prev, specialtyIds: value }))}
+                            onPostedWithinChange={(value) => setFilters(prev => ({ ...prev, postedWithin: value }))}
                             onClearFilters={handleClearFilters}
                             showClearButton={showClearButton}
                         />

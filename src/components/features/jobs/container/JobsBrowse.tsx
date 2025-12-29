@@ -11,42 +11,34 @@ import { JobType, JobStatus } from '@/types';
 import { MobileFilterDrawer } from '../components/MobileFilterDrawer';
 import { JobCard } from '../components/JobCard';
 import { EmptyState } from '../components/EmptyState';
+import { JobFilters, createInitialJobFilters, hasActiveFilters } from '../hooks/useJobFilters';
 
 export const JobsBrowse = () => {
     const searchParams = useSearchParams();
+
+    const initialFilters: JobFilters = createInitialJobFilters({
+        searchQuery: searchParams.get('q') || '',
+        location: searchParams.get('location') || '',
+    });
+
     // Draft filter state (used in the UI while the drawer is open)
-    const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
-    const [location, setLocation] = useState(searchParams.get('location') || '');
-    const [jobType, setJobType] = useState<JobType | 'all'>('all');
-    const [salaryMin, setSalaryMin] = useState<number | ''>('');
-    const [salaryMax, setSalaryMax] = useState<number | ''>('');
-    const [experienceMin, setExperienceMin] = useState<number | ''>('');
-    const [experienceMax, setExperienceMax] = useState<number | ''>('');
-    const [specialtyIds, setSpecialtyIds] = useState<string[]>([]);
-    const [postedWithin, setPostedWithin] = useState<string | 'all'>('all');
+    const [draftFilters, setDraftFilters] = useState<JobFilters>(initialFilters);
 
     // Applied filter state (used to query the API)
-    const [appliedSearchQuery, setAppliedSearchQuery] = useState(searchParams.get('q') || '');
-    const [appliedLocation, setAppliedLocation] = useState(searchParams.get('location') || '');
-    const [appliedJobType, setAppliedJobType] = useState<JobType | 'all'>('all');
-    const [appliedSalaryMin, setAppliedSalaryMin] = useState<number | ''>('');
-    const [appliedSalaryMax, setAppliedSalaryMax] = useState<number | ''>('');
-    const [appliedExperienceMin, setAppliedExperienceMin] = useState<number | ''>('');
-    const [appliedExperienceMax, setAppliedExperienceMax] = useState<number | ''>('');
-    const [appliedSpecialtyIds, setAppliedSpecialtyIds] = useState<string[]>([]);
-    const [appliedPostedWithin, setAppliedPostedWithin] = useState<string | 'all'>('all');
+    const [appliedFilters, setAppliedFilters] = useState<JobFilters>(initialFilters);
 
     const { profile } = useAuth();
     const { data: jobsData, isLoading } = useGetJobs({
-        q: appliedSearchQuery || undefined,
-        location: appliedLocation || undefined,
-        jobType: appliedJobType !== 'all' ? appliedJobType : undefined,
-        salaryMin: appliedSalaryMin || undefined,
-        salaryMax: appliedSalaryMax || undefined,
-        experienceMin: appliedExperienceMin || undefined,
-        experienceMax: appliedExperienceMax || undefined,
-        specialtyIds: appliedSpecialtyIds.length > 0 ? appliedSpecialtyIds : undefined,
-        postedWithin: appliedPostedWithin !== 'all' ? appliedPostedWithin : undefined,
+        q: appliedFilters.searchQuery || undefined,
+        location: appliedFilters.location || undefined,
+        jobType: appliedFilters.jobType !== 'all' ? appliedFilters.jobType : undefined,
+        salaryMin: appliedFilters.salaryMin || undefined,
+        salaryMax: appliedFilters.salaryMax || undefined,
+        experienceMin: appliedFilters.experienceMin || undefined,
+        experienceMax: appliedFilters.experienceMax || undefined,
+        specialtyIds:
+            appliedFilters.specialtyIds.length > 0 ? appliedFilters.specialtyIds : undefined,
+        postedWithin: appliedFilters.postedWithin !== 'all' ? appliedFilters.postedWithin : undefined,
     });
     const { formatSalary, getJobTypeLabel, formatDate } = useJobFormatters();
 
@@ -54,64 +46,30 @@ export const JobsBrowse = () => {
 
     const handleApplyFilters = useCallback(() => {
         // Apply the current draft filter values to trigger the API call
-        setAppliedSearchQuery(searchQuery || '');
-        setAppliedLocation(location || '');
-        setAppliedJobType(jobType);
-        setAppliedSalaryMin(salaryMin || '');
-        setAppliedSalaryMax(salaryMax || '');
-        setAppliedExperienceMin(experienceMin || '');
-        setAppliedExperienceMax(experienceMax || '');
-        setAppliedSpecialtyIds([...specialtyIds]);
-        setAppliedPostedWithin(postedWithin);
-    }, [
-        searchQuery,
-        location,
-        jobType,
-        salaryMin,
-        salaryMax,
-        experienceMin,
-        experienceMax,
-        specialtyIds,
-        postedWithin,
-    ]);
+        setAppliedFilters(draftFilters);
+    }, [draftFilters]);
 
     const handleClearFilters = useCallback(() => {
-        // Reset draft filters
-        setSearchQuery('');
-        setLocation('');
-        setJobType('all');
-        setSalaryMin('');
-        setSalaryMax('');
-        setExperienceMin('');
-        setExperienceMax('');
-        setSpecialtyIds([]);
-        setPostedWithin('all');
+        const cleared: JobFilters = {
+            searchQuery: '',
+            location: '',
+            jobType: 'all',
+            salaryMin: '',
+            salaryMax: '',
+            experienceMin: '',
+            experienceMax: '',
+            specialtyIds: [],
+            postedWithin: 'all',
+        };
 
-        // Reset applied filters (this will trigger the API with cleared filters)
-        setAppliedSearchQuery('');
-        setAppliedLocation('');
-        setAppliedJobType('all');
-        setAppliedSalaryMin('');
-        setAppliedSalaryMax('');
-        setAppliedExperienceMin('');
-        setAppliedExperienceMax('');
-        setAppliedSpecialtyIds([]);
-        setAppliedPostedWithin('all');
+        // Reset draft and applied filters (this will trigger the API with cleared filters)
+        setDraftFilters(cleared);
+        setAppliedFilters(cleared);
     }, []);
 
-    const showClearButton = !!(searchQuery || location || jobType !== 'all' || salaryMin || salaryMax || experienceMin || experienceMax || specialtyIds.length > 0 || postedWithin !== 'all');
+    const showClearButton = hasActiveFilters(draftFilters);
 
-    const hasAppliedFilters = !!(
-        appliedSearchQuery ||
-        appliedLocation ||
-        appliedJobType !== 'all' ||
-        appliedSalaryMin ||
-        appliedSalaryMax ||
-        appliedExperienceMin ||
-        appliedExperienceMax ||
-        appliedSpecialtyIds.length > 0 ||
-        appliedPostedWithin !== 'all'
-    );
+    const hasAppliedFilters = hasActiveFilters(appliedFilters);
 
     return (
         <div className="flex flex-col h-[calc(100vh-4rem)]">
@@ -131,24 +89,42 @@ export const JobsBrowse = () => {
                         {/* Filters Button - opens drawer on all screen sizes */}
                         <div>
                             <MobileFilterDrawer
-                                searchQuery={searchQuery}
-                                location={location}
-                                jobType={jobType}
-                                salaryMin={salaryMin}
-                                salaryMax={salaryMax}
-                                experienceMin={experienceMin}
-                                experienceMax={experienceMax}
-                                specialtyIds={specialtyIds}
-                                postedWithin={postedWithin}
-                                onSearchChange={setSearchQuery}
-                                onLocationChange={setLocation}
-                                onJobTypeChange={setJobType}
-                                onSalaryMinChange={setSalaryMin}
-                                onSalaryMaxChange={setSalaryMax}
-                                onExperienceMinChange={setExperienceMin}
-                                onExperienceMaxChange={setExperienceMax}
-                                onSpecialtyIdsChange={setSpecialtyIds}
-                                onPostedWithinChange={setPostedWithin}
+                                searchQuery={draftFilters.searchQuery}
+                                location={draftFilters.location}
+                                jobType={draftFilters.jobType}
+                                salaryMin={draftFilters.salaryMin}
+                                salaryMax={draftFilters.salaryMax}
+                                experienceMin={draftFilters.experienceMin}
+                                experienceMax={draftFilters.experienceMax}
+                                specialtyIds={draftFilters.specialtyIds}
+                                postedWithin={draftFilters.postedWithin}
+                                onSearchChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, searchQuery: value }))
+                                }
+                                onLocationChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, location: value }))
+                                }
+                                onJobTypeChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, jobType: value }))
+                                }
+                                onSalaryMinChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, salaryMin: value }))
+                                }
+                                onSalaryMaxChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, salaryMax: value }))
+                                }
+                                onExperienceMinChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, experienceMin: value }))
+                                }
+                                onExperienceMaxChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, experienceMax: value }))
+                                }
+                                onSpecialtyIdsChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, specialtyIds: value }))
+                                }
+                                onPostedWithinChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, postedWithin: value }))
+                                }
                                 onClearFilters={handleClearFilters}
                                 showClearButton={showClearButton}
                                 onApply={handleApplyFilters}
