@@ -4,7 +4,6 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { useInView } from 'react-intersection-observer';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
     AlertDialog,
@@ -25,6 +24,7 @@ import { useJobFormatters } from '@/hooks/useJobFormatters';
 import { JobStatus, UserRole } from '@/types';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 import { NotAuthorizedUser } from '@/components/NotAuthorized';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { JobStats } from '../components/JobStats';
 import { ManageJobsFilters } from '../components/ManageJobsFilters';
 import { JobCard } from '../components/JobCard';
@@ -92,18 +92,14 @@ export const JobsManage = () => {
     const jobs = useMemo(() => jobsData?.pages.flatMap((p) => p.items) ?? [], [jobsData]);
     const total = jobsData?.pages?.[0]?.total ?? 0;
 
-    const { ref: sentinelRef, inView } = useInView({
+    const { sentinelRef } = useInfiniteScroll({
         root: null,
         rootMargin: '400px',
         threshold: 0,
+        hasNextPage,
+        isFetchingNextPage,
+        onLoadMore: fetchNextPage,
     });
-
-    useEffect(() => {
-        if (!inView) return;
-        if (!hasNextPage) return;
-        if (isFetchingNextPage) return;
-        fetchNextPage();
-    }, [fetchNextPage, hasNextPage, inView, isFetchingNextPage]);
 
     const filteredJobs = useMemo(() => {
         let filtered = [...jobs];

@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useInView } from 'react-intersection-observer';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useInfiniteApplicationsByCandidate } from '@/hooks/get/useInfiniteApplications';
 import { ApplicationStatus, UserRole } from '@/types';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { CandidateApplicationStats } from '../components/CandidateApplicationStats';
 import { CandidateApplicationFilters } from '../components/CandidateApplicationFilters';
 import { MobileApplicationFilterDrawer } from '../components/MobileApplicationFilterDrawer';
@@ -32,18 +32,14 @@ export function Applications() {
     const applications = useMemo(() => data?.pages.flatMap((p) => p.items) ?? [], [data]);
     const total = data?.pages?.[0]?.total ?? 0;
 
-    const { ref: sentinelRef, inView } = useInView({
+    const { sentinelRef } = useInfiniteScroll({
         root: null,
         rootMargin: '400px',
         threshold: 0,
+        hasNextPage,
+        isFetchingNextPage,
+        onLoadMore: fetchNextPage,
     });
-
-    useEffect(() => {
-        if (!inView) return;
-        if (!hasNextPage) return;
-        if (isFetchingNextPage) return;
-        fetchNextPage();
-    }, [fetchNextPage, hasNextPage, inView, isFetchingNextPage]);
 
     // Filter and sort applications
     const filteredApplications = useMemo(() => {

@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useInView } from 'react-intersection-observer';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
 import { useGetJobsByEmployer } from '@/hooks/get/useGetJobsByEmployer';
@@ -11,6 +10,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { applicationService } from '@/services/application.service';
 import { useToast } from '@/hooks/use-toast';
 import { ApplicationStatus, UserRole, Job, Application } from '@/types';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { ApplicationStats } from '../components/ApplicationStats';
 
 import { ApplicationList } from '../components/ApplicationList';
@@ -56,18 +56,14 @@ export function ManageApplications() {
 
     const total = data?.pages?.[0]?.total ?? 0;
 
-    const { ref: sentinelRef, inView } = useInView({
+    const { sentinelRef } = useInfiniteScroll({
         root: null,
         rootMargin: '400px',
         threshold: 0,
+        hasNextPage,
+        isFetchingNextPage,
+        onLoadMore: fetchNextPage,
     });
-
-    useEffect(() => {
-        if (!inView) return;
-        if (!hasNextPage) return;
-        if (isFetchingNextPage) return;
-        fetchNextPage();
-    }, [fetchNextPage, hasNextPage, inView, isFetchingNextPage]);
 
     // Filter applications for this employer's jobs
     const applications = useMemo(() => {

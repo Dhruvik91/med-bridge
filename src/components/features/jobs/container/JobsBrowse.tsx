@@ -1,15 +1,15 @@
 'use client';
 
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Briefcase } from 'lucide-react';
-import { useInView } from 'react-intersection-observer';
 import { useInfiniteJobs } from '@/hooks/get/useInfiniteJobs';
 import { useAuth } from '@/providers/auth-provider';
 import { useJobFormatters } from '@/hooks/useJobFormatters';
 import { JobType } from '@/types';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { MobileFilterDrawer } from '../components/MobileFilterDrawer';
 import { JobCard } from '../components/JobCard';
 import { EmptyState } from '../components/EmptyState';
@@ -61,18 +61,14 @@ export const JobsBrowse = () => {
     const jobs = useMemo(() => data?.pages.flatMap((p) => p.items) ?? [], [data]);
     const total = data?.pages?.[0]?.total ?? 0;
 
-    const { ref: sentinelRef, inView } = useInView({
+    const { sentinelRef } = useInfiniteScroll({
         root: null,
         rootMargin: '400px',
         threshold: 0,
+        hasNextPage,
+        isFetchingNextPage,
+        onLoadMore: fetchNextPage,
     });
-
-    useEffect(() => {
-        if (!inView) return;
-        if (!hasNextPage) return;
-        if (isFetchingNextPage) return;
-        fetchNextPage();
-    }, [fetchNextPage, hasNextPage, inView, isFetchingNextPage]);
 
     const handleApplyFilters = useCallback(() => {
         // Apply the current draft filter values to trigger the API call

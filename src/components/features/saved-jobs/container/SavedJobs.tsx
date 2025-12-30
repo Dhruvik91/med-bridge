@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useCallback, useEffect, useMemo } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { useState, useCallback, useMemo } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useInfiniteSavedJobs } from '@/hooks/useInfiniteSavedJobs';
 import { useJobFormatters } from '@/hooks/useJobFormatters';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { SavedJobsLoading } from '../components/SavedJobsLoading';
 import { SavedJobsUnauthenticated } from '../components/SavedJobsUnauthenticated';
 import { SavedJobsEmptyState } from '../components/SavedJobsEmptyState';
@@ -83,18 +83,14 @@ export function SavedJobs() {
 
     const hasAppliedFilters = hasActiveFilters(appliedFilters);
 
-    const { ref: sentinelRef, inView } = useInView({
+    const { sentinelRef } = useInfiniteScroll({
         root: null,
         rootMargin: '400px',
         threshold: 0,
+        hasNextPage,
+        isFetchingNextPage,
+        onLoadMore: fetchNextPage,
     });
-
-    useEffect(() => {
-        if (!inView) return;
-        if (!hasNextPage) return;
-        if (isFetchingNextPage) return;
-        fetchNextPage();
-    }, [fetchNextPage, hasNextPage, inView, isFetchingNextPage]);
 
     // If user has no saved jobs at all (after filtering out deleted ones) and no filters are applied
     if (savedJobs.length === 0 && !hasAppliedFilters) {
