@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useInView } from 'react-intersection-observer';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
 import { useGetJobsByEmployer } from '@/hooks/get/useGetJobsByEmployer';
-import { useGetApplications } from '@/hooks/get/useGetApplications';
+import { useInfiniteApplications } from '@/hooks/get/useInfiniteApplications';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { applicationService } from '@/services/application.service';
 import { useToast } from '@/hooks/use-toast';
@@ -35,14 +36,38 @@ export function ManageApplications() {
     // Fetch employer's jobs
     const { data: jobsData, isLoading: jobsLoading } = useGetJobsByEmployer(profile?.id || '');
 
-    // Fetch all applications (paginated)
-    const { data: applicationsData } = useGetApplications();
+    const {
+        data,
+        isLoading: applicationsLoading,
+        isFetchingNextPage,
+        hasNextPage,
+        fetchNextPage,
+        isError,
+    } = useInfiniteApplications(20);
 
     // Derived jobs array from paginated result
     const jobs: Job[] = (jobsData as any)?.items ?? [];
 
     // Derived applications array from paginated result
-    const allApplications: Application[] = (applicationsData as any)?.items ?? [];
+    const allApplications: Application[] = useMemo(
+        () => data?.pages.flatMap((p) => p.items) ?? [],
+        [data],
+    );
+
+    const total = data?.pages?.[0]?.total ?? 0;
+
+    const { ref: sentinelRef, inView } = useInView({
+        root: null,
+        rootMargin: '400px',
+        threshold: 0,
+    });
+
+    useEffect(() => {
+        if (!inView) return;
+        if (!hasNextPage) return;
+        if (isFetchingNextPage) return;
+        fetchNextPage();
+    }, [fetchNextPage, hasNextPage, inView, isFetchingNextPage]);
 
     // Filter applications for this employer's jobs
     const applications = useMemo(() => {
@@ -133,7 +158,7 @@ export function ManageApplications() {
         setSortBy('recent');
     };
 
-    if (userLoading || profileLoading) {
+    if (userLoading || profileLoading || applicationsLoading) {
         return (
             <div className="container mx-auto px-4 py-8">
                 <Skeleton className="h-12 w-64 mb-8" />
@@ -167,7 +192,17 @@ export function ManageApplications() {
                             <div className="space-y-1">
                                 <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight">Manage Applications</h1>
                                 <p className="text-sm md:text-base text-muted-foreground">
-                                    {filteredApplications.length} {filteredApplications.length === 1 ? 'application' : 'applications'} found
+                                    {total > 0 ? (
+                                        <>
+                                            Showing {filteredApplications.length} of {total}{' '}
+                                            {total === 1 ? 'application' : 'applications'}
+                                        </>
+                                    ) : (
+                                        <>
+                                            {filteredApplications.length}{' '}
+                                            {filteredApplications.length === 1 ? 'application' : 'applications'} found
+                                        </>
+                                    )}
                                 </p>
                             </div>
 
@@ -224,6 +259,11 @@ export function ManageApplications() {
             {/* Scrollable Applications List */}
             <div className="flex-1 overflow-y-auto">
                 <div className="container mx-auto px-4 py-6">
+                    {isError ? (
+                        <div className="text-sm text-muted-foreground mb-4">
+                            Failed to load applications. Please try again.
+                        </div>
+                    ) : null}
                     <ApplicationList
                         isLoading={jobsLoading}
                         filteredApplications={filteredApplications}
@@ -232,6 +272,16 @@ export function ManageApplications() {
                         onStatusChange={handleStatusChange}
                         onClearFilters={handleClearFilters}
                     />
+
+                    <div ref={sentinelRef} className="h-8" />
+
+                    {isFetchingNextPage && (
+                        <div className="space-y-4 mt-4">
+                            {[1, 2].map((i) => (
+                                <Skeleton key={i} className="h-48" />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </div >

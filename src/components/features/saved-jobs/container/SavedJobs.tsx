@@ -1,7 +1,9 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { useSavedJobs } from '@/hooks/useSavedJobs';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useInfiniteSavedJobs } from '@/hooks/useInfiniteSavedJobs';
 import { useJobFormatters } from '@/hooks/useJobFormatters';
 import { SavedJobsLoading } from '../components/SavedJobsLoading';
 import { SavedJobsUnauthenticated } from '../components/SavedJobsUnauthenticated';
@@ -25,12 +27,26 @@ export function SavedJobs() {
     const {
         user,
         userLoading,
-        savedJobs,
-        savedJobsLoading,
+        data,
+        isLoading,
+        isFetchingNextPage,
+        hasNextPage,
+        fetchNextPage,
+        isError,
         deletingJobId,
         handleUnsaveJob,
-    } = useSavedJobs(appliedFilters);
+    } = useInfiniteSavedJobs(appliedFilters, 12);
     const { formatSalary, getJobTypeLabel, formatDate } = useJobFormatters();
+
+    const savedJobs = useMemo(
+        () =>
+            (data?.pages.flatMap((p) => p.items) ?? []).filter(
+                (savedJob) => savedJob.job && !savedJob.job.deletedAt,
+            ),
+        [data],
+    );
+
+    const total = data?.pages?.[0]?.total ?? 0;
 
     const handleApplyFilters = useCallback(() => {
         setAppliedFilters(draftFilters);
@@ -54,7 +70,7 @@ export function SavedJobs() {
     }, []);
 
     // Loading state
-    if (userLoading || savedJobsLoading) {
+    if (userLoading || isLoading) {
         return <SavedJobsLoading />;
     }
 
@@ -66,6 +82,19 @@ export function SavedJobs() {
     const showClearButton = hasActiveFilters(draftFilters);
 
     const hasAppliedFilters = hasActiveFilters(appliedFilters);
+
+    const { ref: sentinelRef, inView } = useInView({
+        root: null,
+        rootMargin: '400px',
+        threshold: 0,
+    });
+
+    useEffect(() => {
+        if (!inView) return;
+        if (!hasNextPage) return;
+        if (isFetchingNextPage) return;
+        fetchNextPage();
+    }, [fetchNextPage, hasNextPage, inView, isFetchingNextPage]);
 
     // If user has no saved jobs at all (after filtering out deleted ones) and no filters are applied
     if (savedJobs.length === 0 && !hasAppliedFilters) {
@@ -108,7 +137,15 @@ export function SavedJobs() {
                                 Saved Jobs
                             </h1>
                             <p className="text-sm md:text-base text-muted-foreground">
-                                {savedJobs.length} {savedJobs.length === 1 ? 'job' : 'jobs'} saved
+                                {total > 0 ? (
+                                    <>
+                                        Showing {savedJobs.length} of {total} {total === 1 ? 'job' : 'jobs'} saved
+                                    </>
+                                ) : (
+                                    <>
+                                        {savedJobs.length} {savedJobs.length === 1 ? 'job' : 'jobs'} saved
+                                    </>
+                                )}
                             </p>
                         </div>
 
@@ -173,7 +210,13 @@ export function SavedJobs() {
             {/* Scrollable Job Listings */}
             <div className="flex-1 overflow-y-auto">
                 <div className="container mx-auto px-4 py-6">
-                    {savedJobs.length === 0 ? (
+                    {isError ? (
+                        <EmptyState
+                            icon={Briefcase}
+                            title="Something went wrong"
+                            description="We couldn't load your saved jobs right now. Please try again."
+                        />
+                    ) : savedJobs.length === 0 ? (
                         <EmptyState
                             icon={Briefcase}
                             title="No saved jobs found"
@@ -196,6 +239,22 @@ export function SavedJobs() {
                                     />
                                 ))}
                             </div>
+
+                            <div ref={sentinelRef} className="h-8" />
+
+                            {isFetchingNextPage && (
+                                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                                    {[1, 2, 3].map((i) => (
+                                        <Skeleton key={i} className="h-64" />
+                                    ))}
+                                </div>
+                            )}
+
+                            {!hasNextPage && total > 0 && savedJobs.length >= total && (
+                                <div className="mt-6 text-center text-sm text-muted-foreground">
+                                    You've reached the end.
+                                </div>
+                            )}
                         </>
                     )}
                 </div>

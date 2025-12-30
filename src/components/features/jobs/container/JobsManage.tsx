@@ -4,6 +4,8 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { useInView } from 'react-intersection-observer';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -17,7 +19,7 @@ import {
 import { Briefcase, Plus, CheckCircle, FileText, XCircle, Archive, Eye } from 'lucide-react';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
-import { useGetJobsByEmployer } from '@/hooks/get/useGetJobsByEmployer';
+import { useInfiniteJobsByEmployer } from '@/hooks/get/useInfiniteJobsByEmployer';
 import { useDeleteJob } from '@/hooks/delete/useDeleteJob';
 import { useJobFormatters } from '@/hooks/useJobFormatters';
 import { JobStatus, UserRole } from '@/types';
@@ -69,7 +71,14 @@ export const JobsManage = () => {
 
     const { data: user } = useGetMe();
     const { data: employerProfile, isLoading: isLoadingEmployerProfile } = useGetEmployerProfile(user);
-    const { data: jobsData, isLoading } = useGetJobsByEmployer(employerProfile?.id || '');
+    const {
+        data: jobsData,
+        isLoading,
+        isFetchingNextPage,
+        hasNextPage,
+        fetchNextPage,
+        isError,
+    } = useInfiniteJobsByEmployer(employerProfile?.id || '', 20);
     const { formatSalary, getJobTypeLabel } = useJobFormatters();
     const deleteJobMutation = useDeleteJob();
 
@@ -80,7 +89,21 @@ export const JobsManage = () => {
         }
     }, [user, router]);
 
-    const jobs = jobsData?.items ?? [];
+    const jobs = useMemo(() => jobsData?.pages.flatMap((p) => p.items) ?? [], [jobsData]);
+    const total = jobsData?.pages?.[0]?.total ?? 0;
+
+    const { ref: sentinelRef, inView } = useInView({
+        root: null,
+        rootMargin: '400px',
+        threshold: 0,
+    });
+
+    useEffect(() => {
+        if (!inView) return;
+        if (!hasNextPage) return;
+        if (isFetchingNextPage) return;
+        fetchNextPage();
+    }, [fetchNextPage, hasNextPage, inView, isFetchingNextPage]);
 
     const filteredJobs = useMemo(() => {
         let filtered = [...jobs];
@@ -141,7 +164,15 @@ export const JobsManage = () => {
                             <div className="space-y-1">
                                 <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight">Manage Job Postings</h1>
                                 <p className="text-sm md:text-base text-muted-foreground">
-                                    {filteredJobs.length} {filteredJobs.length === 1 ? 'job' : 'jobs'} found
+                                    {total > 0 ? (
+                                        <>
+                                            Showing {filteredJobs.length} of {total} {total === 1 ? 'job' : 'jobs'}
+                                        </>
+                                    ) : (
+                                        <>
+                                            {filteredJobs.length} {filteredJobs.length === 1 ? 'job' : 'jobs'} found
+                                        </>
+                                    )}
                                 </p>
                             </div>
 
@@ -215,7 +246,13 @@ export const JobsManage = () => {
             {/* Scrollable Job Listings */}
             <div className="flex-1 overflow-y-auto">
                 <div className="container mx-auto px-4 py-6">
-                    {filteredJobs.length === 0 ? (
+                    {isError ? (
+                        <EmptyState
+                            icon={Briefcase}
+                            title="Something went wrong"
+                            description="We couldn't load your jobs right now. Please try again."
+                        />
+                    ) : filteredJobs.length === 0 ? (
                         <EmptyState
                             icon={Briefcase}
                             title={jobs.length === 0 ? 'No jobs posted yet' : 'No jobs found'}
@@ -228,22 +265,40 @@ export const JobsManage = () => {
                             onAction={jobs.length === 0 ? () => router.push(FRONTEND_ROUTES.JOBS.CREATE) : handleClearFilters}
                         />
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 items-stretch">
-                            {filteredJobs.map((job) => (
-                                <JobCard
-                                    key={job.id}
-                                    job={job}
-                                    userRole={user?.role}
-                                    variant="manage"
-                                    formatSalary={formatSalary}
-                                    getJobTypeLabel={(type: string) => getJobTypeLabel(type as any)}
-                                    formatDate={(date) => new Date(date).toLocaleDateString()}
-                                    onDelete={setJobToDelete}
-                                    getStatusColor={(status: string) => getStatusColor(status as JobStatus)}
-                                    getStatusIcon={(status: string) => getStatusIcon(status as JobStatus)}
-                                />
-                            ))}
-                        </div>
+                        <>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 items-stretch">
+                                {filteredJobs.map((job) => (
+                                    <JobCard
+                                        key={job.id}
+                                        job={job}
+                                        userRole={user?.role}
+                                        variant="manage"
+                                        formatSalary={formatSalary}
+                                        getJobTypeLabel={(type: string) => getJobTypeLabel(type as any)}
+                                        formatDate={(date) => new Date(date).toLocaleDateString()}
+                                        onDelete={setJobToDelete}
+                                        getStatusColor={(status: string) => getStatusColor(status as JobStatus)}
+                                        getStatusIcon={(status: string) => getStatusIcon(status as JobStatus)}
+                                    />
+                                ))}
+                            </div>
+
+                            <div ref={sentinelRef} className="h-8" />
+
+                            {isFetchingNextPage && (
+                                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                                    {[1, 2, 3, 4].map((i) => (
+                                        <Skeleton key={i} className="h-64" />
+                                    ))}
+                                </div>
+                            )}
+
+                            {!hasNextPage && total > 0 && jobs.length >= total && (
+                                <div className="mt-6 text-center text-sm text-muted-foreground">
+                                    You've reached the end.
+                                </div>
+                            )}
+                        </>
                     )}
 
                     {/* Delete Confirmation Dialog */}

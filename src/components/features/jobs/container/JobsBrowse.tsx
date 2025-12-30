@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Briefcase } from 'lucide-react';
-import { useGetJobs } from '@/hooks/get/useGetJobs';
+import { useInView } from 'react-intersection-observer';
+import { useInfiniteJobs } from '@/hooks/get/useInfiniteJobs';
 import { useAuth } from '@/providers/auth-provider';
 import { useJobFormatters } from '@/hooks/useJobFormatters';
 import { JobType } from '@/types';
@@ -29,21 +30,49 @@ export const JobsBrowse = () => {
     const [appliedFilters, setAppliedFilters] = useState<JobFilters>(initialFilters);
 
     const { profile } = useAuth();
-    const { data: jobsData, isLoading } = useGetJobs({
-        q: appliedFilters.searchQuery || undefined,
-        location: appliedFilters.location || undefined,
-        jobType: appliedFilters.jobType !== 'all' ? appliedFilters.jobType : undefined,
-        salaryMin: appliedFilters.salaryMin || undefined,
-        salaryMax: appliedFilters.salaryMax || undefined,
-        experienceMin: appliedFilters.experienceMin || undefined,
-        experienceMax: appliedFilters.experienceMax || undefined,
-        specialtyIds:
-            appliedFilters.specialtyIds.length > 0 ? appliedFilters.specialtyIds : undefined,
-        postedWithin: appliedFilters.postedWithin !== 'all' ? appliedFilters.postedWithin : undefined,
-    });
+
+    const queryParams = useMemo(
+        () => ({
+            q: appliedFilters.searchQuery || undefined,
+            location: appliedFilters.location || undefined,
+            jobType: appliedFilters.jobType !== 'all' ? appliedFilters.jobType : undefined,
+            salaryMin: appliedFilters.salaryMin || undefined,
+            salaryMax: appliedFilters.salaryMax || undefined,
+            experienceMin: appliedFilters.experienceMin || undefined,
+            experienceMax: appliedFilters.experienceMax || undefined,
+            specialtyIds:
+                appliedFilters.specialtyIds.length > 0 ? appliedFilters.specialtyIds : undefined,
+            postedWithin:
+                appliedFilters.postedWithin !== 'all' ? appliedFilters.postedWithin : undefined,
+        }),
+        [appliedFilters],
+    );
+
+    const {
+        data,
+        isLoading,
+        isFetchingNextPage,
+        hasNextPage,
+        fetchNextPage,
+        isError,
+    } = useInfiniteJobs(queryParams, 12);
     const { formatSalary, getJobTypeLabel, formatDate } = useJobFormatters();
 
-    const filteredJobs = jobsData?.items ?? [];
+    const jobs = useMemo(() => data?.pages.flatMap((p) => p.items) ?? [], [data]);
+    const total = data?.pages?.[0]?.total ?? 0;
+
+    const { ref: sentinelRef, inView } = useInView({
+        root: null,
+        rootMargin: '400px',
+        threshold: 0,
+    });
+
+    useEffect(() => {
+        if (!inView) return;
+        if (!hasNextPage) return;
+        if (isFetchingNextPage) return;
+        fetchNextPage();
+    }, [fetchNextPage, hasNextPage, inView, isFetchingNextPage]);
 
     const handleApplyFilters = useCallback(() => {
         // Apply the current draft filter values to trigger the API call
@@ -83,7 +112,15 @@ export const JobsBrowse = () => {
                                 Browse Jobs
                             </h1>
                             <p className="text-sm md:text-base text-muted-foreground">
-                                {filteredJobs.length} {filteredJobs.length === 1 ? 'job' : 'jobs'} available
+                                {total > 0 ? (
+                                    <>
+                                        Showing {jobs.length} of {total} {total === 1 ? 'job' : 'jobs'}
+                                    </>
+                                ) : (
+                                    <>
+                                        {jobs.length} {jobs.length === 1 ? 'job' : 'jobs'} available
+                                    </>
+                                )}
                             </p>
                         </div>
 
@@ -156,7 +193,13 @@ export const JobsBrowse = () => {
                                 <Skeleton key={i} className="h-64" />
                             ))}
                         </div>
-                    ) : filteredJobs.length === 0 ? (
+                    ) : isError ? (
+                        <EmptyState
+                            icon={Briefcase}
+                            title="Something went wrong"
+                            description="We couldn't load jobs right now. Please try again."
+                        />
+                    ) : jobs.length === 0 ? (
                         hasAppliedFilters ? (
                             <EmptyState
                                 icon={Briefcase}
@@ -173,19 +216,37 @@ export const JobsBrowse = () => {
                             />
                         )
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                            {filteredJobs.map((job) => (
-                                <JobCard
-                                    key={job.id}
-                                    job={job}
-                                    userRole={profile?.role}
-                                    variant="browse"
-                                    formatSalary={formatSalary}
-                                    getJobTypeLabel={(type: string) => getJobTypeLabel(type as JobType)}
-                                    formatDate={formatDate}
-                                />
-                            ))}
-                        </div>
+                        <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                                {jobs.map((job) => (
+                                    <JobCard
+                                        key={job.id}
+                                        job={job}
+                                        userRole={profile?.role}
+                                        variant="browse"
+                                        formatSalary={formatSalary}
+                                        getJobTypeLabel={(type: string) => getJobTypeLabel(type as JobType)}
+                                        formatDate={formatDate}
+                                    />
+                                ))}
+                            </div>
+
+                            <div ref={sentinelRef} className="h-8" />
+
+                            {isFetchingNextPage && (
+                                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                                    {[1, 2, 3].map((i) => (
+                                        <Skeleton key={i} className="h-64" />
+                                    ))}
+                                </div>
+                            )}
+
+                            {!hasNextPage && total > 0 && jobs.length >= total && (
+                                <div className="mt-6 text-center text-sm text-muted-foreground">
+                                    You've reached the end.
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>
