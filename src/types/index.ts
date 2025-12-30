@@ -11,7 +11,6 @@ export enum JobType {
   contract = 'contract',
   temporary = 'temporary',
   internship = 'internship',
-  remote = 'remote',
 }
 
 export enum JobStatus {
@@ -104,6 +103,14 @@ export interface Specialty {
   updatedAt: string;
 }
 
+export interface Qualification {
+  id: string;
+  name: string;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Organization {
   id: string;
   employerProfileId: string;
@@ -153,13 +160,14 @@ export interface Job {
   salaryMin?: string | number;
   salaryMax?: string | number;
   currency?: string;
-  remote?: boolean;
   jobType: JobType;
   status: JobStatus;
   postedByUserId?: string | null;
   publishedAt?: string | null;
   applicationDeadline?: string | null;
   maxApplications?: number | null;
+  experienceMin?: number | null;
+  experienceMax?: number | null;
   postedDate?: string;
   closingDate?: string;
   viewCount?: number;
@@ -191,6 +199,7 @@ export interface Application {
   job?: Job;
   candidate?: User;
   candidateProfile?: DoctorProfile;
+  expectedSalary?: string | null;
 }
 
 export interface SavedJob {
@@ -308,7 +317,11 @@ export interface CreateJobDto {
   jobType: JobType;
   status?: JobStatus;
   applicationDeadline?: string;
+  maxApplications?: number;
+  experienceMin?: number;
+  experienceMax?: number;
   specialtyIds?: string[];
+  responsibilities?: string[];
 }
 
 export interface UpdateJobDto extends Partial<CreateJobDto> { }
@@ -347,6 +360,12 @@ export interface CreateSpecialtyDto {
 }
 
 export interface UpdateSpecialtyDto extends Partial<CreateSpecialtyDto> { }
+
+export interface CreateQualificationDto {
+  name: string;
+}
+
+export interface UpdateQualificationDto extends Partial<CreateQualificationDto> { }
 
 export interface CreateOrganizationDto {
   employerProfileId: string;

@@ -12,11 +12,13 @@ import { Loader2, CheckCircle2 } from 'lucide-react';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
 import { useGetSpecialties } from '@/hooks/get/useGetSpecialties';
+import { useGetQualifications } from '@/hooks/get/useGetQualifications';
 import { useCreateDoctorProfile } from '@/hooks/post/useCreateDoctorProfile';
 import { useUploadFile } from '@/hooks/post/useUploadFile';
 import { Gender, CreateDoctorProfileDto } from '@/types';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 import { useSpecialtySelection } from '@/hooks/useSpecialtySelection';
+import { useQualificationSelection } from '@/hooks/useQualificationSelection';
 import { useAddSpecialtyModal } from '@/hooks/useAddSpecialtyModal';
 import { PersonalInfoStep } from '../components/PersonalInfoStep';
 import { ProfessionalDetailsStep } from '../components/ProfessionalDetailsStep';
@@ -71,8 +73,13 @@ export function DoctorProfileComplete() {
     const { data: specialtiesData } = useGetSpecialties();
     const specialties = specialtiesData?.items ?? [];
 
+    const { data: qualificationsData } = useGetQualifications();
+    const qualifications = qualificationsData?.items ?? [];
+
     const { selectedSpecialties, addSpecialty, removeSpecialty } = useSpecialtySelection();
+    const { selectedQualifications, addQualification, removeQualification } = useQualificationSelection();
     const { isOpen: isSpecialtyModalOpen, openModal: openSpecialtyModal, closeModal: closeSpecialtyModal } = useAddSpecialtyModal();
+    const [isQualModalOpen, setIsQualModalOpen] = useState(false);
 
     // Redirect to dashboard if profile already exists
     useEffect(() => {
@@ -88,14 +95,8 @@ export function DoctorProfileComplete() {
     const onSubmit = (data: ProfileForm) => {
         if (!user) return;
 
-        const qualifications = data.qualificationsRaw
-            ? data.qualificationsRaw
-                .split(',')
-                .map((q) => q.trim())
-                .filter((q) => q.length > 0)
-            : undefined;
-
         const specialtyIds = selectedSpecialties.map((s) => s.id);
+        const qualificationIds = selectedQualifications.map((q) => q.id);
 
         // Use social links built from the social links UI state
         const socialLinksValue = Object.keys(socialLinks).length > 0 ? socialLinks : undefined;
@@ -110,7 +111,7 @@ export function DoctorProfileComplete() {
             summary: data.bio,
             licenseNumbers: data.licenseNumber ? [data.licenseNumber] : undefined,
             experienceYears: data.yearsOfExperience,
-            qualifications,
+            qualifications: qualificationIds.length > 0 ? qualificationIds : undefined,
             specialties: specialtyIds.length > 0 ? specialtyIds : undefined,
             address: data.address,
             city: data.city,
@@ -216,6 +217,18 @@ export function DoctorProfileComplete() {
                                     isModalOpen={isSpecialtyModalOpen}
                                     onOpenModal={openSpecialtyModal}
                                     onCloseModal={closeSpecialtyModal}
+                                    qualifications={qualifications}
+                                    selectedQualifications={selectedQualifications}
+                                    onAddQualification={(id: string) => {
+                                        const qual = qualifications.find((q) => q.id === id);
+                                        if (qual) {
+                                            addQualification(qual);
+                                        }
+                                    }}
+                                    onRemoveQualification={removeQualification}
+                                    isQualModalOpen={isQualModalOpen}
+                                    onOpenQualModal={() => setIsQualModalOpen(true)}
+                                    onCloseQualModal={() => setIsQualModalOpen(false)}
                                 />
                             )}
 

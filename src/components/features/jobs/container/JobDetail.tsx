@@ -10,11 +10,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ArrowLeft } from 'lucide-react';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetJob } from '@/hooks/get/useGetJob';
 import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
-import { useGetSavedJobs } from '@/hooks/get/useGetSavedJobs';
+import { useSavedJobs } from '@/hooks/useSavedJobs';
 import { useGetApplicationsByCandidate } from '@/hooks/get/useGetApplications';
 import { useApplyToJob } from '@/hooks/post/useApplyToJob';
 import { useSaveJob, useUnsaveJob } from '@/hooks/post/useSaveJob';
@@ -68,7 +67,7 @@ export const JobDetail = () => {
     const { data: user } = useGetMe();
     const { data: profile } = useGetDoctorProfile(user?.id || '');
     const { data: job, isLoading } = useGetJob(jobId);
-    const { data: savedJobsData } = useGetSavedJobs(user?.id || '');
+    const { savedJobs } = useSavedJobs();
     const { data: applicationsData } = useGetApplicationsByCandidate(user?.id || '');
 
     const applyMutation = useApplyToJob();
@@ -77,11 +76,10 @@ export const JobDetail = () => {
     const uploadMutation = useUploadFile();
 
     useEffect(() => {
-        const savedJobs = savedJobsData?.items ?? [];
         if (savedJobs && jobId) {
-            setIsSaved(savedJobs.some((sj: any) => sj.jobId === jobId));
+            setIsSaved(savedJobs.some((sj: any) => sj.job?.id === jobId));
         }
-    }, [savedJobsData, jobId]);
+    }, [savedJobs, jobId]);
 
     const onSubmitApplication = async (data: ApplicationFormData) => {
         if (!user) {
@@ -226,7 +224,6 @@ export const JobDetail = () => {
                                 organizationName={job.organization?.name || job.employerProfile?.name || 'Healthcare Facility'}
                                 location={job.location}
                                 jobType={job.jobType}
-                                remote={job.remote}
                                 postedDate={job.createdAt || job.publishedAt || new Date().toISOString()}
                                 viewsCount={typeof job.viewsCount === 'number' ? job.viewsCount : undefined}
                                 status={job.status ?? undefined}
@@ -235,6 +232,7 @@ export const JobDetail = () => {
                                 onShare={handleShare}
                                 isSaving={saveJobMutation.isPending}
                                 getJobTypeLabel={getJobTypeLabel}
+                                role={user?.role}
                             />
                         </CardHeader>
 
@@ -313,7 +311,6 @@ export const JobDetail = () => {
                             country={job.location.country}
                             latitude={job.location.latitude}
                             longitude={job.location.longitude}
-                            remote={job.remote}
                         />
                     )}
                 </div>

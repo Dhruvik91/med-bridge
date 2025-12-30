@@ -25,14 +25,13 @@ import { useCreateLocation } from '@/hooks/post/useCreateLocation';
 import { useCreateSpecialty } from '@/hooks/post/useCreateSpecialty';
 import { useSpecialtySelection } from '@/hooks/useSpecialtySelection';
 import { useCreateJobDialogs } from '@/hooks/useCreateJobDialogs';
-import { useJobForm, JobFormData } from '@/hooks/useJobForm';
+import { useJobForm } from '@/hooks/useJobForm';
 import { useJobEditForm } from '@/hooks/useJobEditForm';
 import { useEmployerRoleCheck } from '@/hooks/useEmployerRoleCheck';
 import { JobType, JobStatus, Job, CreateJobDto, Organization } from '@/types';
 import { NotAuthorizedUser } from '@/components/NotAuthorized';
 import { ProgressIndicator } from '../components/ProgressIndicator';
 import { CreateResourceDialog } from '../components/CreateResourceDialog';
-import { SpecialtySelector } from '../components/SpecialtySelector';
 import { JobFormSkeleton } from '../components/JobFormSkeleton';
 
 const STEPS = [
@@ -59,7 +58,7 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
     const { data: specialtiesData } = useGetSpecialties();
     const specialties = specialtiesData?.items ?? [];
 
-    const { selectedSpecialties, addSpecialty, removeSpecialty, setSelectedSpecialties } = useSpecialtySelection();
+    const { selectedSpecialties, setSelectedSpecialties } = useSpecialtySelection();
 
     const {
         showOrgDialog,
@@ -172,7 +171,7 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
         if (currentStep === 1) {
             fieldsToValidate = ['title', 'jobType', 'description'];
         } else if (currentStep === 2) {
-            fieldsToValidate = ['salaryMin', 'salaryMax', 'requirements', 'benefits', 'closingDate'];
+            fieldsToValidate = ['salaryMin', 'salaryMax', 'requirements', 'responsibilities', 'benefits', 'closingDate', 'maxApplications'];
         } else if (currentStep === 3) {
             fieldsToValidate = ['organizationId', 'locationId', 'specialtyIds'];
         }
@@ -264,7 +263,6 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                                             <SelectItem value={JobType.part_time}>Part Time</SelectItem>
                                             <SelectItem value={JobType.contract}>Contract</SelectItem>
                                             <SelectItem value={JobType.temporary}>Temporary</SelectItem>
-                                            <SelectItem value={JobType.remote}>Remote</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -344,6 +342,23 @@ Bachelor's degree
                                 </div>
 
                                 <div className="space-y-2">
+                                    <Label htmlFor="responsibilities">Responsibilities</Label>
+                                    <Textarea
+                                        id="responsibilities"
+                                        {...form.register('responsibilities')}
+                                        rows={4}
+                                        placeholder={`List the key responsibilities and duties. Please add each item on a new line.
+
+Example:
+Diagnose and treat patients
+Collaborate with medical team`}
+                                    />
+                                    {form.formState.errors.responsibilities && (
+                                        <p className="text-sm text-destructive">{form.formState.errors.responsibilities.message}</p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
                                     <Label htmlFor="benefits">Benefits</Label>
                                     <Textarea
                                         id="benefits"
@@ -360,42 +375,57 @@ Health insurance
                                     )}
                                 </div>
 
-                                <div className="space-y-2 flex flex-col">
-                                    <Label htmlFor="closingDate">Application Deadline</Label>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant={"outline"}
-                                                className={cn(
-                                                    "w-full pl-3 text-left font-normal",
-                                                    !form.watch('closingDate') && "text-muted-foreground"
-                                                )}
-                                            >
-                                                {form.watch('closingDate') ? (
-                                                    format(new Date(form.watch('closingDate')), "PPP")
-                                                ) : (
-                                                    <span>Pick a date</span>
-                                                )}
-                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar
-                                                mode="single"
-                                                selected={form.watch('closingDate') ? new Date(form.watch('closingDate')) : undefined}
-                                                onSelect={(date) => {
-                                                    form.setValue('closingDate', date ? format(date, 'yyyy-MM-dd') : '', { shouldValidate: true });
-                                                }}
-                                                disabled={(date) =>
-                                                    date < new Date() || date < new Date("1900-01-01")
-                                                }
-                                                initialFocus
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    {form.formState.errors.closingDate && (
-                                        <p className="text-sm text-destructive">{form.formState.errors.closingDate.message}</p>
-                                    )}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-2 flex flex-col">
+                                        <Label htmlFor="closingDate">Application Deadline</Label>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    variant={"outline"}
+                                                    className={cn(
+                                                        "w-full pl-3 text-left font-normal",
+                                                        !form.watch('closingDate') && "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    {form.watch('closingDate') ? (
+                                                        format(new Date(form.watch('closingDate')), "PPP")
+                                                    ) : (
+                                                        <span>Pick a date</span>
+                                                    )}
+                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={form.watch('closingDate') ? new Date(form.watch('closingDate')) : undefined}
+                                                    onSelect={(date) => {
+                                                        form.setValue('closingDate', date ? format(date, 'yyyy-MM-dd') : '', { shouldValidate: true });
+                                                    }}
+                                                    disabled={(date) =>
+                                                        date < new Date() || date < new Date("1900-01-01")
+                                                    }
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                        {form.formState.errors.closingDate && (
+                                            <p className="text-sm text-destructive">{form.formState.errors.closingDate.message}</p>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="maxApplications">Max Applications</Label>
+                                        <Input
+                                            id="maxApplications"
+                                            type="number"
+                                            {...form.register('maxApplications')}
+                                            placeholder="e.g., 50"
+                                        />
+                                        {form.formState.errors.maxApplications && (
+                                            <p className="text-sm text-destructive">{form.formState.errors.maxApplications.message}</p>
+                                        )}
+                                    </div>
                                 </div>
                             </CardContent>
                             <CardFooter className="flex justify-between">
@@ -480,25 +510,42 @@ Health insurance
                                 </CardContent>
                             </Card>
 
-                            <SpecialtySelector
-                                availableSpecialties={specialties}
-                                selectedSpecialties={selectedSpecialties}
-                                onAddSpecialty={(specialtyId: string) => {
-                                    const specialty = specialties.find(s => s.id === specialtyId);
-                                    if (specialty) {
-                                        addSpecialty(specialty);
-                                        form.setValue('specialtyIds', [...selectedSpecialties, specialty].map(s => s.id), { shouldValidate: true });
-                                    }
-                                }}
-                                onRemoveSpecialty={(specialtyId: string) => {
-                                    removeSpecialty(specialtyId);
-                                    form.setValue('specialtyIds', selectedSpecialties.filter(s => s.id !== specialtyId).map(s => s.id), { shouldValidate: true });
-                                }}
-                                onCreateNew={openSpecialtyDialog}
-                            />
-                            {form.formState.errors.specialtyIds && (
-                                <p className="text-sm text-destructive">{form.formState.errors.specialtyIds.message}</p>
-                            )}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Specialties</CardTitle>
+                                    <CardDescription>Select or create specialties</CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="flex gap-2">
+                                        <Select
+                                            value={form.watch('specialtyIds')?.[0] || ''}
+                                            onValueChange={(value) => {
+                                                const selected = specialties.find((s: any) => s.id === value);
+                                                setSelectedSpecialties(selected ? [selected] : []);
+                                                form.setValue('specialtyIds', value ? [value] : [], { shouldValidate: true });
+                                            }}
+                                        >
+                                            <SelectTrigger className="flex-1">
+                                                <SelectValue placeholder="Select specialty" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {specialties?.map((spec: any) => (
+                                                    <SelectItem key={spec.id} value={spec.id}>
+                                                        {spec.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <Button type="button" variant="outline" onClick={openSpecialtyDialog}>
+                                            <Plus className="h-4 w-4 mr-2" />
+                                            New
+                                        </Button>
+                                    </div>
+                                    {form.formState.errors.specialtyIds && (
+                                        <p className="text-sm text-destructive">{form.formState.errors.specialtyIds.message}</p>
+                                    )}
+                                </CardContent>
+                            </Card>
 
                             <Card>
                                 <CardFooter className="flex justify-between pt-6">

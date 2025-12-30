@@ -1,65 +1,76 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 import { Briefcase } from 'lucide-react';
 import { useGetJobs } from '@/hooks/get/useGetJobs';
 import { useAuth } from '@/providers/auth-provider';
 import { useJobFormatters } from '@/hooks/useJobFormatters';
-import { JobType, JobStatus } from '@/types';
-import { JobSearchFilters } from '../components/JobSearchFilters';
+import { JobType } from '@/types';
 import { MobileFilterDrawer } from '../components/MobileFilterDrawer';
 import { JobCard } from '../components/JobCard';
 import { EmptyState } from '../components/EmptyState';
+import { JobFilters, createInitialJobFilters, hasActiveFilters } from '../hooks/useJobFilters';
 
 export const JobsBrowse = () => {
     const searchParams = useSearchParams();
-    const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
-    const [location, setLocation] = useState(searchParams.get('location') || '');
-    const [jobType, setJobType] = useState<JobType | 'all'>('all');
+
+    const initialFilters: JobFilters = createInitialJobFilters({
+        searchQuery: searchParams.get('q') || '',
+        location: searchParams.get('location') || '',
+    });
+
+    // Draft filter state (used in the UI while the drawer is open)
+    const [draftFilters, setDraftFilters] = useState<JobFilters>(initialFilters);
+
+    // Applied filter state (used to query the API)
+    const [appliedFilters, setAppliedFilters] = useState<JobFilters>(initialFilters);
 
     const { profile } = useAuth();
-    const { data: jobsData, isLoading } = useGetJobs();
+    const { data: jobsData, isLoading } = useGetJobs({
+        q: appliedFilters.searchQuery || undefined,
+        location: appliedFilters.location || undefined,
+        jobType: appliedFilters.jobType !== 'all' ? appliedFilters.jobType : undefined,
+        salaryMin: appliedFilters.salaryMin || undefined,
+        salaryMax: appliedFilters.salaryMax || undefined,
+        experienceMin: appliedFilters.experienceMin || undefined,
+        experienceMax: appliedFilters.experienceMax || undefined,
+        specialtyIds:
+            appliedFilters.specialtyIds.length > 0 ? appliedFilters.specialtyIds : undefined,
+        postedWithin: appliedFilters.postedWithin !== 'all' ? appliedFilters.postedWithin : undefined,
+    });
     const { formatSalary, getJobTypeLabel, formatDate } = useJobFormatters();
 
-    const filteredJobs = useMemo(() => {
-        const jobs = jobsData?.items ?? [];
+    const filteredJobs = jobsData?.items ?? [];
 
-        let filtered = jobs.filter(job => job.status === JobStatus.published);
-
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
-            filtered = filtered.filter(job =>
-                job.title.toLowerCase().includes(query) ||
-                job.description.toLowerCase().includes(query) ||
-                job.specialties?.some(s => s.name.toLowerCase().includes(query))
-            );
-        }
-
-        if (location) {
-            const loc = location.toLowerCase();
-            filtered = filtered.filter(job =>
-                job.location?.city.toLowerCase().includes(loc) ||
-                job.location?.state?.toLowerCase().includes(loc) ||
-                job.location?.country.toLowerCase().includes(loc)
-            );
-        }
-
-        if (jobType !== 'all') {
-            filtered = filtered.filter(job => job.jobType === jobType);
-        }
-
-        return filtered;
-    }, [jobsData, searchQuery, location, jobType]);
+    const handleApplyFilters = useCallback(() => {
+        // Apply the current draft filter values to trigger the API call
+        setAppliedFilters(draftFilters);
+    }, [draftFilters]);
 
     const handleClearFilters = useCallback(() => {
-        setSearchQuery('');
-        setLocation('');
-        setJobType('all');
+        const cleared: JobFilters = {
+            searchQuery: '',
+            location: '',
+            jobType: 'all',
+            salaryMin: '',
+            salaryMax: '',
+            experienceMin: '',
+            experienceMax: '',
+            specialtyIds: [],
+            postedWithin: 'all',
+        };
+
+        // Reset draft and applied filters (this will trigger the API with cleared filters)
+        setDraftFilters(cleared);
+        setAppliedFilters(cleared);
     }, []);
 
-    const showClearButton = !!(searchQuery || location || jobType !== 'all');
+    const showClearButton = hasActiveFilters(draftFilters);
+
+    const hasAppliedFilters = hasActiveFilters(appliedFilters);
 
     return (
         <div className="flex flex-col h-[calc(100vh-4rem)]">
@@ -76,34 +87,63 @@ export const JobsBrowse = () => {
                             </p>
                         </div>
 
-                        {/* Mobile Filter Button */}
-                        <div className="md:hidden">
+                        {/* Filters Button - opens drawer on all screen sizes */}
+                        <div className="flex items-center gap-2">
                             <MobileFilterDrawer
-                                searchQuery={searchQuery}
-                                location={location}
-                                jobType={jobType}
-                                onSearchChange={setSearchQuery}
-                                onLocationChange={setLocation}
-                                onJobTypeChange={setJobType}
+                                searchQuery={draftFilters.searchQuery}
+                                location={draftFilters.location}
+                                jobType={draftFilters.jobType}
+                                salaryMin={draftFilters.salaryMin}
+                                salaryMax={draftFilters.salaryMax}
+                                experienceMin={draftFilters.experienceMin}
+                                experienceMax={draftFilters.experienceMax}
+                                specialtyIds={draftFilters.specialtyIds}
+                                postedWithin={draftFilters.postedWithin}
+                                onSearchChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, searchQuery: value }))
+                                }
+                                onLocationChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, location: value }))
+                                }
+                                onJobTypeChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, jobType: value }))
+                                }
+                                onSalaryMinChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, salaryMin: value }))
+                                }
+                                onSalaryMaxChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, salaryMax: value }))
+                                }
+                                onExperienceMinChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, experienceMin: value }))
+                                }
+                                onExperienceMaxChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, experienceMax: value }))
+                                }
+                                onSpecialtyIdsChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, specialtyIds: value }))
+                                }
+                                onPostedWithinChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, postedWithin: value }))
+                                }
                                 onClearFilters={handleClearFilters}
                                 showClearButton={showClearButton}
+                                onApply={handleApplyFilters}
                             />
+                            {showClearButton && (
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={handleClearFilters}
+                                >
+                                    Clear
+                                </Button>
+                            )}
                         </div>
                     </div>
 
-                    {/* Desktop Filters - Inline */}
-                    <div className="mt-4">
-                        <JobSearchFilters
-                            searchQuery={searchQuery}
-                            location={location}
-                            jobType={jobType}
-                            onSearchChange={setSearchQuery}
-                            onLocationChange={setLocation}
-                            onJobTypeChange={setJobType}
-                            onClearFilters={handleClearFilters}
-                            showClearButton={showClearButton}
-                        />
-                    </div>
+                    {/* All filters are now inside the Filters drawer */}
                 </div>
             </div>
 
@@ -117,13 +157,21 @@ export const JobsBrowse = () => {
                             ))}
                         </div>
                     ) : filteredJobs.length === 0 ? (
-                        <EmptyState
-                            icon={Briefcase}
-                            title="No jobs found"
-                            description="Try adjusting your search criteria or clearing filters"
-                            actionLabel="Clear Filters"
-                            onAction={handleClearFilters}
-                        />
+                        hasAppliedFilters ? (
+                            <EmptyState
+                                icon={Briefcase}
+                                title="No jobs found"
+                                description="Try adjusting your search criteria or clearing filters"
+                                actionLabel="Clear Filters"
+                                onAction={handleClearFilters}
+                            />
+                        ) : (
+                            <EmptyState
+                                icon={Briefcase}
+                                title="Coming soon"
+                                description="We are working hard to bring you opportunities. Please check back later."
+                            />
+                        )
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                             {filteredJobs.map((job) => (

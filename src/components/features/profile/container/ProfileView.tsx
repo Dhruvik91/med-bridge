@@ -8,6 +8,7 @@ import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
 import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
 import { useGetSpecialties } from '@/hooks/get/useGetSpecialties';
+import { useGetQualifications } from '@/hooks/get/useGetQualifications';
 import { useAuth } from '@/providers/auth-provider';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
@@ -37,11 +38,19 @@ export function ProfileView() {
     const { data: doctorProfile, isLoading: doctorProfileLoading } = useGetDoctorProfile(user?.id || '');
     const { data: employerProfile, isLoading: employerProfileLoading } = useGetEmployerProfile(user);
     const { data: specialtiesData } = useGetSpecialties();
+    const { data: qualificationsData } = useGetQualifications();
 
     const specialties = specialtiesData?.items ?? [];
+    const qualifications = qualificationsData?.items ?? [];
+
     const specialtyNames = doctorProfile?.specialties?.map((id) => {
         const specialty = specialties.find((s) => s.id === id);
         return specialty?.name || id;
+    }) || [];
+
+    const qualificationNames = doctorProfile?.qualifications?.map((id) => {
+        const qualification = qualifications.find((q) => q.id === id);
+        return qualification?.name || id;
     }) || [];
 
     const isLoading = userLoading || doctorProfileLoading || employerProfileLoading;
@@ -109,7 +118,7 @@ export function ProfileView() {
 
                     <ProfessionalCredentialsCard
                         licenseNumbers={doctorProfile.licenseNumbers}
-                        qualifications={doctorProfile.qualifications ?? undefined}
+                        qualifications={qualificationNames}
                         specialties={specialtyNames}
                     />
                 </div>

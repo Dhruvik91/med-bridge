@@ -46,6 +46,10 @@ export const API_CONFIG = {
       base: "/specialties",
       bySlug: "/specialties/slug",
     },
+    qualifications: {
+      base: "/qualifications",
+      bySlug: "/qualifications/slug",
+    },
     users: "/users",
     attachments: "/attachments",
     jobSeekerProfiles: "/job-seeker-profiles",

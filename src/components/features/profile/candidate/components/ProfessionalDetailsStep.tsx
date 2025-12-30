@@ -5,9 +5,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { UseFormRegister, FieldErrors, UseFormWatch } from 'react-hook-form';
-import { Specialty } from '@/types';
+import { Specialty, Qualification } from '@/types';
 import { Plus, X } from 'lucide-react';
 import { AddSpecialtyModal } from './AddSpecialtyModal';
+import { QualificationSelector } from './QualificationSelector';
+import { AddQualificationModal } from './AddQualificationModal';
 
 interface ProfessionalDetailsStepProps {
     register: UseFormRegister<any>;
@@ -27,11 +29,19 @@ interface ProfessionalDetailsStepProps {
     isModalOpen: boolean;
     onOpenModal: () => void;
     onCloseModal: () => void;
+    // Qualification props
+    qualifications: Qualification[];
+    selectedQualifications: Qualification[];
+    onAddQualification: (qualificationId: string) => void;
+    onRemoveQualification: (qualificationId: string) => void;
+    isQualModalOpen: boolean;
+    onOpenQualModal: () => void;
+    onCloseQualModal: () => void;
 }
 
 import { useState } from 'react';
 
-export function ProfessionalDetailsStep({ register, errors, watch, specialties, selectedSpecialties, onAddSpecialty, onRemoveSpecialty, socialLinks, onSocialLinksChange, onAvatarFileSelected, onResumeFileSelected, avatarUploading, resumeUploading, isModalOpen, onOpenModal, onCloseModal }: ProfessionalDetailsStepProps) {
+export function ProfessionalDetailsStep({ register, errors, watch, specialties, selectedSpecialties, onAddSpecialty, onRemoveSpecialty, socialLinks, onSocialLinksChange, onAvatarFileSelected, onResumeFileSelected, avatarUploading, resumeUploading, isModalOpen, onOpenModal, onCloseModal, qualifications, selectedQualifications, onAddQualification, onRemoveQualification, isQualModalOpen, onOpenQualModal, onCloseQualModal }: ProfessionalDetailsStepProps) {
     const [newLinkLabel, setNewLinkLabel] = useState('');
     const [newLinkUrl, setNewLinkUrl] = useState('');
 
@@ -85,11 +95,13 @@ export function ProfessionalDetailsStep({ register, errors, watch, specialties, 
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="qualificationsRaw">Qualifications</Label>
-                <Input
-                    id="qualificationsRaw"
-                    placeholder="e.g. MBBS, MD, DM"
-                    {...register('qualificationsRaw')}
+                <Label>Qualifications</Label>
+                <QualificationSelector
+                    availableQualifications={qualifications}
+                    selectedQualifications={selectedQualifications}
+                    onAddQualification={onAddQualification}
+                    onRemoveQualification={onRemoveQualification}
+                    onCreateNew={onOpenQualModal}
                 />
             </div>
 
@@ -254,6 +266,12 @@ export function ProfessionalDetailsStep({ register, errors, watch, specialties, 
                 isOpen={isModalOpen}
                 onClose={onCloseModal}
                 onSpecialtyCreated={onAddSpecialty}
+            />
+
+            <AddQualificationModal
+                isOpen={isQualModalOpen}
+                onClose={onCloseQualModal}
+                onQualificationCreated={onAddQualification}
             />
         </>
     );

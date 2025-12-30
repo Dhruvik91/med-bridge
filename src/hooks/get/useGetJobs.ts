@@ -1,9 +1,9 @@
 import { jobService } from "@/services/job.service";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetJobs = (page = 1, limit = 20) => {
+export const useGetJobs = (params: Record<string, any> = {}) => {
     return useQuery({
-        queryKey: ['jobs', page, limit],
-        queryFn: () => jobService.findAll(page, limit),
+        queryKey: ['jobs', params],
+        queryFn: () => jobService.findAll(params),
     });
 };

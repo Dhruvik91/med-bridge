@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -8,45 +8,106 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Badge } from '@/components/ui/badge';
 import { Search, MapPin, Filter, SlidersHorizontal } from 'lucide-react';
 import { JobType } from '@/types';
+import { useGetSpecialties } from '@/hooks/get/useGetSpecialties';
 
 interface MobileFilterDrawerProps {
     searchQuery: string;
     location: string;
     jobType: JobType | 'all';
+    salaryMin: number | '';
+    salaryMax: number | '';
+    experienceMin: number | '';
+    experienceMax: number | '';
+    specialtyIds: string[];
+    postedWithin: string | 'all';
     onSearchChange: (value: string) => void;
     onLocationChange: (value: string) => void;
     onJobTypeChange: (value: JobType | 'all') => void;
+    onSalaryMinChange: (value: number | '') => void;
+    onSalaryMaxChange: (value: number | '') => void;
+    onExperienceMinChange: (value: number | '') => void;
+    onExperienceMaxChange: (value: number | '') => void;
+    onSpecialtyIdsChange: (value: string[]) => void;
+    onPostedWithinChange: (value: string | 'all') => void;
     onClearFilters: () => void;
     showClearButton: boolean;
+    onApply?: () => void;
 }
 
 export const MobileFilterDrawer = ({
     searchQuery,
     location,
     jobType,
+    salaryMin,
+    salaryMax,
+    experienceMin,
+    experienceMax,
+    specialtyIds,
+    postedWithin,
     onSearchChange,
     onLocationChange,
     onJobTypeChange,
+    onSalaryMinChange,
+    onSalaryMaxChange,
+    onExperienceMinChange,
+    onExperienceMaxChange,
+    onSpecialtyIdsChange,
+    onPostedWithinChange,
     onClearFilters,
     showClearButton,
+    onApply,
 }: MobileFilterDrawerProps) => {
     const [open, setOpen] = useState(false);
+    const [isDesktop, setIsDesktop] = useState(false);
+    const { data: specialtiesData } = useGetSpecialties();
+    const specialties = specialtiesData?.items ?? [];
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        const mediaQuery = window.matchMedia('(min-width: 768px)');
+
+        const updateMatch = (event: MediaQueryListEvent | MediaQueryList) => {
+            setIsDesktop(event.matches);
+        };
+
+        // Set initial value
+        updateMatch(mediaQuery);
+
+        // Listen for changes
+        const handler = (event: MediaQueryListEvent) => updateMatch(event);
+
+        mediaQuery.addEventListener('change', handler);
+
+        return () => {
+            mediaQuery.removeEventListener('change', handler);
+        };
+    }, []);
 
     // Count active filters
     const activeFilterCount = [
         searchQuery,
         location,
         jobType !== 'all' ? jobType : null,
+        salaryMin,
+        salaryMax,
+        experienceMin,
+        experienceMax,
+        specialtyIds.length > 0 ? specialtyIds : null,
+        postedWithin !== 'all' ? postedWithin : null,
     ].filter(Boolean).length;
 
     const handleApplyFilters = () => {
+        if (onApply) {
+            onApply();
+        }
         setOpen(false);
     };
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="relative">
+                <Button size="sm" className="relative">
                     <SlidersHorizontal className="h-4 w-4 mr-2" />
                     Filters
                     {activeFilterCount > 0 && (
@@ -59,7 +120,10 @@ export const MobileFilterDrawer = ({
                     )}
                 </Button>
             </SheetTrigger>
-            <SheetContent side="top" className="h-auto max-h-[80vh] overflow-y-auto">
+            <SheetContent
+                side={isDesktop ? 'right' : 'top'}
+                className="h-auto max-h-[80vh] overflow-y-auto md:max-w-[50vw] lg:max-w-[40vw] xl:max-w-[20vw] w-full mx-auto my-0"
+            >
                 <SheetHeader>
                     <SheetTitle>Filter Jobs</SheetTitle>
                 </SheetHeader>
@@ -100,6 +164,35 @@ export const MobileFilterDrawer = ({
                         </div>
                     </div>
 
+                    {/* Specialty Selector */}
+                    <div className="space-y-2">
+                        <label htmlFor="mobile-specialty" className="text-sm font-medium">
+                            Specialty
+                        </label>
+                        <Select
+                            value={specialtyIds[0] ?? 'all'}
+                            onValueChange={(value) => {
+                                if (value === 'all') {
+                                    onSpecialtyIdsChange([]);
+                                } else {
+                                    onSpecialtyIdsChange([value]);
+                                }
+                            }}
+                        >
+                            <SelectTrigger id="mobile-specialty">
+                                <SelectValue placeholder="Select specialty" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Specialties</SelectItem>
+                                {specialties.map((specialty) => (
+                                    <SelectItem key={specialty.id} value={specialty.id}>
+                                        {specialty.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
                     {/* Job Type Select */}
                     <div className="space-y-2">
                         <label htmlFor="mobile-job-type" className="text-sm font-medium">
@@ -115,7 +208,64 @@ export const MobileFilterDrawer = ({
                                 <SelectItem value={JobType.part_time}>Part Time</SelectItem>
                                 <SelectItem value={JobType.contract}>Contract</SelectItem>
                                 <SelectItem value={JobType.temporary}>Temporary</SelectItem>
-                                <SelectItem value={JobType.remote}>Remote</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {/* Salary Range */}
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium">Salary Range</label>
+                        <div className="flex items-center gap-3">
+                            <Input
+                                type="number"
+                                placeholder="Min Salary"
+                                value={salaryMin}
+                                onChange={(e) => onSalaryMinChange(e.target.value ? Number(e.target.value) : '')}
+                            />
+                            <span className="text-muted-foreground">-</span>
+                            <Input
+                                type="number"
+                                placeholder="Max Salary"
+                                value={salaryMax}
+                                onChange={(e) => onSalaryMaxChange(e.target.value ? Number(e.target.value) : '')}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Experience Range */}
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium">Experience (Years)</label>
+                        <div className="flex items-center gap-3">
+                            <Input
+                                type="number"
+                                placeholder="Min Exp"
+                                value={experienceMin}
+                                onChange={(e) => onExperienceMinChange(e.target.value ? Number(e.target.value) : '')}
+                            />
+                            <span className="text-muted-foreground">-</span>
+                            <Input
+                                type="number"
+                                placeholder="Max Exp"
+                                value={experienceMax}
+                                onChange={(e) => onExperienceMaxChange(e.target.value ? Number(e.target.value) : '')}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Posted Within */}
+                    <div className="space-y-2">
+                        <label htmlFor="mobile-posted-within" className="text-sm font-medium">
+                            Posted Within
+                        </label>
+                        <Select value={postedWithin} onValueChange={onPostedWithinChange}>
+                            <SelectTrigger id="mobile-posted-within">
+                                <SelectValue placeholder="Select timeframe" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">Any Time</SelectItem>
+                                <SelectItem value="24h">Last 24 Hours</SelectItem>
+                                <SelectItem value="7d">Last 7 Days</SelectItem>
+                                <SelectItem value="30d">Last 30 Days</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>

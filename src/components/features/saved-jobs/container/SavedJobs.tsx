@@ -1,19 +1,27 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useSavedJobs } from '@/hooks/useSavedJobs';
 import { useJobFormatters } from '@/hooks/useJobFormatters';
 import { SavedJobsLoading } from '../components/SavedJobsLoading';
 import { SavedJobsUnauthenticated } from '../components/SavedJobsUnauthenticated';
 import { SavedJobsEmptyState } from '../components/SavedJobsEmptyState';
 import { SavedJobCard } from '../components/SavedJobCard';
-import { JobSearchFilters } from '../../jobs/components/JobSearchFilters';
 import { MobileFilterDrawer } from '../../jobs/components/MobileFilterDrawer';
 import { EmptyState } from '../../jobs/components/EmptyState';
 import { Briefcase } from 'lucide-react';
-import { JobType } from '@/types';
+import { JobFilters, createInitialJobFilters, hasActiveFilters } from '../../jobs/hooks/useJobFilters';
+import { Button } from '@/components/ui/button';
 
 export function SavedJobs() {
+    const initialFilters: JobFilters = createInitialJobFilters();
+
+    // Draft filters used inside the drawer UI
+    const [draftFilters, setDraftFilters] = useState<JobFilters>(initialFilters);
+
+    // Applied filters used to actually query the API
+    const [appliedFilters, setAppliedFilters] = useState<JobFilters>(initialFilters);
+
     const {
         user,
         userLoading,
@@ -21,49 +29,29 @@ export function SavedJobs() {
         savedJobsLoading,
         deletingJobId,
         handleUnsaveJob,
-    } = useSavedJobs();
-
+    } = useSavedJobs(appliedFilters);
     const { formatSalary, getJobTypeLabel, formatDate } = useJobFormatters();
 
-    const [searchQuery, setSearchQuery] = useState('');
-    const [location, setLocation] = useState('');
-    const [jobType, setJobType] = useState<JobType | 'all'>('all');
-
-    const filteredSavedJobs = useMemo(() => {
-        let filtered = savedJobs;
-
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
-            filtered = filtered.filter(savedJob =>
-                savedJob.job?.title.toLowerCase().includes(query) ||
-                savedJob.job?.description.toLowerCase().includes(query) ||
-                savedJob.job?.specialties?.some(s => s.name.toLowerCase().includes(query))
-            );
-        }
-
-        if (location) {
-            const loc = location.toLowerCase();
-            filtered = filtered.filter(savedJob =>
-                savedJob.job?.location?.city.toLowerCase().includes(loc) ||
-                savedJob.job?.location?.state?.toLowerCase().includes(loc) ||
-                savedJob.job?.location?.country.toLowerCase().includes(loc)
-            );
-        }
-
-        if (jobType !== 'all') {
-            filtered = filtered.filter(savedJob => savedJob.job?.jobType === jobType);
-        }
-
-        return filtered;
-    }, [savedJobs, searchQuery, location, jobType]);
+    const handleApplyFilters = useCallback(() => {
+        setAppliedFilters(draftFilters);
+    }, [draftFilters]);
 
     const handleClearFilters = useCallback(() => {
-        setSearchQuery('');
-        setLocation('');
-        setJobType('all');
-    }, []);
+        const cleared: JobFilters = {
+            searchQuery: '',
+            location: '',
+            jobType: 'all',
+            salaryMin: '',
+            salaryMax: '',
+            experienceMin: '',
+            experienceMax: '',
+            specialtyIds: [],
+            postedWithin: 'all',
+        };
 
-    const showClearButton = !!(searchQuery || location || jobType !== 'all');
+        setDraftFilters(cleared);
+        setAppliedFilters(cleared);
+    }, []);
 
     // Loading state
     if (userLoading || savedJobsLoading) {
@@ -75,11 +63,36 @@ export function SavedJobs() {
         return <SavedJobsUnauthenticated />;
     }
 
-    // If user has no saved jobs at all (before filtering)
-    if (savedJobs.length === 0) {
+    const showClearButton = hasActiveFilters(draftFilters);
+
+    const hasAppliedFilters = hasActiveFilters(appliedFilters);
+
+    // If user has no saved jobs at all (after filtering out deleted ones) and no filters are applied
+    if (savedJobs.length === 0 && !hasAppliedFilters) {
         return (
-            <div className="container mx-auto px-4 py-8">
-                <SavedJobsEmptyState />
+            <div className="flex flex-col h-[calc(100vh-4rem)]">
+                {/* Fixed Header - Sticky on Desktop */}
+                <div className="sticky top-0 z-10 bg-background border-b">
+                    <div className="container mx-auto px-4 py-4 md:py-6">
+                        <div className="flex items-center justify-between mb-4 md:mb-0">
+                            <div>
+                                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-1">
+                                    Saved Jobs
+                                </h1>
+                                <p className="text-sm md:text-base text-muted-foreground">
+                                    0 jobs saved
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Empty State Content */}
+                <div className="flex-1 overflow-y-auto">
+                    <div className="container mx-auto px-4 py-8">
+                        <SavedJobsEmptyState />
+                    </div>
+                </div>
             </div>
         );
     }
@@ -95,37 +108,64 @@ export function SavedJobs() {
                                 Saved Jobs
                             </h1>
                             <p className="text-sm md:text-base text-muted-foreground">
-                                {filteredSavedJobs.length} {filteredSavedJobs.length === 1 ? 'job' : 'jobs'} saved
+                                {savedJobs.length} {savedJobs.length === 1 ? 'job' : 'jobs'} saved
                             </p>
                         </div>
 
-                        {/* Mobile Filter Button */}
-                        <div className="md:hidden">
+                        {/* Filters Button - opens drawer on all screen sizes */}
+                        <div className="flex items-center gap-2">
                             <MobileFilterDrawer
-                                searchQuery={searchQuery}
-                                location={location}
-                                jobType={jobType}
-                                onSearchChange={setSearchQuery}
-                                onLocationChange={setLocation}
-                                onJobTypeChange={setJobType}
+                                searchQuery={draftFilters.searchQuery}
+                                location={draftFilters.location}
+                                jobType={draftFilters.jobType}
+                                salaryMin={draftFilters.salaryMin}
+                                salaryMax={draftFilters.salaryMax}
+                                experienceMin={draftFilters.experienceMin}
+                                experienceMax={draftFilters.experienceMax}
+                                specialtyIds={draftFilters.specialtyIds}
+                                postedWithin={draftFilters.postedWithin}
+                                onSearchChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, searchQuery: value }))
+                                }
+                                onLocationChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, location: value }))
+                                }
+                                onJobTypeChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, jobType: value }))
+                                }
+                                onSalaryMinChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, salaryMin: value }))
+                                }
+                                onSalaryMaxChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, salaryMax: value }))
+                                }
+                                onExperienceMinChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, experienceMin: value }))
+                                }
+                                onExperienceMaxChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, experienceMax: value }))
+                                }
+                                onSpecialtyIdsChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, specialtyIds: value }))
+                                }
+                                onPostedWithinChange={(value) =>
+                                    setDraftFilters((prev) => ({ ...prev, postedWithin: value }))
+                                }
                                 onClearFilters={handleClearFilters}
                                 showClearButton={showClearButton}
+                                onApply={handleApplyFilters}
                             />
-                        </div>
-                    </div>
 
-                    {/* Desktop Filters - Inline */}
-                    <div className="mt-4">
-                        <JobSearchFilters
-                            searchQuery={searchQuery}
-                            location={location}
-                            jobType={jobType}
-                            onSearchChange={setSearchQuery}
-                            onLocationChange={setLocation}
-                            onJobTypeChange={setJobType}
-                            onClearFilters={handleClearFilters}
-                            showClearButton={showClearButton}
-                        />
+                            {hasAppliedFilters && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={handleClearFilters}
+                                >
+                                    Clear filters
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -133,7 +173,7 @@ export function SavedJobs() {
             {/* Scrollable Job Listings */}
             <div className="flex-1 overflow-y-auto">
                 <div className="container mx-auto px-4 py-6">
-                    {filteredSavedJobs.length === 0 ? (
+                    {savedJobs.length === 0 ? (
                         <EmptyState
                             icon={Briefcase}
                             title="No saved jobs found"
@@ -144,7 +184,7 @@ export function SavedJobs() {
                     ) : (
                         <>
                             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                                {filteredSavedJobs.map((savedJob) => (
+                                {savedJobs.map((savedJob) => (
                                     <SavedJobCard
                                         key={savedJob.id}
                                         savedJob={savedJob}

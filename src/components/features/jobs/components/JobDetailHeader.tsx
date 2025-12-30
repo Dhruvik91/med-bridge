@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CardTitle } from '@/components/ui/card';
 import { MapPin, Building2, Briefcase, Clock, Eye, BookmarkPlus, Bookmark, Share2 } from 'lucide-react';
-import { JobType } from '@/types';
+import { JobType, UserRole } from '@/types';
 
 interface JobDetailHeaderProps {
     title: string;
@@ -13,10 +13,10 @@ interface JobDetailHeaderProps {
         country: string;
     };
     jobType: JobType;
-    remote?: boolean;
     postedDate: string;
     viewsCount?: number;
     status?: string;
+    role?: UserRole,
     isSaved: boolean;
     onSave: () => void;
     onShare: () => void;
@@ -29,10 +29,10 @@ export const JobDetailHeader = ({
     organizationName,
     location,
     jobType,
-    remote,
     postedDate,
     viewsCount,
     status,
+    role,
     isSaved,
     onSave,
     onShare,
@@ -58,19 +58,21 @@ export const JobDetailHeader = ({
                     </div>
                 </div>
                 <div className="flex gap-2">
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={onSave}
-                        disabled={isSaving}
-                        aria-label={isSaved ? 'Remove from saved jobs' : 'Save job'}
-                    >
-                        {isSaved ? (
-                            <Bookmark className="h-5 w-5 fill-current" aria-hidden="true" />
-                        ) : (
-                            <BookmarkPlus className="h-5 w-5" aria-hidden="true" />
-                        )}
-                    </Button>
+                    {
+                        role === UserRole.candidate && <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={onSave}
+                            disabled={isSaving}
+                            aria-label={isSaved ? 'Remove from saved jobs' : 'Save job'}
+                        >
+                            {isSaved ? (
+                                <Bookmark className="h-5 w-5 fill-current" aria-hidden="true" />
+                            ) : (
+                                <BookmarkPlus className="h-5 w-5" aria-hidden="true" />
+                            )}
+                        </Button>
+                    }
                     <Button
                         variant="outline"
                         size="icon"
@@ -87,11 +89,6 @@ export const JobDetailHeader = ({
                     <Briefcase className="mr-1 h-4 w-4" aria-hidden="true" />
                     {getJobTypeLabel(jobType)}
                 </Badge>
-                {remote && (
-                    <Badge variant="secondary" className="text-sm">
-                        Remote
-                    </Badge>
-                )}
                 <Badge variant="outline" className="text-sm">
                     <Clock className="mr-1 h-4 w-4" aria-hidden="true" />
                     Posted {new Date(postedDate).toLocaleDateString()}
