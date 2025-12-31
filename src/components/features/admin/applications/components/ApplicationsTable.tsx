@@ -1,22 +1,8 @@
 import { useMemo } from 'react';
-import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-  ColumnDef,
-} from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import { Application } from '@/types';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +11,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { MoreVertical, Trash2, Eye } from 'lucide-react';
 import { format } from 'date-fns';
+import { useDataTable } from '@/hooks/useDataTable';
+import { DataTable } from '@/components/ui/data-table';
 import { ApplicationStatusBadge } from './ApplicationStatusBadge';
 
 interface ApplicationsTableProps {
@@ -32,7 +20,7 @@ interface ApplicationsTableProps {
   isLoading: boolean;
   hasNextPage?: boolean;
   isFetchingNextPage?: boolean;
-  sentinelRef?: (node: HTMLTableRowElement | null) => void;
+  sentinelRef?: (node?: Element | null) => void;
   onViewDetails?: (application: Application) => void;
   onDelete?: (application: Application) => void;
 }
@@ -142,73 +130,23 @@ export function ApplicationsTable({
     [onViewDetails, onDelete]
   );
 
-  const table = useReactTable({
+  const { table } = useDataTable({
     data: applications,
     columns,
-    getCoreRowModel: getCoreRowModel(),
+    enableSorting: false,
+    enableFiltering: false,
+    enablePagination: false,
   });
 
   return (
-    <Card>
-      <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="text-center py-8">
-                    Loading...
-                  </TableCell>
-                </TableRow>
-              ) : table.getRowModel().rows.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="text-center py-8">
-                    No applications found
-                  </TableCell>
-                </TableRow>
-              ) : (
-                <>
-                  {table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-                  {hasNextPage && (
-                    <TableRow ref={sentinelRef}>
-                      <TableCell colSpan={columns.length} className="text-center py-4">
-                        {isFetchingNextPage ? 'Loading more...' : 'Load more'}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </CardContent>
-    </Card>
+    <DataTable
+      table={table}
+      isLoading={isLoading}
+      loadingMessage="Loading applications..."
+      emptyMessage="No applications found"
+      hasNextPage={hasNextPage}
+      isFetchingNextPage={isFetchingNextPage}
+      sentinelRef={sentinelRef}
+    />
   );
 }
