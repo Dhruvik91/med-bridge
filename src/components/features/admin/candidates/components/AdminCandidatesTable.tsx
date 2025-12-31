@@ -1,25 +1,13 @@
 import { useMemo } from 'react';
-import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-  ColumnDef,
-} from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import { DoctorProfile } from '@/types';
-import { Card, CardContent } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { format } from 'date-fns';
+import { useDataTable, ColumnTotal } from '@/hooks/useDataTable';
+import { DataTable, DataTableSortableHeader } from '@/components/ui/data-table';
 import { AdminCandidateNameCell } from './AdminCandidateNameCell';
 import { AdminCandidateActionsCell } from './AdminCandidateActionsCell';
 
-interface AdminCandidatesTableProps {
+interface AdminCandidatesTableRefactoredProps {
   candidates: DoctorProfile[];
   isLoading: boolean;
   hasNextPage?: boolean;
@@ -27,6 +15,8 @@ interface AdminCandidatesTableProps {
   sentinelRef?: (node?: Element | null) => void;
   onViewCandidate?: (candidate: DoctorProfile) => void;
   onDeleteCandidate?: (candidate: DoctorProfile) => void;
+  globalFilter?: string;
+  showTotals?: boolean;
 }
 
 export function AdminCandidatesTable({
@@ -37,21 +27,29 @@ export function AdminCandidatesTable({
   sentinelRef,
   onViewCandidate,
   onDeleteCandidate,
-}: AdminCandidatesTableProps) {
+  globalFilter = '',
+  showTotals = false,
+}: AdminCandidatesTableRefactoredProps) {
   const columns = useMemo<ColumnDef<DoctorProfile>[]>(
     () => [
       {
         accessorKey: 'fullName',
-        header: 'Name',
+        header: ({ column }) => (
+          <DataTableSortableHeader column={column} title="Name" />
+        ),
         cell: ({ row }) => <AdminCandidateNameCell candidate={row.original} />,
+        enableSorting: true,
       },
       {
         accessorKey: 'experienceYears',
-        header: 'Experience',
+        header: ({ column }) => (
+          <DataTableSortableHeader column={column} title="Experience" />
+        ),
         cell: ({ row }) => {
           const years = row.original.experienceYears;
           return years ? `${years} years` : 'N/A';
         },
+        enableSorting: true,
       },
       {
         accessorKey: 'city',
@@ -69,10 +67,13 @@ export function AdminCandidatesTable({
       },
       {
         accessorKey: 'createdAt',
-        header: 'Joined',
+        header: ({ column }) => (
+          <DataTableSortableHeader column={column} title="Joined" />
+        ),
         cell: ({ row }) => {
           return format(new Date(row.original.createdAt), 'MMM dd, yyyy');
         },
+        enableSorting: true,
       },
       {
         id: 'actions',
@@ -89,73 +90,61 @@ export function AdminCandidatesTable({
     [onViewCandidate, onDeleteCandidate]
   );
 
-  const table = useReactTable({
+  const columnTotals = useMemo<ColumnTotal<DoctorProfile>[]>(
+    () => [
+      {
+        columnId: 'fullName',
+        calculate: (rows) => `Total: ${rows.length}`,
+      },
+      {
+        columnId: 'experienceYears',
+        calculate: (rows) => {
+          const total = rows.reduce((sum, row) => {
+            return sum + (row.original.experienceYears || 0);
+          }, 0);
+          const avg = rows.length > 0 ? (total / rows.length).toFixed(1) : 0;
+          return `Avg: ${avg} yrs`;
+        },
+      },
+    ],
+    []
+  );
+
+  const globalFilterFn = (row: any, columnId: string, filterValue: string): boolean => {
+    const candidate = row.original as DoctorProfile;
+    const searchValue = filterValue.toLowerCase();
+    
+    return !!(
+      candidate.fullName?.toLowerCase().includes(searchValue) ||
+      candidate.user?.email?.toLowerCase().includes(searchValue) ||
+      candidate.phone?.toLowerCase().includes(searchValue) ||
+      candidate.city?.toLowerCase().includes(searchValue) ||
+      candidate.country?.toLowerCase().includes(searchValue)
+    );
+  };
+
+  const { table, totals } = useDataTable({
     data: candidates,
     columns,
-    getCoreRowModel: getCoreRowModel(),
+    enableSorting: true,
+    enableFiltering: true,
+    globalFilterFn,
+    columnTotals: showTotals ? columnTotals : [],
   });
 
+  table.getState().globalFilter = globalFilter;
+
   return (
-    <Card>
-      <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="text-center py-8">
-                    Loading...
-                  </TableCell>
-                </TableRow>
-              ) : table.getRowModel().rows.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="text-center py-8">
-                    No candidates found
-                  </TableCell>
-                </TableRow>
-              ) : (
-                <>
-                  {table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-                  {hasNextPage && (
-                    <TableRow ref={sentinelRef}>
-                      <TableCell colSpan={columns.length} className="text-center py-4">
-                        {isFetchingNextPage ? 'Loading more...' : 'Load more'}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </CardContent>
-    </Card>
+    <DataTable
+      table={table}
+      isLoading={isLoading}
+      loadingMessage="Loading candidates..."
+      emptyMessage="No candidates found"
+      totals={totals}
+      showTotals={showTotals}
+      hasNextPage={hasNextPage}
+      isFetchingNextPage={isFetchingNextPage}
+      sentinelRef={sentinelRef}
+    />
   );
 }
