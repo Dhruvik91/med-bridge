@@ -3,8 +3,9 @@
 import { useState, useMemo, useCallback } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useGetMe } from '@/hooks/get/useGetMe';
-import { useGetApplicationsByCandidate } from '@/hooks/get/useGetApplications';
+import { useInfiniteApplicationsByCandidate } from '@/hooks/get/useInfiniteApplications';
 import { ApplicationStatus, UserRole } from '@/types';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { CandidateApplicationStats } from '../components/CandidateApplicationStats';
 import { CandidateApplicationFilters } from '../components/CandidateApplicationFilters';
 import { MobileApplicationFilterDrawer } from '../components/MobileApplicationFilterDrawer';
@@ -19,11 +20,26 @@ export function Applications() {
     // Fetch current user
     const { data: user, isLoading: userLoading } = useGetMe();
 
-    // Fetch applications (paginated)
-    const { data: applicationsData, isLoading: applicationsLoading } = useGetApplicationsByCandidate(user?.id || '');
+    const {
+        data,
+        isLoading: applicationsLoading,
+        isFetchingNextPage,
+        hasNextPage,
+        fetchNextPage,
+        isError,
+    } = useInfiniteApplicationsByCandidate(user?.id || '', 20);
 
-    // Derived applications array from paginated result
-    const applications = applicationsData?.items ?? [];
+    const applications = useMemo(() => data?.pages.flatMap((p) => p.items) ?? [], [data]);
+    const total = data?.pages?.[0]?.total ?? 0;
+
+    const { sentinelRef } = useInfiniteScroll({
+        root: null,
+        rootMargin: '400px',
+        threshold: 0,
+        hasNextPage,
+        isFetchingNextPage,
+        onLoadMore: fetchNextPage,
+    });
 
     // Filter and sort applications
     const filteredApplications = useMemo(() => {
@@ -100,7 +116,17 @@ export function Applications() {
                                 My Applications
                             </h1>
                             <p className="text-sm md:text-base text-muted-foreground">
-                                {filteredApplications.length} {filteredApplications.length === 1 ? 'application' : 'applications'} found
+                                {total > 0 ? (
+                                    <>
+                                        Showing {filteredApplications.length} of {total}{' '}
+                                        {total === 1 ? 'application' : 'applications'}
+                                    </>
+                                ) : (
+                                    <>
+                                        {filteredApplications.length}{' '}
+                                        {filteredApplications.length === 1 ? 'application' : 'applications'} found
+                                    </>
+                                )}
                             </p>
                         </div>
 
@@ -140,12 +166,27 @@ export function Applications() {
             {/* Scrollable Applications List */}
             <div className="flex-1 overflow-y-auto">
                 <div className="container mx-auto px-4 py-6">
+                    {isError ? (
+                        <div className="text-sm text-muted-foreground">
+                            Failed to load applications. Please try again.
+                        </div>
+                    ) : null}
                     <CandidateApplicationList
                         isLoading={applicationsLoading}
                         filteredApplications={filteredApplications}
                         statusFilter={statusFilter}
                         setStatusFilter={setStatusFilter}
                     />
+
+                    <div ref={sentinelRef} className="h-8" />
+
+                    {isFetchingNextPage && (
+                        <div className="space-y-4 mt-4">
+                            {[1, 2].map((i) => (
+                                <Skeleton key={i} className="h-40" />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

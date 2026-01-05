@@ -55,6 +55,15 @@ export const API_CONFIG = {
     jobSeekerProfiles: "/job-seeker-profiles",
     locations: "/locations",
     uploads: "/uploads",
+    admin: {
+      base: "/admin",
+      stats: "/admin/stats",
+      users: "/admin/users",
+      candidates: "/admin/candidates",
+      employers: "/admin/employers",
+      jobs: "/admin/jobs",
+      applications: "/admin/applications",
+    },
   },
 };
 
@@ -96,6 +105,14 @@ export const FRONTEND_ROUTES = {
       COMPLETE: '/profile/employer/complete',
       EDIT: '/profile/employer/edit',
     },
+  },
+  ADMIN: {
+    BASE: '/dashboard/admin',
+    USERS: '/dashboard/admin/users',
+    CANDIDATES: '/dashboard/admin/candidates',
+    EMPLOYERS: '/dashboard/admin/employers',
+    JOBS: '/dashboard/admin/jobs',
+    APPLICATIONS: '/dashboard/admin/applications',
   },
 }
 
