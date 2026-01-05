@@ -16,7 +16,8 @@ import {
     User,
     LogOut,
     LucideIcon,
-    File
+    File,
+    Users, FileText, Building2, LayoutDashboard, UserCheck
 } from 'lucide-react'
 import {
     DropdownMenu,
@@ -79,6 +80,39 @@ const getEmployerNavItems = (): NavItem[] => [
     },
 ]
 
+const getAdminNavItems = (): NavItem[] => [
+    {
+        href: FRONTEND_ROUTES.ADMIN.BASE,
+        label: 'Dashboard',
+        icon: LayoutDashboard,
+    },
+    {
+        href: FRONTEND_ROUTES.ADMIN.USERS,
+        label: 'Users',
+        icon: Users,
+    },
+    {
+        href: FRONTEND_ROUTES.ADMIN.CANDIDATES,
+        label: 'Candidates',
+        icon: UserCheck,
+    },
+    {
+        href: FRONTEND_ROUTES.ADMIN.EMPLOYERS,
+        label: 'Employers',
+        icon: Building2,
+    },
+    {
+        href: FRONTEND_ROUTES.ADMIN.JOBS,
+        label: 'Jobs',
+        icon: Briefcase,
+    },
+    {
+        href: FRONTEND_ROUTES.ADMIN.APPLICATIONS,
+        label: 'Applications',
+        icon: FileText,
+    },
+]
+
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 const getNavItems = (role: UserRole) => {
@@ -87,6 +121,8 @@ const getNavItems = (role: UserRole) => {
             return getCandidateNavItems()
         case UserRole.employer:
             return getEmployerNavItems()
+        case UserRole.admin:
+            return getAdminNavItems()
         default:
             return getCandidateNavItems()
     }
@@ -143,7 +179,7 @@ export function Sidebar({ className, ...props }: SidebarProps) {
                                 "flex items-center space-x-3 px-3 py-2 rounded-md transition-colors text-sm font-medium",
                                 isActive
                                     ? "bg-primary/10 text-primary"
-                                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                                    : "hover:bg-accent hover:text-accent-foreground"
                             )}
                         >
                             <Icon className="h-5 w-5" />

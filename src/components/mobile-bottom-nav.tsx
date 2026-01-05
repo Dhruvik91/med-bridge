@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Briefcase, User, Users, Home, Building2, BookmarkCheck, PlusCircle, LucideIcon, File } from "lucide-react"
+import { Briefcase, User, Users, Home, Building2, BookmarkCheck, PlusCircle, LucideIcon, File, FileText, LayoutDashboard, UserCheck } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/providers/auth-provider"
 import { UserRole } from "@/types"
@@ -72,6 +72,39 @@ const getEmployerNavItems = (): NavItem[] => [
   },
 ]
 
+const getAdminNavItems = (): NavItem[] => [
+  {
+    href: FRONTEND_ROUTES.ADMIN.BASE,
+    label: 'Dashboard',
+    icon: LayoutDashboard,
+  },
+  {
+    href: FRONTEND_ROUTES.ADMIN.USERS,
+    label: 'Users',
+    icon: Users,
+  },
+  {
+    href: FRONTEND_ROUTES.ADMIN.CANDIDATES,
+    label: 'Candidates',
+    icon: UserCheck,
+  },
+  {
+    href: FRONTEND_ROUTES.ADMIN.EMPLOYERS,
+    label: 'Employers',
+    icon: Building2,
+  },
+  {
+    href: FRONTEND_ROUTES.ADMIN.JOBS,
+    label: 'Jobs',
+    icon: Briefcase,
+  },
+  {
+    href: FRONTEND_ROUTES.ADMIN.APPLICATIONS,
+    label: 'Applications',
+    icon: FileText,
+  },
+]
+
 export function MobileBottomNav() {
   const pathname = usePathname()
   const { user, loading } = useAuth()
@@ -87,21 +120,20 @@ export function MobileBottomNav() {
   if (isProfileCompletionPage) return null
 
   // Determine navigation items based on user role
-  const getNavItems = () => {
-    const role = user.role
-
-    // Map both role systems: doctor/hospital and candidate/employer
-    if (role === UserRole.candidate) {
-      return getCandidateNavItems()
-    } else if (role === UserRole.employer) {
-      return getEmployerNavItems()
+  const getNavItems = (role: UserRole) => {
+    switch (role) {
+      case UserRole.candidate:
+        return getCandidateNavItems()
+      case UserRole.employer:
+        return getEmployerNavItems()
+      case UserRole.admin:
+        return getAdminNavItems()
+      default:
+        return getCandidateNavItems()
     }
-
-    // Default to candidate navigation for admin or unknown roles
-    return getCandidateNavItems()
   }
 
-  const items = getNavItems()
+  const items = getNavItems(user.role)
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:hidden">
