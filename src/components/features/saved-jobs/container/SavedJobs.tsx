@@ -69,6 +69,20 @@ export function SavedJobs() {
         setAppliedFilters(cleared);
     }, []);
 
+    const showClearButton = hasActiveFilters(draftFilters);
+    const hasAppliedFilters = hasActiveFilters(appliedFilters);
+
+    // Initialize infinite scroll hook before any early returns (Rules of Hooks)
+    const { sentinelRef } = useInfiniteScroll({
+        root: null,
+        rootMargin: '400px',
+        threshold: 0,
+        enabled: !userLoading && !isLoading && !!user,
+        hasNextPage,
+        isFetchingNextPage,
+        onLoadMore: fetchNextPage,
+    });
+
     // Loading state
     if (userLoading || isLoading) {
         return <SavedJobsLoading />;
@@ -78,19 +92,6 @@ export function SavedJobs() {
     if (!user) {
         return <SavedJobsUnauthenticated />;
     }
-
-    const showClearButton = hasActiveFilters(draftFilters);
-
-    const hasAppliedFilters = hasActiveFilters(appliedFilters);
-
-    const { sentinelRef } = useInfiniteScroll({
-        root: null,
-        rootMargin: '400px',
-        threshold: 0,
-        hasNextPage,
-        isFetchingNextPage,
-        onLoadMore: fetchNextPage,
-    });
 
     // If user has no saved jobs at all (after filtering out deleted ones) and no filters are applied
     if (savedJobs.length === 0 && !hasAppliedFilters) {
