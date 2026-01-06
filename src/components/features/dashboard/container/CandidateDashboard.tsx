@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
@@ -11,7 +10,6 @@ import {
     Eye,
     TrendingUp,
 } from 'lucide-react';
-import { FRONTEND_ROUTES } from '@/constants/constants';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
 import { useGetApplicationsByCandidate } from '@/hooks/get/useGetApplications';

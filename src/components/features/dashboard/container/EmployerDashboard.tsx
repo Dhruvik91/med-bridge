@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Briefcase, FileText, Eye, Users } from 'lucide-react';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 import { useGetMe } from '@/hooks/get/useGetMe';
@@ -125,8 +124,7 @@ export function EmployerDashboard() {
                 />
             </div>
 
-            {/* Active Jobs and Recent Applications - Side by Side */}
-            <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
                 {/* Active Jobs */}
                 <ActiveJobsList
                     jobs={jobs}
