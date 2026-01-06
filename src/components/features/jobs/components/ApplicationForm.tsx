@@ -1,18 +1,18 @@
 import { UseFormReturn } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-import { Send, Upload, FileText } from 'lucide-react';
+import { Send, FileText, CheckCircle2 } from 'lucide-react';
+import Link from 'next/link';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 
 interface ApplicationFormProps {
     form: UseFormReturn<any>;
@@ -20,9 +20,7 @@ interface ApplicationFormProps {
     isSubmitting: boolean;
     hasApplied: boolean;
     appliedDate?: string;
-    onFileChange: (e: React.ChangeEvent<HTMLInputElement>, field: any) => void;
-    onClearResume: (field: any) => void;
-    selectedFile: File | null;
+    profileResumeUrl?: string | null;
 }
 
 export const ApplicationForm = ({
@@ -31,9 +29,7 @@ export const ApplicationForm = ({
     isSubmitting,
     hasApplied,
     appliedDate,
-    onFileChange,
-    onClearResume,
-    selectedFile,
+    profileResumeUrl,
 }: ApplicationFormProps) => {
     if (hasApplied) {
         return (
@@ -49,6 +45,44 @@ export const ApplicationForm = ({
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                {/* Resume Status */}
+                <div className="p-4 bg-muted rounded-lg">
+                    <div className="flex items-start gap-3">
+                        {profileResumeUrl ? (
+                            <>
+                                <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />
+                                <div className="flex-1">
+                                    <p className="font-medium text-sm">Resume from your profile</p>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        Your resume will be automatically attached from your profile
+                                    </p>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <FileText className="h-5 w-5 text-orange-600 mt-0.5" />
+                                <div className="flex-1">
+                                    <p className="font-medium text-sm text-orange-600">Resume required</p>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        Please upload your resume in your profile before applying
+                                    </p>
+                                    <Button
+                                        type="button"
+                                        variant="link"
+                                        size="sm"
+                                        className="h-auto p-0 mt-2 text-xs"
+                                        asChild
+                                    >
+                                        <Link href={FRONTEND_ROUTES.PROFILE.BASE}>
+                                            Go to Profile →
+                                        </Link>
+                                    </Button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+
                 {/* Cover Letter Field */}
                 <FormField
                     control={form.control}
@@ -68,65 +102,9 @@ export const ApplicationForm = ({
                     )}
                 />
 
-                {/* Resume Upload Field */}
-                <FormField
-                    control={form.control}
-                    name="resume"
-                    render={({ field: { onChange, value, ...field } }) => (
-                        <FormItem>
-                            <FormLabel>
-                                Resume <span className="text-destructive">*</span>
-                            </FormLabel>
-                            <FormControl>
-                                <div className="space-y-2">
-                                    <div className="flex items-center gap-2">
-                                        <Input
-                                            id="resume"
-                                            type="file"
-                                            accept=".pdf,.doc,.docx"
-                                            className="file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
-                                            onChange={(e) => onFileChange(e, { onChange })}
-                                            {...field}
-                                        />
-                                        {!selectedFile && <Upload className="h-4 w-4 text-muted-foreground" />}
-                                    </div>
-
-                                    {/* File info display */}
-                                    {selectedFile && (
-                                        <div className="flex items-center justify-between p-3 bg-muted rounded-md">
-                                            <div className="flex items-center gap-2 text-sm">
-                                                <FileText className="h-4 w-4 text-primary" />
-                                                <div>
-                                                    <p className="font-medium">{selectedFile.name}</p>
-                                                    <p className="text-xs text-muted-foreground">
-                                                        {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <Button
-                                                type="button"
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => onClearResume({ onChange })}
-                                                className="h-8 px-2"
-                                            >
-                                                Remove
-                                            </Button>
-                                        </div>
-                                    )}
-                                </div>
-                            </FormControl>
-                            <FormDescription>
-                                Required • Accepted formats: PDF, DOC, DOCX • Maximum size: 5MB
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
                 <Button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !profileResumeUrl}
                     className="w-full"
                 >
                     {isSubmitting ? (

@@ -17,7 +17,6 @@ import { useSavedJobs } from '@/hooks/useSavedJobs';
 import { useGetApplicationsByCandidate } from '@/hooks/get/useGetApplications';
 import { useApplyToJob } from '@/hooks/post/useApplyToJob';
 import { useSaveJob, useUnsaveJob } from '@/hooks/post/useSaveJob';
-import { useUploadFile } from '@/hooks/post/useUploadFile';
 import { useToast } from '@/hooks/use-toast';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 import { JobType, UserRole } from '@/types';
@@ -28,24 +27,9 @@ import { QuickActionsCard } from '../components/QuickActionsCard';
 import { EmployerInfoCard } from '../components/EmployerInfoCard';
 import { LocationInfoCard } from '../components/LocationInfoCard';
 
-// File validation constants
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_FILE_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-const ACCEPTED_FILE_EXTENSIONS = ['.pdf', '.doc', '.docx'];
-
 // Zod schema for application form
 const applicationSchema = z.object({
     coverLetter: z.string().optional(),
-    resume: z
-        .custom<FileList>()
-        .refine((files) => files && files.length > 0, { message: 'Resume is required. Please upload your resume.' })
-        .refine((files) => !files || files.length === 0 || files.length === 1, { message: 'Please select only one file' })
-        .refine((files) => !files || files.length === 0 || files[0].size > 0, { message: 'File is empty. Please select a valid resume file.' })
-        .refine((files) => !files || files.length === 0 || files[0].size <= MAX_FILE_SIZE, { message: `File size must be less than ${MAX_FILE_SIZE / 1024 / 1024}MB` })
-        .refine((files) => !files || files.length === 0 || ACCEPTED_FILE_TYPES.includes(files[0].type), { message: 'Only PDF, DOC, and DOCX files are accepted' })
-        .refine((files) => !files || files.length === 0 || ACCEPTED_FILE_EXTENSIONS.some(ext => files[0].name.toLowerCase().endsWith(ext)), { message: 'Invalid file extension. Only .pdf, .doc, and .docx are allowed' })
-        .refine((files) => !files || files.length === 0 || files[0].name.length <= 255, { message: 'File name is too long (max 255 characters)' })
-        .refine((files) => !files || files.length === 0 || !/[<>:"\/\\|?*\x00-\x1f]/g.test(files[0].name), { message: 'File name contains invalid characters' }),
 });
 
 type ApplicationFormData = z.infer<typeof applicationSchema>;
@@ -57,7 +41,6 @@ export const JobDetail = () => {
     const jobId = params.id as string;
 
     const [isSaved, setIsSaved] = useState(false);
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
     const form = useForm<ApplicationFormData>({
         resolver: zodResolver(applicationSchema),
@@ -73,7 +56,6 @@ export const JobDetail = () => {
     const applyMutation = useApplyToJob();
     const saveJobMutation = useSaveJob();
     const unsaveJobMutation = useUnsaveJob();
-    const uploadMutation = useUploadFile();
 
     useEffect(() => {
         if (savedJobs && jobId) {
@@ -97,40 +79,24 @@ export const JobDetail = () => {
             return;
         }
 
-        let resumeUrl = '';
-        if (data.resume && data.resume.length > 0) {
-            try {
-                resumeUrl = await uploadMutation.mutateAsync(data.resume[0]);
-            } catch (error) {
-                return;
-            }
+        if (!profile.resumeUrl) {
+            toast({
+                title: 'Resume required',
+                description: 'Please upload your resume in your profile before applying',
+                variant: 'destructive',
+            });
+            router.push(FRONTEND_ROUTES.PROFILE.BASE);
+            return;
         }
 
         applyMutation.mutate({
             jobId,
             candidateId: user!.id,
             coverLetter: data.coverLetter || '',
-            resumeUrl: resumeUrl || undefined,
+            resumeUrl: profile.resumeUrl,
         });
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
-        const files = e.target.files;
-        if (files && files.length > 0) {
-            setSelectedFile(files[0]);
-            field.onChange(files);
-        } else {
-            setSelectedFile(null);
-            field.onChange(undefined);
-        }
-    };
-
-    const handleClearResume = (field: any) => {
-        setSelectedFile(null);
-        field.onChange(undefined);
-        const fileInput = document.getElementById('resume') as HTMLInputElement;
-        if (fileInput) fileInput.value = '';
-    };
 
     const handleSaveJob = () => {
         if (!user) {
@@ -268,9 +234,7 @@ export const JobDetail = () => {
                                     isSubmitting={applyMutation.isPending}
                                     hasApplied={hasApplied}
                                     appliedDate={applications.find(a => a.jobId === jobId)?.appliedAt}
-                                    onFileChange={handleFileChange}
-                                    onClearResume={handleClearResume}
-                                    selectedFile={selectedFile}
+                                    profileResumeUrl={profile?.resumeUrl}
                                 />
                             </CardContent>
                         </Card>

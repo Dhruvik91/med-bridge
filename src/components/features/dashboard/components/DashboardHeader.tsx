@@ -32,7 +32,7 @@ export function DashboardHeader({ displayName, fullName, title, description }: D
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">
-                    Welcome back{greeting}!
+                    Welcome {greeting}!
                 </h1>
                 <p className="text-muted-foreground mt-1 text-sm md:text-base">
                     Here's your job search overview
