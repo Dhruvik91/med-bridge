@@ -107,6 +107,7 @@ export function ProfileView() {
                     country={doctorProfile.country ?? undefined}
                     socialLinks={doctorProfile.socialLinks ?? undefined}
                     resumeUrl={doctorProfile.resumeUrl ?? undefined}
+                    candidateName={doctorProfile.displayName || doctorProfile.fullName}
                 />
 
                 <div className="grid gap-6 md:grid-cols-2">

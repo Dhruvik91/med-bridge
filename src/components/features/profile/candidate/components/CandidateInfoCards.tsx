@@ -1,7 +1,11 @@
+'use client';
+
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mail, Phone, MapPin, Briefcase, Link as LinkIcon, FileText, ExternalLink } from 'lucide-react';
+import { Mail, Phone, MapPin, Briefcase, Link as LinkIcon, FileText, ExternalLink, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { ResumeViewerModal } from '../../components/ResumeViewerModal';
 
 interface CandidateInfoCardsProps {
     email: string;
@@ -11,6 +15,7 @@ interface CandidateInfoCardsProps {
     country?: string;
     socialLinks?: Record<string, string>;
     resumeUrl?: string;
+    candidateName?: string;
 }
 
 export function CandidateInfoCards({
@@ -21,8 +26,12 @@ export function CandidateInfoCards({
     country,
     socialLinks,
     resumeUrl,
+    candidateName,
 }: CandidateInfoCardsProps) {
+    const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
+
     return (
+        <>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -116,14 +125,40 @@ export function CandidateInfoCards({
                         <FileText className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <Button variant="outline" size="sm" asChild className="w-full sm:w-auto">
-                            <Link href={resumeUrl} target="_blank" rel="noopener noreferrer">
-                                View Resume <ExternalLink className="ml-2 h-3 w-3" />
-                            </Link>
-                        </Button>
+                        <div className="flex flex-col sm:flex-row gap-2">
+                            <Button 
+                                variant="default" 
+                                size="sm" 
+                                onClick={() => setIsResumeModalOpen(true)}
+                                className="w-full sm:w-auto"
+                            >
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Resume
+                            </Button>
+                            <Button 
+                                variant="outline" 
+                                size="sm" 
+                                asChild 
+                                className="w-full sm:w-auto"
+                            >
+                                <Link href={resumeUrl} target="_blank" rel="noopener noreferrer">
+                                    Open in New Tab <ExternalLink className="ml-2 h-3 w-3" />
+                                </Link>
+                            </Button>
+                        </div>
                     </CardContent>
                 </Card>
             )}
         </div>
+        
+        {resumeUrl && (
+            <ResumeViewerModal
+                isOpen={isResumeModalOpen}
+                onClose={() => setIsResumeModalOpen(false)}
+                resumeUrl={resumeUrl}
+                candidateName={candidateName}
+            />
+        )}
+    </>
     );
 }
