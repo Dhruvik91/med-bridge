@@ -126,8 +126,8 @@ export function SavedJobsList({ savedJobs, isLoading }: SavedJobsListProps) {
                             ) : (
                                 <Carousel opts={{ align: 'start' }} className="w-full" setApi={setCarouselApi}>
                                     <CarouselContent>
-                                        {savedJobs.map((savedJob) => (
-                                            <CarouselItem key={savedJob.id} className="basis-full">
+                                        {savedJobs.map((savedJob, index) => (
+                                            <CarouselItem key={savedJob.id || index} className="basis-full">
                                                 <SavedJobCard savedJob={savedJob} />
                                             </CarouselItem>
                                         ))}
@@ -141,12 +141,12 @@ export function SavedJobsList({ savedJobs, isLoading }: SavedJobsListProps) {
                                 <div className="space-y-4">
                                     {[1, 2, 3].map(i => (
                                         <Skeleton key={i} className="h-24" />
-                                    ))}  
+                                    ))}
                                 </div>
                             ) : (
                                 <div className="space-y-4">
-                                    {savedJobs.map((savedJob) => (
-                                        <SavedJobCard key={savedJob.id} savedJob={savedJob} />
+                                    {savedJobs.map((savedJob, index) => (
+                                        <SavedJobCard key={savedJob.id || index} savedJob={savedJob} />
                                     ))}
                                 </div>
                             )}
