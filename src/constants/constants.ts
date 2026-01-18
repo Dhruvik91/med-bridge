@@ -122,5 +122,5 @@ export const AUTH_TOKEN_KEY = 'auth_token'
 export enum ROLES {
   CANDIDATE = 'candidate',
   EMPLOYER = 'employer',
-  DOCTOR = 'doctor',
+  ADMIN = 'admin',
 }
