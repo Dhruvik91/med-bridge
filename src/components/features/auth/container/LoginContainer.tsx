@@ -4,16 +4,15 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Stethoscope } from 'lucide-react';
+// import Link from 'next/link';
+// import { Stethoscope } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/providers/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { LoginHeader } from '../components/LoginHeader';
 import { LoginFooter } from '../components/LoginFooter';
-import { SocialLogin } from '../components/SocialLogin';
+// import { SocialLogin } from '../components/SocialLogin';
 import { LoginForm } from '../components/LoginForm';
 
 const loginSchema = z.object({
@@ -63,12 +62,12 @@ export function LoginContainer() {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-secondary/10 to-primary/5 px-4 py-12">
             <div className="w-full max-w-md">
                 {/* Logo */}
-                <div className="flex justify-center mb-8">
+                {/* <div className="flex justify-center mb-8">
                     <Link href="/" className="flex items-center gap-2">
                         <Stethoscope className="h-8 w-8 text-primary" aria-hidden="true" />
                         <span className="text-2xl font-bold">MedBridge</span>
                     </Link>
-                </div>
+                </div> */}
 
                 <Card className="shadow-lg">
                     <LoginHeader />
@@ -86,7 +85,7 @@ export function LoginContainer() {
                             isLoading={isLoading}
                         />
 
-                        <SocialLogin onGoogleLogin={handleGoogleLogin} />
+                        {/* <SocialLogin onGoogleLogin={handleGoogleLogin} /> */}
                     </CardContent>
 
                     <LoginFooter />

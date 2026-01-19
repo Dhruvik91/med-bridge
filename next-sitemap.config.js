@@ -18,9 +18,6 @@ module.exports = {
         disallow: ['/admin/', '/api/'],
       },
     ],
-    additionalSitemaps: [
-      `${process.env.SITE_URL}/server-sitemap.xml`,
-    ],
   },
   transform: async (config, path) => {
     // Custom transformation for specific paths
@@ -32,7 +29,7 @@ module.exports = {
         lastmod: new Date().toISOString(),
       }
     }
-    
+
     // Default transformation
     return {
       loc: path,

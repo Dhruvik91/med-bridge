@@ -133,7 +133,7 @@ export function SignupForm({ form, onSubmit, isLoading }: SignupFormProps) {
                 )}
             </Button>
 
-            <p className="text-xs text-center text-muted-foreground">
+            {/* <p className="text-xs text-center text-muted-foreground">
                 By signing up, you agree to our{' '}
                 <Link href="/terms" className="underline hover:text-primary">
                     Terms of Service
@@ -142,7 +142,7 @@ export function SignupForm({ form, onSubmit, isLoading }: SignupFormProps) {
                 <Link href="/privacy" className="underline hover:text-primary">
                     Privacy Policy
                 </Link>
-            </p>
+            </p> */}
         </form>
     );
 }
