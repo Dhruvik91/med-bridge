@@ -17,7 +17,8 @@ import {
     LogOut,
     LucideIcon,
     File,
-    Users, FileText, Building2, LayoutDashboard, UserCheck
+    Users, FileText, Building2, LayoutDashboard, UserCheck,
+    Mail
 } from 'lucide-react'
 import {
     DropdownMenu,
@@ -27,7 +28,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { FRONTEND_ROUTES } from '@/constants/constants'
+import { COMPANY_EMAIL, FRONTEND_ROUTES } from '@/constants/constants'
 import { UserRole } from '@/types'
 
 import { getDashboardRoute } from '@/lib/dashboard-routes'
@@ -196,7 +197,7 @@ export function Sidebar({ className, ...props }: SidebarProps) {
                             <div className="flex items-center space-x-3 w-full">
                                 <Avatar className="h-8 w-8">
                                     <AvatarImage src={(profile?.metadata as any)?.avatarUrl} />
-                                    <AvatarFallback>{(profile?.metadata as any)?.name?.charAt(0) || user.email?.charAt(0)}</AvatarFallback>
+                                    <AvatarFallback>{(profile?.metadata as any)?.name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}</AvatarFallback>
                                 </Avatar>
                                 <div className="flex flex-col items-start text-left overflow-hidden flex-1">
                                     <span className="text-sm font-medium truncate w-full">{(profile?.metadata as any)?.name || 'User'}</span>
@@ -213,6 +214,12 @@ export function Sidebar({ className, ...props }: SidebarProps) {
                                 <User className="mr-2 h-4 w-4" />
                                 <span>Profile</span>
                             </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <a href={`mailto:${COMPANY_EMAIL}`} className="cursor-pointer w-full">
+                                <Mail className="mr-2 h-4 w-4" />
+                                <span>Feedback</span>
+                            </a>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={handleSignOutClick} className="cursor-pointer text-destructive focus:text-destructive">
                             <LogOut className="mr-2 h-4 w-4" />

@@ -124,3 +124,6 @@ export enum ROLES {
   EMPLOYER = 'employer',
   ADMIN = 'admin',
 }
+
+
+export const COMPANY_EMAIL = process.env.EMAIL || "dhruvikgondaliya91@gmail.com"
