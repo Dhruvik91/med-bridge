@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FRONTEND_ROUTES } from '@/constants/constants';
+import { FRONTEND_ROUTES, COMPANY_EMAIL } from '@/constants/constants';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
@@ -11,7 +11,7 @@ import { useGetSpecialties } from '@/hooks/get/useGetSpecialties';
 import { useGetQualifications } from '@/hooks/get/useGetQualifications';
 import { useAuth } from '@/providers/auth-provider';
 import { Button } from '@/components/ui/button';
-import { LogOut } from 'lucide-react';
+import { LogOut, Mail } from 'lucide-react';
 import { SignOutConfirmationModal } from '../components/SignOutConfirmationModal';
 
 
@@ -128,7 +128,15 @@ export function ProfileView() {
                     onEditClick={() => router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.EDIT)}
                 />
 
-                <div className="md:hidden pt-4">
+                <div className="md:hidden pt-4 grid grid-cols-2 gap-4">
+                    <Button
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => window.location.href = `mailto:${COMPANY_EMAIL}`}
+                    >
+                        <Mail className="mr-2 h-4 w-4" />
+                        Feedback
+                    </Button>
                     <Button
                         variant="destructive"
                         className="w-full"
@@ -196,7 +204,15 @@ export function ProfileView() {
                     onEditClick={() => router.push(FRONTEND_ROUTES.PROFILE.EMPLOYER.EDIT)}
                 />
 
-                <div className="md:hidden pt-4">
+                <div className="md:hidden pt-4 grid grid-cols-2 gap-4">
+                    <Button
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => window.location.href = `mailto:${COMPANY_EMAIL}`}
+                    >
+                        <Mail className="mr-2 h-4 w-4" />
+                        Feedback
+                    </Button>
                     <Button
                         variant="destructive"
                         className="w-full"
