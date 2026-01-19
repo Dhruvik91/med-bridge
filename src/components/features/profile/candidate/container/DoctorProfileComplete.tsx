@@ -7,7 +7,7 @@ import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
+
 import { Loader2, CheckCircle2 } from 'lucide-react';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile';
@@ -136,7 +136,7 @@ export function DoctorProfileComplete() {
         }
     };
 
-    const progress = ((currentStep + 1) / steps.length) * 100;
+
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-primary/5 py-12 px-4">
@@ -149,7 +149,7 @@ export function DoctorProfileComplete() {
                             Step {currentStep + 1} of {steps.length}
                         </span>
                     </div>
-                    <Progress value={progress} className="h-2" />
+
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)}>

@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import Link from 'next/link';
-import { Stethoscope } from 'lucide-react';
+// import Link from 'next/link';
+// import { Stethoscope } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/providers/auth-provider';
@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { UserRole } from '@/types';
 import { SignupHeader } from '../components/SignupHeader';
 import { SignupFooter } from '../components/SignupFooter';
-import { SocialLogin } from '../components/SocialLogin';
+// import { SocialLogin } from '../components/SocialLogin';
 import { SignupForm } from '../components/SignupForm';
 
 const signupSchema = z.object({
@@ -76,12 +76,12 @@ export function SignupContainer() {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-secondary/10 to-primary/5 px-4 py-12">
             <div className="w-full max-w-md">
                 {/* Logo */}
-                <div className="flex justify-center mb-8">
+                {/* <div className="flex justify-center mb-8">
                     <Link href="/" className="flex items-center gap-2">
                         <Stethoscope className="h-8 w-8 text-primary" aria-hidden="true" />
                         <span className="text-2xl font-bold">MedBridge</span>
                     </Link>
-                </div>
+                </div> */}
 
                 <Card className="shadow-lg">
                     <SignupHeader />
@@ -99,7 +99,7 @@ export function SignupContainer() {
                             isLoading={isLoading}
                         />
 
-                        <SocialLogin onGoogleLogin={handleGoogleSignup} />
+                        {/* <SocialLogin onGoogleLogin={handleGoogleSignup} /> */}
                     </CardContent>
 
                     <SignupFooter />

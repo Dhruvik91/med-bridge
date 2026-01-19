@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
+
 import { NotAuthorizedUser } from '@/components/NotAuthorized';
 
 import { PersonalInfoStep } from '../components/PersonalInfoStep';
@@ -183,7 +183,7 @@ export function DoctorProfileEdit() {
         return <NotAuthorizedUser userType={user?.role} />;
     }
 
-    const progress = ((currentStep + 1) / steps.length) * 100;
+
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-primary/5 py-12 px-4">
@@ -196,7 +196,7 @@ export function DoctorProfileEdit() {
                             Step {currentStep + 1} of {steps.length}
                         </span>
                     </div>
-                    <Progress value={progress} className="h-2" />
+
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
