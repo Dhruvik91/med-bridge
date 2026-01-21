@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { ApplicationDetailsContainer } from '@/components/features/applications/container/ApplicationDetails';
 
 export const metadata: Metadata = {
-    title: 'Application Details | MedBridge',
+    title: 'Application Details',
     description: 'View details of your job application.',
 };
 

@@ -96,7 +96,7 @@ export function ResetPasswordContainer() {
                 <div className="flex justify-center mb-8">
                     <Link href="/" className="flex items-center gap-2">
                         <Stethoscope className="h-8 w-8 text-primary" aria-hidden="true" />
-                        <span className="text-2xl font-bold">MedBridge</span>
+                        <span className="text-2xl font-bold">MedBridges</span>
                     </Link>
                 </div>
 

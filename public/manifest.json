@@ -1,13 +1,17 @@
 {
-  "name": "MedBridge - Healthcare Job Marketplace",
-  "short_name": "MedBridge",
+  "name": "MedBridges - Healthcare Job Marketplace",
+  "short_name": "MedBridges",
   "description": "Professional healthcare job marketplace connecting qualified doctors with hospitals and healthcare facilities.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0ea5e9",
   "orientation": "portrait-primary",
-  "categories": ["medical", "business", "productivity"],
+  "categories": [
+    "medical",
+    "business",
+    "productivity"
+  ],
   "lang": "en-US",
   "scope": "/",
   "icons": [
@@ -104,7 +108,7 @@
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "MedBridge Homepage"
+      "label": "MedBridges Homepage"
     },
     {
       "src": "/screenshots/mobile-jobs.png",

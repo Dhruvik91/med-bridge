@@ -5,7 +5,7 @@ export function SignupHeader() {
         <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center">Create your account</CardTitle>
             <CardDescription className="text-center">
-                Join MedBridge to find your next opportunity
+                Join MedBridges to find your next opportunity
             </CardDescription>
         </CardHeader>
     );

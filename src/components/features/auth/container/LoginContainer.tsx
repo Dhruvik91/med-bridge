@@ -41,7 +41,7 @@ export function LoginContainer() {
 
             toast({
                 title: 'Login successful',
-                description: 'Welcome back to MedBridge',
+                description: 'Welcome back to MedBridges',
             });
         } catch (err: any) {
             setError(err.response?.data?.message || 'Invalid email or password');
@@ -65,7 +65,7 @@ export function LoginContainer() {
                 {/* <div className="flex justify-center mb-8">
                     <Link href="/" className="flex items-center gap-2">
                         <Stethoscope className="h-8 w-8 text-primary" aria-hidden="true" />
-                        <span className="text-2xl font-bold">MedBridge</span>
+                        <span className="text-2xl font-bold">MedBridges</span>
                     </Link>
                 </div> */}
 

@@ -93,7 +93,7 @@ export function ProfileView() {
         return (
             <div className="container mx-auto px-4 py-8 space-y-8 pb-24 md:pb-8">
                 <CandidateProfileHeader
-                    displayName={doctorProfile.displayName || ''}
+                    displayName={doctorProfile.displayName || 'No Display Name'}
                     fullName={doctorProfile.fullName}
                     avatarUrl={doctorProfile.avatarUrl ?? undefined}
                     onEditClick={() => router.push(FRONTEND_ROUTES.PROFILE.DOCTOR.EDIT)}
