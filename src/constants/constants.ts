@@ -126,4 +126,4 @@ export enum ROLES {
 }
 
 
-export const COMPANY_EMAIL = process.env.EMAIL || "dhruvikgondaliya91@gmail.com"
+export const COMPANY_EMAIL = process.env.NEXT_PUBLIC_COMPANY_EMAIL || "dhruvikgondaliya91@gmail.com"
