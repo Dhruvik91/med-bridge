@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     if (!response.ok) {
       return {
-        title: 'Job Not Found | MedBridges',
+        title: 'Job Not Found',
         description: 'The requested job could not be found.',
       };
     }
@@ -23,16 +23,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const job = await response.json();
 
     return {
-      title: `${job.title} at ${job.organization?.name || job.employerProfile?.name || 'Healthcare Facility'} | MedBridges`,
+      title: `${job.title} at ${job.organization?.name || job.employerProfile?.name || 'Healthcare Facility'}`,
       description: `${job.title} in ${job.location?.city}, ${job.location?.state}. Apply now on MedBridges.`,
       openGraph: {
-        title: `${job.title} | MedBridges`,
+        title: `${job.title}`,
         description: `Hiring: ${job.title}. Apply now!`,
       },
     };
   } catch (error) {
     return {
-      title: 'Job Details | MedBridges',
+      title: 'Job Details',
       description: 'View job details and apply on MedBridges.',
     };
   }

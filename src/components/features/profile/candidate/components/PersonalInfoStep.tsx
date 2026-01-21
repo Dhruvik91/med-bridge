@@ -93,7 +93,10 @@ export function PersonalInfoStep({ register, errors, setValue, watch }: Personal
                             const newDate = dateOfBirth ? new Date(dateOfBirth) : new Date();
                             newDate.setMonth(parseInt(value));
                             setDateOfBirth(newDate);
-                            const iso = newDate.toISOString().split('T')[0];
+                            const year = newDate.getFullYear();
+                            const month = String(newDate.getMonth() + 1).padStart(2, '0');
+                            const day = String(newDate.getDate()).padStart(2, '0');
+                            const iso = `${year}-${month}-${day}`;
                             setValue('dateOfBirth', iso, { shouldValidate: true });
                         }}
                     >
@@ -115,7 +118,10 @@ export function PersonalInfoStep({ register, errors, setValue, watch }: Personal
                             const newDate = dateOfBirth ? new Date(dateOfBirth) : new Date();
                             newDate.setFullYear(parseInt(value));
                             setDateOfBirth(newDate);
-                            const iso = newDate.toISOString().split('T')[0];
+                            const year = newDate.getFullYear();
+                            const month = String(newDate.getMonth() + 1).padStart(2, '0');
+                            const day = String(newDate.getDate()).padStart(2, '0');
+                            const iso = `${year}-${month}-${day}`;
                             setValue('dateOfBirth', iso, { shouldValidate: true });
                         }}
                     >
@@ -137,7 +143,10 @@ export function PersonalInfoStep({ register, errors, setValue, watch }: Personal
                             const newDate = dateOfBirth ? new Date(dateOfBirth) : new Date();
                             newDate.setDate(parseInt(value));
                             setDateOfBirth(newDate);
-                            const iso = newDate.toISOString().split('T')[0];
+                            const year = newDate.getFullYear();
+                            const month = String(newDate.getMonth() + 1).padStart(2, '0');
+                            const day = String(newDate.getDate()).padStart(2, '0');
+                            const iso = `${year}-${month}-${day}`;
                             setValue('dateOfBirth', iso, { shouldValidate: true });
                         }}
                     >

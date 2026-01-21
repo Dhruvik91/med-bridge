@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { SavedJobs } from '@/components/features/saved-jobs/container/SavedJobs';
 
 export const metadata: Metadata = {
-  title: 'Saved Jobs | MedBridges',
+  title: 'Saved Jobs',
   description: 'View and manage your saved healthcare job opportunities.',
 };
 

@@ -33,6 +33,8 @@ import { UserRole } from '@/types'
 
 import { getDashboardRoute } from '@/lib/dashboard-routes'
 import { SignOutConfirmationModal } from '@/components/features/profile/components/SignOutConfirmationModal'
+import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile'
+import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile'
 
 type NavItem = {
     href: string
@@ -134,6 +136,17 @@ export function Sidebar({ className, ...props }: SidebarProps) {
     const { user, profile, signOut, loading } = useAuth()
     const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false)
 
+    // Fetch profile data based on user role
+    const { data: doctorProfile, isLoading: isDoctorProfileLoading } = useGetDoctorProfile(
+        user?.role === UserRole.candidate ? user.id : ''
+    )
+
+    // For employer profile, we need to check if we should fetch it
+    const shouldFetchEmployerProfile = user?.role === UserRole.employer
+    const { data: employerProfile, isLoading: isEmployerProfileLoading } = useGetEmployerProfile(
+        shouldFetchEmployerProfile ? { ...user, isEmailVerified: true, isGoogleSignup: false, createdAt: '', updatedAt: '' } : undefined
+    )
+
     if (loading || !user) return null
 
     const isProfileCompletionPage =
@@ -144,6 +157,20 @@ export function Sidebar({ className, ...props }: SidebarProps) {
 
     const items = getNavItems(user.role)
     const dashboardRoute = getDashboardRoute(profile?.role || null)
+
+    // Determine profile data based on role
+    const isProfileLoading = isDoctorProfileLoading || isEmployerProfileLoading
+    const avatarUrl = user.role === UserRole.candidate
+        ? doctorProfile?.avatarUrl
+        : user.role === UserRole.employer
+            ? employerProfile?.logoUrl
+            : null
+
+    const displayName = user.role === UserRole.candidate
+        ? (doctorProfile?.displayName || doctorProfile?.fullName)
+        : user.role === UserRole.employer
+            ? employerProfile?.name
+            : null
 
     const handleSignOutClick = () => {
         setIsSignOutModalOpen(true)
@@ -195,14 +222,32 @@ export function Sidebar({ className, ...props }: SidebarProps) {
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="w-full justify-start px-2 hover:bg-accent h-auto py-2">
                             <div className="flex items-center space-x-3 w-full">
-                                <Avatar className="h-8 w-8">
-                                    <AvatarImage src={(profile?.metadata as any)?.avatarUrl} />
-                                    <AvatarFallback>{(profile?.metadata as any)?.name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}</AvatarFallback>
-                                </Avatar>
-                                <div className="flex flex-col items-start text-left overflow-hidden flex-1">
-                                    <span className="text-sm font-medium truncate w-full">{(profile?.metadata as any)?.name || 'User'}</span>
-                                    <span className="text-xs text-muted-foreground truncate w-full">{user.email}</span>
-                                </div>
+                                {isProfileLoading ? (
+                                    <>
+                                        <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
+                                        <div className="flex flex-col items-start text-left overflow-hidden flex-1 space-y-1">
+                                            <div className="h-4 w-24 bg-muted rounded animate-pulse" />
+                                            <div className="h-3 w-32 bg-muted rounded animate-pulse" />
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Avatar className="h-8 w-8">
+                                            <AvatarImage src={avatarUrl || (profile?.metadata as any)?.avatarUrl} />
+                                            <AvatarFallback>
+                                                {(displayName || (profile?.metadata as any)?.name || user.email || '')
+                                                    .charAt(0)
+                                                    .toUpperCase()}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex flex-col items-start text-left overflow-hidden flex-1">
+                                            <span className="text-sm font-medium truncate w-full">
+                                                {displayName || (profile?.metadata as any)?.name || 'User'}
+                                            </span>
+                                            <span className="text-xs text-muted-foreground truncate w-full">{user.email}</span>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </Button>
                     </DropdownMenuTrigger>
