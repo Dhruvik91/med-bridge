@@ -59,30 +59,49 @@ async function fetchCurrentUser(req: NextRequest): Promise<BackendUser | null> {
 
 async function hasCompletedProfile(req: NextRequest, user: BackendUser): Promise<boolean> {
   try {
+
     if (user.role === UserRole.candidate) {
-      const res = await fetch(`${API_CONFIG.baseUrl}/${API_CONFIG.path.doctorProfiles.byUser}/${user.id}`, {
+      const url = `${API_CONFIG.baseUrl}/${API_CONFIG.path.doctorProfiles.byUser}/${user.id}`;
+
+      const res = await fetch(url, {
         headers: {
           cookie: req.headers.get('cookie') ?? '',
         },
       });
-      if (!res.ok) return false;
+
+
+      if (!res.ok) {
+        return false;
+      }
+
       const envelope = (await res.json()) as ApiEnvelope<unknown>;
-      return !envelope.isError && !!envelope.data;
+
+      const hasProfile = !envelope.isError && !!envelope.data;
+      return hasProfile;
     }
 
     if (user.role === UserRole.employer) {
-      const res = await fetch(`${API_CONFIG.baseUrl}/${API_CONFIG.path.employerProfiles.byUser}/${user.id}`, {
+      const url = `${API_CONFIG.baseUrl}/${API_CONFIG.path.employerProfiles.byUser}/${user.id}`;
+
+      const res = await fetch(url, {
         headers: {
           cookie: req.headers.get('cookie') ?? '',
         },
       });
-      if (!res.ok) return false;
+
+
+      if (!res.ok) {
+        return false;
+      }
+
       const envelope = (await res.json()) as ApiEnvelope<unknown>;
-      return !envelope.isError && !!envelope.data;
+
+      const hasProfile = !envelope.isError && !!envelope.data;
+      return hasProfile;
     }
 
     return false;
-  } catch {
+  } catch (error) {
     return false;
   }
 }
@@ -123,11 +142,27 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Authenticated users on login/signup routes -> redirect to dashboard
+  // Check profile completion first for authenticated users
+  const hasProfile = await hasCompletedProfile(req, user);
+
+  // Authenticated users on login/signup routes -> redirect based on profile completion
   // But allow access to forgot-password and reset-password even when authenticated
   const authRoutesToRedirect = [FRONTEND_ROUTES.AUTH.LOGIN, FRONTEND_ROUTES.AUTH.SIGNUP];
   if (isPublic && (pathname === FRONTEND_ROUTES.HOME || authRoutesToRedirect.includes(pathname))) {
     const url = req.nextUrl.clone();
+
+    // If profile is not complete, redirect to profile completion
+    if (!hasProfile) {
+      if (user.role === 'employer') {
+        url.pathname = FRONTEND_ROUTES.PROFILE.EMPLOYER.COMPLETE;
+      } else {
+        url.pathname = FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE;
+      }
+      url.searchParams.delete('next');
+      return NextResponse.redirect(url);
+    }
+
+    // If profile is complete, redirect to dashboard
     url.pathname = getDashboardRoute(user.role);
     url.searchParams.delete('next');
     return NextResponse.redirect(url);
@@ -135,8 +170,6 @@ export async function middleware(req: NextRequest) {
 
   // Enforce role-based access and profile completion for app routes
   if (isAppRoute) {
-    const hasProfile = await hasCompletedProfile(req, user);
-
     // If no profile, restrict access to app routes except profile completion
     if (!hasProfile) {
       const isDoctorCompletion = pathname.startsWith(FRONTEND_ROUTES.PROFILE.DOCTOR.COMPLETE);

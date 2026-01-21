@@ -52,7 +52,7 @@ self.addEventListener('activate', (event) => {
 // Push notification event
 self.addEventListener('push', (event) => {
   const options = {
-    body: event.data ? event.data.text() : 'New notification from MedBridge',
+    body: event.data ? event.data.text() : 'New notification from MedBridges',
     icon: '/icons/icon-192x192.png',
     badge: '/icons/icon-72x72.png',
     vibrate: [100, 50, 100],
@@ -75,7 +75,7 @@ self.addEventListener('push', (event) => {
   }
 
   event.waitUntil(
-    self.registration.showNotification('MedBridge', options)
+    self.registration.showNotification('MedBridges', options)
   )
 })
 

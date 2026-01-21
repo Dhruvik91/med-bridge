@@ -12,13 +12,13 @@ export default function AuthCallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
-  
+
   // Get user data after token is set
   const { data: user, isError, isSuccess } = useGetMe();
 
   useEffect(() => {
     const token = searchParams.get('token');
-    
+
     if (token) {
       localStorage.setItem(AUTH_TOKEN_KEY, token);
       // The useGetMe hook will automatically fetch user data
@@ -36,14 +36,14 @@ export default function AuthCallbackPage() {
     if (isSuccess && user) {
       toast({
         title: 'Login successful',
-        description: 'Welcome to MedBridge',
+        description: 'Welcome to MedBridges',
       });
-      
+
       // Redirect to role-specific dashboard
       const dashboardRoute = getDashboardRoute(user.role);
       router.push(dashboardRoute);
     }
-    
+
     if (isError) {
       toast({
         title: 'Authentication failed',

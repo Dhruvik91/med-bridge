@@ -99,7 +99,7 @@ export function AppShell({ children }: AppShellProps) {
         theme={theme === 'dark' ? 'dark' : 'light'}
       />
       <div className="p-8 border-t border-border text-center text-sm text-muted-foreground">
-        <p>&copy; {new Date().getFullYear()} MedBridge. All rights reserved. Healthcare Job Marketplace.</p>
+        <p>&copy; {new Date().getFullYear()} MedBridges. All rights reserved. Healthcare Job Marketplace.</p>
       </div>
     </div>
   )

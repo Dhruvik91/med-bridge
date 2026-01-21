@@ -64,7 +64,7 @@ export function HomePage() {
             <section className="container mx-auto px-4 py-20" aria-labelledby="features-heading">
                 <div className="text-center mb-16">
                     <h2 id="features-heading" className="text-3xl md:text-4xl font-bold mb-4">
-                        Why Choose MedBridge?
+                        Why Choose MedBridges?
                     </h2>
                     <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                         We provide the most comprehensive platform for medical professionals and healthcare employers
@@ -237,7 +237,7 @@ export function HomePage() {
                         Ready to Take the Next Step in Your Career?
                     </h2>
                     <p className="text-lg mb-8 max-w-2xl mx-auto opacity-90">
-                        Join thousands of healthcare professionals who have found their perfect match on MedBridge
+                        Join thousands of healthcare professionals who have found their perfect match on MedBridges
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Button asChild size="lg" variant="secondary" className="text-base">

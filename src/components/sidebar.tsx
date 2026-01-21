@@ -163,7 +163,7 @@ export function Sidebar({ className, ...props }: SidebarProps) {
             <div className="p-6">
                 <Link href={dashboardRoute} className="flex items-center space-x-2">
                     <Stethoscope className="h-8 w-8 text-primary" />
-                    <span className="text-xl font-bold">MedBridge</span>
+                    <span className="text-xl font-bold">MedBridges</span>
                 </Link>
             </div>
 

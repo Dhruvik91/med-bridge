@@ -50,7 +50,7 @@ export function SignupContainer() {
 
             toast({
                 title: 'Account created successfully',
-                description: 'Welcome to MedBridge! Please complete your profile.',
+                description: 'Welcome to MedBridges! Please complete your profile.',
             });
         } catch (err: any) {
             setError(err?.response?.data?.message || 'Failed to create account. Please try again.');
@@ -79,7 +79,7 @@ export function SignupContainer() {
                 {/* <div className="flex justify-center mb-8">
                     <Link href="/" className="flex items-center gap-2">
                         <Stethoscope className="h-8 w-8 text-primary" aria-hidden="true" />
-                        <span className="text-2xl font-bold">MedBridge</span>
+                        <span className="text-2xl font-bold">MedBridges</span>
                     </Link>
                 </div> */}
 
