@@ -5,7 +5,7 @@ Disallow: /admin/
 Disallow: /api/
 
 # Host
-Host: http://localhost:4000
+Host: https://medbridges.xyz
 
 # Sitemaps
-Sitemap: http://localhost:4000/sitemap.xml
+Sitemap: https://medbridges.xyz/sitemap.xml

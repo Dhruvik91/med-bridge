@@ -3,7 +3,14 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  images: { unoptimized: true },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "medbridge-portal.s3.ap-south-1.amazonaws.com",
+      },
+    ],
+  },
 };
 
 module.exports = nextConfig;
