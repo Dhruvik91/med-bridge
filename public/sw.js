@@ -3,12 +3,11 @@ const urlsToCache = [
   '/',
   '/jobs',
   '/profile',
-  '/messages',
   '/auth/login',
   '/auth/signup',
   '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  '/android-chrome-192x192.png',
+  '/android-chrome-512x512.png'
 ]
 
 // Install event - cache resources
@@ -53,8 +52,8 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('push', (event) => {
   const options = {
     body: event.data ? event.data.text() : 'New notification from MedBridges',
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/icon-72x72.png',
+    icon: '/android-chrome-192x192.png',
+    badge: '/favicon-32x32.png',
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
@@ -64,12 +63,12 @@ self.addEventListener('push', (event) => {
       {
         action: 'explore',
         title: 'View',
-        icon: '/icons/icon-72x72.png'
+        icon: '/favicon-32x32.png'
       },
       {
         action: 'close',
         title: 'Close',
-        icon: '/icons/icon-72x72.png'
+        icon: '/favicon-32x32.png'
       }
     ]
   }
