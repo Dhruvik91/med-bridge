@@ -155,7 +155,7 @@ export const JobsManage = () => {
             {/* Fixed Header - Sticky on Desktop */}
             <div className="sticky top-0 z-10 bg-background border-b">
                 <div className="container mx-auto px-4 py-4 md:py-6">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 md:mb-0">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:mb-0">
                         <div className="flex items-center justify-between">
                             <div className="space-y-1">
                                 <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight">Manage Job Postings</h1>
@@ -171,9 +171,13 @@ export const JobsManage = () => {
                                     )}
                                 </p>
                             </div>
-
                             {/* Mobile Buttons */}
-                            <div className="flex gap-2 md:hidden">
+                            <div className='flex gap-2 md:hidden'>
+                                <Button asChild variant="outline" size="sm">
+                                    <Link href={FRONTEND_ROUTES.JOBS.BASE}>
+                                        <Eye className="h-4 w-4" />
+                                    </Link>
+                                </Button>
                                 <MobileJobStatsDrawer stats={stats} />
                                 <MobileJobFilterDrawer
                                     searchQuery={searchQuery}
@@ -226,16 +230,6 @@ export const JobsManage = () => {
                         />
                     </div>
 
-                    {/* Mobile Post Job Button - Visible only on mobile below header */}
-                    <div className="md:hidden mt-4">
-
-                        <Button asChild variant="outline" size="lg" className="w-full md:w-auto hidden md:flex">
-                            <Link href={FRONTEND_ROUTES.JOBS.BASE}>
-                                <Eye className="mr-2 h-4 w-4" />
-                                View Jobs
-                            </Link>
-                        </Button>
-                    </div>
                 </div>
             </div>
 

@@ -26,8 +26,7 @@ export const MobileApplicationStatsDrawer = ({ stats }: MobileApplicationStatsDr
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
                 <Button variant="outline" size="sm" className="relative">
-                    <BarChart3 className="h-4 w-4 mr-2" />
-                    Stats
+                    <BarChart3 className="h-4 w-4" />
                 </Button>
             </SheetTrigger>
             <SheetContent side="top" className="h-auto max-h-[80vh] overflow-y-auto">

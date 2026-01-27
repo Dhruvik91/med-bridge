@@ -41,9 +41,8 @@ export const MobileJobFilterDrawer = ({
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="relative">
-                    <SlidersHorizontal className="h-4 w-4 mr-2" />
-                    Filters
+                <Button size="sm" className="relative">
+                    <SlidersHorizontal className="h-4 w-4" />
                     {activeFilterCount > 0 && (
                         <Badge
                             variant="default"

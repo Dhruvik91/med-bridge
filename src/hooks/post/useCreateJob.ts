@@ -13,6 +13,8 @@ export const useCreateJob = () => {
   return useMutation({
     mutationFn: (data: CreateJobDto) => jobService.create(data),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['jobs'] });
+      queryClient.invalidateQueries({ queryKey: ['job'] });
       queryClient.invalidateQueries({ queryKey: ['employerJobs'] });
       toast({
         title: 'Job created',

@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Briefcase, User, Users, Home, Building2, BookmarkCheck, PlusCircle, LucideIcon, File } from "lucide-react"
+import { Briefcase, User, Home, Building2, BookmarkCheck, PlusCircle, LucideIcon, File } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/providers/auth-provider"
 import { UserRole } from "@/types"
@@ -51,9 +51,9 @@ const getEmployerNavItems = (): NavItem[] => [
     icon: Home,
   },
   {
-    href: FRONTEND_ROUTES.JOBS.BASE,
-    label: "Jobs",
-    icon: Briefcase,
+    href: FRONTEND_ROUTES.APPLICATIONS.MANAGE,
+    label: "Applications",
+    icon: File,
   },
   {
     href: FRONTEND_ROUTES.JOBS.CREATE,
