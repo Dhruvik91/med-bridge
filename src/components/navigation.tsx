@@ -53,6 +53,15 @@ export function Navigation() {
             <span className="text-xl font-bold">MedBridges</span>
           </Link>
 
+          {/* Mobile Sign Up Button (Only on Home Page when not logged in) */}
+          {!user && pathname === '/' && (
+            <div className="md:hidden">
+              <Link href={FRONTEND_ROUTES.AUTH.SIGNUP}>
+                <Button size="sm">Sign Up</Button>
+              </Link>
+            </div>
+          )}
+
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center flex-1 ml-8">
             {loading ? (
