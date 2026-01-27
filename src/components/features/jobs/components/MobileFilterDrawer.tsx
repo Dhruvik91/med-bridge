@@ -108,8 +108,7 @@ export const MobileFilterDrawer = ({
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
                 <Button size="sm" className="relative">
-                    <SlidersHorizontal className="h-4 w-4 mr-2" />
-                    Filters
+                    <SlidersHorizontal className="h-4 w-4" />
                     {activeFilterCount > 0 && (
                         <Badge
                             variant="default"

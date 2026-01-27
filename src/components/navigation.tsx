@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
 import {
-  Stethoscope,
   User,
   LogOut
 } from 'lucide-react'
@@ -23,6 +22,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { getDashboardRoute } from '@/lib/dashboard-routes'
 import { UserRole } from '@/types'
 import { FRONTEND_ROUTES } from '@/constants/constants'
+
+import { CompanyLogo } from './CompanyLogo'
 
 export function Navigation() {
   const { user, profile, signOut, loading } = useAuth()
@@ -48,10 +49,20 @@ export function Navigation() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href={logoHref} className="flex items-center space-x-2">
-            <Stethoscope className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold">MedBridges</span>
+          <Link href={logoHref}>
+            <div className="relative h-24 w-40">
+              <CompanyLogo />
+            </div>
           </Link>
+
+          {/* Mobile Sign Up Button (Only on Home Page when not logged in) */}
+          {!user && pathname === '/' && (
+            <div className="md:hidden flex items-center">
+              <Link href={FRONTEND_ROUTES.AUTH.SIGNUP}>
+                <Button size="sm" className="h-8">Sign Up</Button>
+              </Link>
+            </div>
+          )}
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center flex-1 ml-8">

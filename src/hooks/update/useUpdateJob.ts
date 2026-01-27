@@ -12,10 +12,12 @@ export const useUpdateJob = (jobId: string) => {
 
   return useMutation({
     mutationFn: (data: UpdateJobDto) => jobService.update(jobId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['jobs'] });
-      queryClient.invalidateQueries({ queryKey: ['job', jobId] });
-      queryClient.invalidateQueries({ queryKey: ['employerJobs'] });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['jobs'] }),
+        queryClient.invalidateQueries({ queryKey: ['job', jobId] }),
+        queryClient.invalidateQueries({ queryKey: ['employerJobs'] }),
+      ]);
       toast({
         title: 'Job updated',
         description: 'Your job posting has been updated successfully.',

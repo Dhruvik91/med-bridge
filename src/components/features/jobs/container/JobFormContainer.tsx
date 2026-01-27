@@ -209,7 +209,7 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
     }
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-8 pb-24 lg:pb-8">
             <div className="max-w-4xl mx-auto">
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold mb-2">
@@ -428,12 +428,12 @@ Health insurance
                                     </div>
                                 </div>
                             </CardContent>
-                            <CardFooter className="flex justify-between">
-                                <Button variant="outline" onClick={handlePrevious}>
+                            <CardFooter className="flex flex-col sm:flex-row justify-between gap-4">
+                                <Button variant="outline" onClick={handlePrevious} className="w-full sm:w-auto">
                                     <ArrowLeft className="mr-2 h-4 w-4" />
                                     Previous
                                 </Button>
-                                <Button onClick={handleNext}>
+                                <Button onClick={handleNext} className="w-full sm:w-auto">
                                     Next Step
                                     <ArrowRight className="ml-2 h-4 w-4" />
                                 </Button>
@@ -450,7 +450,7 @@ Health insurance
                                     <CardDescription>Select or create an organization</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    <div className="flex gap-2">
+                                    <div className="flex flex-col sm:flex-row gap-2">
                                         <Select
                                             value={form.watch('organizationId')}
                                             onValueChange={(value) => form.setValue('organizationId', value, { shouldValidate: true })}
@@ -483,7 +483,7 @@ Health insurance
                                     <CardDescription>Select or create a location</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    <div className="flex gap-2">
+                                    <div className="flex flex-col sm:flex-row gap-2">
                                         <Select
                                             value={form.watch('locationId')}
                                             onValueChange={(value) => form.setValue('locationId', value, { shouldValidate: true })}
@@ -516,7 +516,7 @@ Health insurance
                                     <CardDescription>Select or create specialties</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    <div className="flex gap-2">
+                                    <div className="flex flex-col sm:flex-row gap-2">
                                         <Select
                                             value={form.watch('specialtyIds')?.[0] || ''}
                                             onValueChange={(value) => {
@@ -548,17 +548,18 @@ Health insurance
                             </Card>
 
                             <Card>
-                                <CardFooter className="flex justify-between pt-6">
-                                    <Button variant="outline" onClick={handlePrevious}>
+                                <CardFooter className="flex flex-col sm:flex-row justify-between gap-4 pt-6">
+                                    <Button variant="outline" onClick={handlePrevious} className="w-full sm:w-auto">
                                         <ArrowLeft className="mr-2 h-4 w-4" />
                                         Previous
                                     </Button>
-                                    <div className="flex gap-2">
+                                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                                         <Button
                                             type="button"
                                             variant="outline"
                                             onClick={handleSaveDraft}
                                             disabled={createJobMutation.isPending || updateJobMutation.isPending}
+                                            className="w-full sm:w-auto"
                                         >
                                             <Save className="mr-2 h-4 w-4" />
                                             Save as Draft
@@ -567,6 +568,7 @@ Health insurance
                                             type="button"
                                             onClick={handlePublish}
                                             disabled={createJobMutation.isPending || updateJobMutation.isPending}
+                                            className="w-full sm:w-auto"
                                         >
                                             <Send className="mr-2 h-4 w-4" />
                                             {mode === 'create' ? 'Publish Job' : 'Update & Publish'}

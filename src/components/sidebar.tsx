@@ -9,7 +9,6 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
-    Stethoscope,
     Home,
     Briefcase,
     BookmarkCheck,
@@ -35,6 +34,8 @@ import { getDashboardRoute } from '@/lib/dashboard-routes'
 import { SignOutConfirmationModal } from '@/components/features/profile/components/SignOutConfirmationModal'
 import { useGetDoctorProfile } from '@/hooks/get/useGetDoctorProfile'
 import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile'
+
+import { CompanyLogo } from './CompanyLogo'
 
 type NavItem = {
     href: string
@@ -187,10 +188,11 @@ export function Sidebar({ className, ...props }: SidebarProps) {
 
     return (
         <div className={cn("flex flex-col h-full bg-background border-r border-border", className)} {...props}>
-            <div className="p-6">
-                <Link href={dashboardRoute} className="flex items-center space-x-2">
-                    <Stethoscope className="h-8 w-8 text-primary" />
-                    <span className="text-xl font-bold">MedBridges</span>
+            <div className="">
+                <Link href={dashboardRoute} className="flex items-center justify-center">
+                    <div className="relative h-24">
+                        <CompanyLogo />
+                    </div>
                 </Link>
             </div>
 

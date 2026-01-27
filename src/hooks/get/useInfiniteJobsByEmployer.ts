@@ -15,5 +15,6 @@ export const useInfiniteJobsByEmployer = (employerProfileId: string, limit = 20)
             const hasMore = lastPage.page * lastPage.limit < lastPage.total;
             return hasMore ? nextPage : undefined;
         },
+        refetchOnMount: true,
     });
 };
