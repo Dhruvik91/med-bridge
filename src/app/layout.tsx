@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'MedBridges' }],
   creator: 'MedBridges',
   publisher: 'MedBridges',
-  metadataBase: new URL('https://medbridge.com'),
+  metadataBase: new URL('https://medbridges.xyz'),
   alternates: {
     canonical: '/'
   },
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://medbridge.com',
+    url: 'https://medbridges.xyz',
     title: 'MedBridges - Connecting Doctors with Healthcare Opportunities',
     description: 'Professional healthcare job marketplace connecting qualified doctors with hospitals and healthcare facilities.',
     siteName: 'MedBridges',

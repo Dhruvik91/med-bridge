@@ -49,17 +49,17 @@ export function Navigation() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href={logoHref} className="flex items-center">
-            <div className="relative h-40 w-80">
+          <Link href={logoHref}>
+            <div className="relative h-24 w-40">
               <CompanyLogo />
             </div>
           </Link>
 
           {/* Mobile Sign Up Button (Only on Home Page when not logged in) */}
           {!user && pathname === '/' && (
-            <div className="md:hidden">
+            <div className="md:hidden flex items-center">
               <Link href={FRONTEND_ROUTES.AUTH.SIGNUP}>
-                <Button size="sm">Sign Up</Button>
+                <Button size="sm" className="h-8">Sign Up</Button>
               </Link>
             </div>
           )}

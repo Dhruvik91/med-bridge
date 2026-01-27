@@ -13,7 +13,7 @@ export const CompanyLogo = ({ className }: { className?: string }) => {
     return <Image
         src={theme === 'dark' ? CompanyLogoLight : CompanyLogoDark}
         alt="MedBridges"
-        className={cn("h-full w-auto", className)}
+        className={cn("h-full w-full object-contain", className)}
         priority
     />
 }
