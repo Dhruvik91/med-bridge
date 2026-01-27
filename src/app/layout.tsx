@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     siteName: 'MedBridges',
     images: [
       {
-        url: '/og-image.jpg',
+        url: 'https://medbridge-portal.s3.ap-south-1.amazonaws.com/BannerImage.png',
         width: 1200,
         height: 630,
         alt: 'MedBridges - Healthcare Job Marketplace'
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'MedBridges - Connecting Doctors with Healthcare Opportunities',
     description: 'Professional healthcare job marketplace for doctors and hospitals.',
-    images: ['/og-image.jpg']
+    images: ['https://medbridge-portal.s3.ap-south-1.amazonaws.com/BannerImage.png']
   },
   robots: {
     index: true,
