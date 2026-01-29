@@ -1,8 +1,7 @@
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { X, Plus } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Qualification } from '@/types';
+import { SearchableSelect } from './SearchableSelect';
 
 interface QualificationSelectorProps {
     availableQualifications: Qualification[];
@@ -25,24 +24,13 @@ export const QualificationSelector = ({
 
     return (
         <div className="space-y-2">
-            <div className="flex gap-2">
-                <Select onValueChange={onAddQualification}>
-                    <SelectTrigger className="flex-1">
-                        <SelectValue placeholder="Select a qualification" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {unselectedQualifications.map((qualification) => (
-                            <SelectItem key={qualification.id} value={qualification.id}>
-                                {qualification.name}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-                <Button type="button" variant="outline" onClick={onCreateNew}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    New
-                </Button>
-            </div>
+            <SearchableSelect
+                items={unselectedQualifications}
+                onSelect={onAddQualification}
+                onOthersClick={onCreateNew}
+                placeholder="Select a qualification"
+                noResultsMessage="No qualification found."
+            />
 
             {selectedQualifications.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">

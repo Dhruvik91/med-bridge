@@ -1,5 +1,4 @@
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +9,7 @@ import { Plus, X } from 'lucide-react';
 import { AddSpecialtyModal } from './AddSpecialtyModal';
 import { QualificationSelector } from './QualificationSelector';
 import { AddQualificationModal } from './AddQualificationModal';
+import { SearchableSelect } from './SearchableSelect';
 
 interface ProfessionalDetailsStepProps {
     register: UseFormRegister<any>;
@@ -220,29 +220,13 @@ export function ProfessionalDetailsStep({ register, errors, watch, specialties, 
 
             <div className="space-y-2">
                 <Label>Specialties</Label>
-                <div className="flex gap-2">
-                    <Select onValueChange={(value) => onAddSpecialty(value)}>
-                        <SelectTrigger className="flex-1">
-                            <SelectValue placeholder="Select a specialty" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {availableSpecialties.map((spec) => (
-                                <SelectItem key={spec.id} value={spec.id}>
-                                    {spec.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={onOpenModal}
-                        className="shrink-0"
-                    >
-                        <Plus className="h-4 w-4 mr-2" />
-                        New
-                    </Button>
-                </div>
+                <SearchableSelect
+                    items={availableSpecialties}
+                    onSelect={onAddSpecialty}
+                    onOthersClick={onOpenModal}
+                    placeholder="Select a specialty"
+                    noResultsMessage="No specialty found."
+                />
                 {selectedSpecialties.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-2">
                         {selectedSpecialties.map((spec) => (
