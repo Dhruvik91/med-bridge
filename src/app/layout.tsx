@@ -24,6 +24,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'MedBridges' }],
   creator: 'MedBridges',
   publisher: 'MedBridges',
+  applicationName: 'MedBridges',
   metadataBase: new URL('https://medbridges.xyz'),
   alternates: {
     canonical: '/'
@@ -32,10 +33,12 @@ export const metadata: Metadata = {
     icon: [
       { url: '/favicon.ico' },
       { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' }
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/android-chrome-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/android-chrome-512x512.png', sizes: '512x512', type: 'image/png' }
     ],
     apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180' }
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
     ]
   },
   manifest: '/manifest.json',
@@ -98,6 +101,18 @@ export default function RootLayout({
             })(window,document,'script','dataLayer','${process.env.NEXT_PUBLIC_GTM_ID}');
           `}
         </Script>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "MedBridges",
+              "alternateName": ["Med Bridges", "MedBridge"],
+              "url": "https://medbridges.xyz"
+            })
+          }}
+        />
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         {/* GTM noscript fallback */}
