@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { SignupFormValues } from '../container/SignupContainer';
 import { RoleSelector } from './RoleSelector';
+import { usePathname } from 'next/navigation';
 
 interface SignupFormProps {
     form: UseFormReturn<SignupFormValues>;
@@ -17,17 +18,21 @@ interface SignupFormProps {
 }
 
 export function SignupForm({ form, onSubmit, isLoading }: SignupFormProps) {
+    const pathName = usePathname()
     const { register, handleSubmit, watch, setValue, formState: { errors } } = form;
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const selectedRole = watch('role');
 
+    const showRoleSelector = pathName === "/auth/signup"
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <RoleSelector
                 selectedRole={selectedRole}
                 onRoleChange={(role) => setValue('role', role)}
+                showRoleSelection={!showRoleSelector}
             />
 
             <div className="space-y-2">

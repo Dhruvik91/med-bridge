@@ -16,6 +16,7 @@ import {
     TrendingUp,
     Globe
 } from 'lucide-react';
+import { COMPANY_EMAIL } from '@/constants/constants';
 
 export function HomePage() {
 
@@ -219,11 +220,9 @@ export function HomePage() {
                             ))}
                         </CardContent>
                         <CardFooter>
-                            <Button asChild size="lg" variant="outline" className="w-full">
-                                <Link href="/auth/signup">
-                                    Join as an Employer
-                                    <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-                                </Link>
+                            <Button size="lg" variant="outline" className="w-full" onClick={() => window.location.href = `mailto:${COMPANY_EMAIL}`}>
+                                Join as an Employer
+                                <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
                             </Button>
                         </CardFooter>
                     </Card>

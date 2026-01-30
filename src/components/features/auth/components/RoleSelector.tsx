@@ -2,15 +2,17 @@ import { UserCircle, Building2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { UserRole } from '@/types';
+import { cn } from '@/lib/utils';
 
 interface RoleSelectorProps {
     selectedRole: UserRole.candidate | UserRole.employer;
     onRoleChange: (role: UserRole.candidate | UserRole.employer) => void;
+    showRoleSelection?: boolean;
 }
 
-export function RoleSelector({ selectedRole, onRoleChange }: RoleSelectorProps) {
+export function RoleSelector({ selectedRole, onRoleChange, showRoleSelection = true }: RoleSelectorProps) {
     return (
-        <div className="space-y-3">
+        <div className={cn("space-y-3", showRoleSelection ? "block" : "hidden")}>
             <Label>I am a</Label>
             <RadioGroup
                 value={selectedRole}
