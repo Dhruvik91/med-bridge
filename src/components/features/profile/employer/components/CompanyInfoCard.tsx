@@ -22,7 +22,7 @@ export function CompanyInfoCard({
     if (!hasAnyInfo) return null;
 
     return (
-        <Card>
+        <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
             <CardHeader>
                 <CardTitle>Company Information</CardTitle>
                 <CardDescription>Organization details</CardDescription>

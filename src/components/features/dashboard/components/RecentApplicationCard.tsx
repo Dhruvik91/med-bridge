@@ -13,7 +13,7 @@ export function RecentApplicationCard({ application, jobTitle }: RecentApplicati
     return (
         <Link
             href={`${FRONTEND_ROUTES.APPLICATIONS.BASE}/${application.id}`}
-            className="group block p-4 md:p-5 border rounded-xl hover:border-primary hover:shadow-md transition-all duration-200 bg-gradient-to-r from-background to-muted/20 hover:from-primary/5 hover:to-primary/10"
+            className="group block p-4 md:p-5 transition-all duration-300 glass-enhanced hover:shadow-2xl hover:border-primary/50"
         >
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                 <div className="flex-1 min-w-0">

@@ -74,7 +74,7 @@ export function ForgotPasswordContainer() {
                     </Link>
                 </div>
 
-                <Card className="shadow-lg">
+                <Card className="shadow-lg glass-enhanced transition-all duration-300 hover:shadow-xl">
                     <ForgotPasswordHeader isSuccess={isSuccess} />
                     <CardContent className="space-y-4">
                         {renderContent()}

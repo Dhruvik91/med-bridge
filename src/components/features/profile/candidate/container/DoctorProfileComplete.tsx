@@ -153,7 +153,7 @@ export function DoctorProfileComplete() {
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <Card>
+                    <Card className="glass-enhanced transition-all duration-300">
                         <CardHeader>
                             <CardTitle>{steps[currentStep].title}</CardTitle>
                             <CardDescription>

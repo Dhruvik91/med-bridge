@@ -12,7 +12,7 @@ interface CompanyInfoFormProps {
 
 export function CompanyInfoForm({ register, errors, watch }: CompanyInfoFormProps) {
     return (
-        <Card>
+        <Card className="glass-enhanced transition-all duration-300">
             <CardHeader>
                 <CardTitle>Company Information</CardTitle>
                 <CardDescription>

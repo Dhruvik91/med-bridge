@@ -183,7 +183,7 @@ export const JobDetail = () => {
         <div className="container mx-auto px-4 py-8">
             <div className="grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-6">
-                    <Card>
+                    <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                         <CardHeader>
                             <JobDetailHeader
                                 title={job.title}
@@ -218,7 +218,7 @@ export const JobDetail = () => {
                     </Card>
 
                     {user && user.role === UserRole.candidate && (
-                        <Card id="apply">
+                        <Card id="apply" className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                             <CardHeader>
                                 <CardTitle>Apply for this position</CardTitle>
                                 <CardDescription>

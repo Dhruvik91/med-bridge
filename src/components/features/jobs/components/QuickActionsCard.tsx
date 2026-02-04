@@ -17,7 +17,7 @@ export const QuickActionsCard = ({
     isSaving,
 }: QuickActionsCardProps) => {
     return (
-        <Card className="sticky top-4">
+        <Card className="sticky top-4 glass-enhanced transition-all duration-300 hover:shadow-xl">
             <CardHeader>
                 <CardTitle>Quick Actions</CardTitle>
             </CardHeader>

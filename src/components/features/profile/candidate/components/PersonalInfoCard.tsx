@@ -12,7 +12,7 @@ export function PersonalInfoCard({ dob, gender, address }: PersonalInfoCardProps
     if (!hasAnyInfo) return null;
 
     return (
-        <Card>
+        <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
             <CardHeader>
                 <CardTitle>Personal Information</CardTitle>
                 <CardDescription>Your basic details</CardDescription>

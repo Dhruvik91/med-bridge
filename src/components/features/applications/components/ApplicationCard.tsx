@@ -120,7 +120,7 @@ export function ApplicationCard({ application, job, candidate, onStatusChange }:
     };
 
     return (
-        <Card className="hover:shadow-lg transition-all duration-200 border-border/50 overflow-hidden flex flex-col h-full bg-card">
+        <Card className="transition-all duration-300 hover:shadow-2xl hover:border-primary/50 flex flex-col h-full glass-enhanced">
             <CardHeader className="pb-3 px-4 pt-4">
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">

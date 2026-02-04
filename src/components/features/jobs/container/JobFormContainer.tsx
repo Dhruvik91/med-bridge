@@ -231,7 +231,7 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                 <form onSubmit={(e) => e.preventDefault()}>
                     {/* Step 1: Essentials */}
                     {currentStep === 1 && (
-                        <Card>
+                        <Card className="glass-enhanced transition-all duration-300">
                             <CardHeader>
                                 <CardTitle>Job Essentials</CardTitle>
                                 <CardDescription>Provide the basic information about the job</CardDescription>
@@ -291,7 +291,7 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
 
                     {/* Step 2: Details */}
                     {currentStep === 2 && (
-                        <Card>
+                        <Card className="glass-enhanced transition-all duration-300">
                             <CardHeader>
                                 <CardTitle>Job Details</CardTitle>
                                 <CardDescription>Provide salary, requirements, and benefits</CardDescription>
@@ -444,7 +444,7 @@ Health insurance
                     {/* Step 3: Context */}
                     {currentStep === 3 && (
                         <div className="space-y-6">
-                            <Card>
+                            <Card className="glass-enhanced transition-all duration-300">
                                 <CardHeader>
                                     <CardTitle>Organization</CardTitle>
                                     <CardDescription>Select or create an organization</CardDescription>
@@ -477,7 +477,7 @@ Health insurance
                                 </CardContent>
                             </Card>
 
-                            <Card>
+                            <Card className="glass-enhanced transition-all duration-300">
                                 <CardHeader>
                                     <CardTitle>Location</CardTitle>
                                     <CardDescription>Select or create a location</CardDescription>
@@ -510,7 +510,7 @@ Health insurance
                                 </CardContent>
                             </Card>
 
-                            <Card>
+                            <Card className="glass-enhanced transition-all duration-300">
                                 <CardHeader>
                                     <CardTitle>Specialties</CardTitle>
                                     <CardDescription>Select or create specialties</CardDescription>
@@ -547,7 +547,7 @@ Health insurance
                                 </CardContent>
                             </Card>
 
-                            <Card>
+                            <Card className="glass-enhanced transition-all duration-300">
                                 <CardFooter className="flex flex-col sm:flex-row justify-between gap-4 pt-6">
                                     <Button variant="outline" onClick={handlePrevious} className="w-full sm:w-auto">
                                         <ArrowLeft className="mr-2 h-4 w-4" />

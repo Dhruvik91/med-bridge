@@ -24,7 +24,7 @@ export function CandidateInfoCards({
 }: CandidateInfoCardsProps) {
     return (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
+            <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
                         Email
@@ -37,7 +37,7 @@ export function CandidateInfoCards({
             </Card>
 
             {phone && (
-                <Card>
+                <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground">
                             Phone
@@ -51,7 +51,7 @@ export function CandidateInfoCards({
             )}
 
             {experienceYears !== undefined && (
-                <Card>
+                <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground">
                             Experience
@@ -66,7 +66,7 @@ export function CandidateInfoCards({
             )}
 
             {(city || country) && (
-                <Card>
+                <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground">
                             Location
@@ -82,7 +82,7 @@ export function CandidateInfoCards({
             )}
 
             {socialLinks && Object.keys(socialLinks).length > 0 && (
-                <Card className="md:col-span-2 lg:col-span-2">
+                <Card className="md:col-span-2 lg:col-span-2 glass-enhanced transition-all duration-300 hover:shadow-xl">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground">
                             Social Links
@@ -108,7 +108,7 @@ export function CandidateInfoCards({
             )}
 
             {resumeUrl && (
-                <Card className="md:col-span-2 lg:col-span-2">
+                <Card className="md:col-span-2 lg:col-span-2 glass-enhanced transition-all duration-300 hover:shadow-xl">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground">
                             Resume

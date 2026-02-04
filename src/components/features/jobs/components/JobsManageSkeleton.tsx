@@ -17,7 +17,7 @@ export const JobsManageSkeleton = () => {
                 {/* Stats Skeleton */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[1, 2, 3, 4].map((i) => (
-                        <Card key={i}>
+                        <Card key={i} className="glass-enhanced transition-all duration-300">
                             <CardHeader className="pb-3">
                                 <Skeleton className="h-4 w-20" />
                             </CardHeader>
@@ -39,7 +39,7 @@ export const JobsManageSkeleton = () => {
             {/* Job Cards Skeleton */}
             <div className="space-y-6">
                 {[1, 2, 3].map((i) => (
-                    <Card key={i} className="hover:shadow-lg transition-shadow">
+                    <Card key={i} className="hover:shadow-lg transition-shadow glass-enhanced transition-all duration-300">
                         <CardHeader className="pb-4">
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex-1 min-w-0 space-y-3">

@@ -10,7 +10,7 @@ interface StatsCardProps {
 
 export function StatsCard({ title, value, description, icon: Icon }: StatsCardProps) {
     return (
-        <Card>
+        <Card className="glass-enhanced transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between pb-2 px-3 md:px-6 pt-3 md:pt-6">
                 <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
                     {title}

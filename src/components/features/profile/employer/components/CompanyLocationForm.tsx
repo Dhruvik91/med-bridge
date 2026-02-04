@@ -10,7 +10,7 @@ interface CompanyLocationFormProps {
 
 export function CompanyLocationForm({ register, errors }: CompanyLocationFormProps) {
     return (
-        <Card className="mt-6">
+        <Card className="mt-6 glass-enhanced transition-all duration-300">
             <CardHeader>
                 <CardTitle>Location</CardTitle>
                 <CardDescription>

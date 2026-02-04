@@ -9,7 +9,7 @@ interface ProfessionalBioCardProps {
 
 export function ProfessionalBioCard({ summary, onEditClick }: ProfessionalBioCardProps) {
     return (
-        <Card>
+        <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
             <CardHeader>
                 <CardTitle>Professional Bio</CardTitle>
                 <CardDescription>About your experience and expertise</CardDescription>

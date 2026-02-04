@@ -190,7 +190,7 @@ export function ManageApplications() {
     return (
         <div className="flex flex-col h-[calc(100vh-4rem)]">
             {/* Fixed Header - Sticky on Desktop */}
-            <div className="sticky top-0 z-10 bg-background border-b">
+            <div className="sticky top-0 z-10 glass-enhanced border-b">
                 <div className="container mx-auto px-4 py-4 md:py-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 md:mb-0">
                         <div className="flex items-center justify-between">

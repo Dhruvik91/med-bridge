@@ -187,7 +187,7 @@ export function Sidebar({ className, ...props }: SidebarProps) {
     }
 
     return (
-        <div className={cn("flex flex-col h-full bg-background border-r border-border", className)} {...props}>
+        <div className={cn("flex flex-col h-full bg-background border-r border-border glass-enhanced", className)} {...props}>
             <div className="">
                 <Link href={dashboardRoute} className="flex items-center justify-center">
                     <div className="relative h-24">

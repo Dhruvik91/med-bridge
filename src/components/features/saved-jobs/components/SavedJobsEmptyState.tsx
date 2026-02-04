@@ -6,7 +6,7 @@ import { FRONTEND_ROUTES } from '@/constants/constants';
 
 export function SavedJobsEmptyState() {
     return (
-        <Card className="text-center py-16">
+        <Card className="text-center py-16 glass-enhanced transition-all duration-300">
             <CardContent>
                 <BookmarkPlus className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                 <h2 className="text-2xl font-semibold mb-2">No saved jobs yet</h2>

@@ -69,7 +69,7 @@ export function LoginContainer() {
                     </Link>
                 </div> */}
 
-                <Card className="shadow-lg">
+                <Card className="shadow-lg glass-enhanced transition-all duration-300 hover:shadow-xl">
                     <LoginHeader />
 
                     <CardContent className="space-y-4">
