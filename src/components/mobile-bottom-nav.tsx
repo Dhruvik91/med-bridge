@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Briefcase, User, Home, Building2, BookmarkCheck, PlusCircle, LucideIcon, File } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
 import { useAuth } from "@/providers/auth-provider"
 import { UserRole } from "@/types"
 import { FRONTEND_ROUTES } from "@/constants/constants"
@@ -115,12 +116,19 @@ export function MobileBottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-1 flex-col items-center justify-center gap-1 rounded-full px-2 py-1 text-xs font-medium transition-colors",
+                "relative flex flex-1 flex-col items-center justify-center gap-1 rounded-full px-2 py-1 text-xs font-medium transition-colors",
                 active ? "text-primary" : "text-muted-foreground hover:text-foreground"
               )}
             >
-              <Icon className={cn("h-5 w-5", active && "fill-primary/10")} />
-              <span>{item.label}</span>
+              {active && (
+                <motion.div
+                  layoutId="active-tab"
+                  className="absolute inset-0 bg-primary/10 rounded-full"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              <Icon className={cn("relative z-10 h-5 w-5", active && "fill-primary/10")} />
+              <span className="relative z-10">{item.label}</span>
             </Link>
           )
         })}
