@@ -31,3 +31,17 @@ export const useInfiniteApplications = (limit = 20) => {
         },
     });
 };
+export const useInfiniteApplicationsByJob = (jobId: string, limit = 20) => {
+    return useInfiniteQuery({
+        queryKey: ['jobApplications', 'infinite', jobId, limit],
+        enabled: !!jobId,
+        initialPageParam: 1,
+        queryFn: ({ pageParam }) => applicationService.findByJob(jobId, pageParam, limit),
+        getNextPageParam: (lastPage) => {
+            if (!lastPage || !Array.isArray(lastPage.items)) return undefined;
+            const nextPage = lastPage.page + 1;
+            const hasMore = lastPage.page * lastPage.limit < lastPage.total;
+            return hasMore ? nextPage : undefined;
+        },
+    });
+};

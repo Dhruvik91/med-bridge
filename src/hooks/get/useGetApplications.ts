@@ -15,3 +15,11 @@ export const useGetApplicationsByCandidate = (candidateId: string) => {
         enabled: !!candidateId,
     });
 };
+
+export const useGetApplicationsByJob = (jobId: string) => {
+    return useQuery({
+        queryKey: ['jobApplications', jobId],
+        queryFn: () => applicationService.findByJob(jobId),
+        enabled: !!jobId,
+    });
+};
