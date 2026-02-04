@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
@@ -22,10 +23,18 @@ import { Search } from 'lucide-react';
 import { NotAuthorizedUser } from '@/components/NotAuthorized';
 
 export function ManageApplications() {
+    const searchParams = useSearchParams();
     const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'all'>('all');
-    const [jobFilter, setJobFilter] = useState<string>('all');
+    const [jobFilter, setJobFilter] = useState<string>(searchParams.get('jobId') || 'all');
     const [searchQuery, setSearchQuery] = useState('');
     const [sortBy, setSortBy] = useState<'recent' | 'oldest'>('recent');
+
+    useEffect(() => {
+        const jobId = searchParams.get('jobId');
+        if (jobId) {
+            setJobFilter(jobId);
+        }
+    }, [searchParams]);
 
     // Fetch current user
     const { data: user, isLoading: userLoading } = useGetMe();

@@ -76,6 +76,12 @@ export const JobCard = ({
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
+                                    <Link href={`${FRONTEND_ROUTES.APPLICATIONS.MANAGE}?jobId=${job.id}`} className="cursor-pointer">
+                                        <Users className="mr-2 h-4 w-4" />
+                                        View Applications
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
                                     <Link href={`${FRONTEND_ROUTES.JOBS.BASE}/${job.id}/edit`} className="cursor-pointer">
                                         <Edit className="mr-2 h-4 w-4" />
                                         Edit Job
