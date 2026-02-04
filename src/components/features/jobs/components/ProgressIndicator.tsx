@@ -9,7 +9,7 @@ interface ProgressIndicatorProps {
 
 export const ProgressIndicator = ({ currentStep, totalSteps, stepLabels }: ProgressIndicatorProps) => {
     return (
-        <Card className="mb-6 overflow-hidden">
+        <Card className="mb-6 overflow-hidden glass-enhanced transition-all duration-300">
             <CardContent className="pt-8 pb-6">
                 <div className="relative max-w-2xl mx-auto">
                     {/* Progress Line Background */}

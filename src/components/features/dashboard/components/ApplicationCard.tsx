@@ -31,7 +31,7 @@ export function ApplicationCard({ application, getStatusIcon, getStatusColor }: 
     return (
         <Link
             href={`${FRONTEND_ROUTES.JOBS.BASE}/${application.jobId}`}
-            className="group block p-4 md:p-5 border rounded-xl hover:border-primary hover:shadow-md transition-all duration-200 bg-gradient-to-r from-background to-muted/20 hover:from-primary/5 hover:to-primary/10"
+            className="group block p-4 md:p-5 border rounded-xl hover:border-primary hover:shadow-md transition-all duration-300 bg-gradient-to-r from-background to-muted/20 hover:from-primary/5 hover:to-primary/10 glass-enhanced"
         >
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                 <div className="flex-1 min-w-0">

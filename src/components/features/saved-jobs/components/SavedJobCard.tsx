@@ -54,7 +54,7 @@ export function SavedJobCard({
 
     return (
         <>
-            <Card className="hover:shadow-lg transition-shadow flex flex-col">
+            <Card className="flex flex-col transition-all duration-300 hover:shadow-2xl glass-enhanced hover:border-primary/50">
                 <CardHeader>
                     <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">

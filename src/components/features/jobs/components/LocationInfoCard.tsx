@@ -17,7 +17,7 @@ export const LocationInfoCard = ({
     longitude,
 }: LocationInfoCardProps) => {
     return (
-        <Card>
+        <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
             <CardHeader>
                 <CardTitle>Job Location</CardTitle>
             </CardHeader>

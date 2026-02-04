@@ -29,7 +29,7 @@ export const EmployerInfoCard = ({
     website,
 }: EmployerInfoCardProps) => {
     return (
-        <Card>
+        <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
             <CardHeader>
                 <CardTitle>About the Employer</CardTitle>
             </CardHeader>

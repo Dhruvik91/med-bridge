@@ -29,7 +29,7 @@ export const MobileApplicationStatsDrawer = ({ stats }: MobileApplicationStatsDr
                     <BarChart3 className="h-4 w-4" />
                 </Button>
             </SheetTrigger>
-            <SheetContent side="top" className="h-auto max-h-[80vh] overflow-y-auto">
+            <SheetContent side="top" className="h-auto max-h-[80vh] overflow-y-auto glass-enhanced">
                 <SheetHeader className="mb-6">
                     <SheetTitle>Application Statistics</SheetTitle>
                 </SheetHeader>

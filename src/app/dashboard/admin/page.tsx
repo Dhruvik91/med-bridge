@@ -75,7 +75,7 @@ export default function AdminDashboardPage() {
           const Icon = stat.icon;
           return (
             <Link key={stat.title} href={stat.link}>
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer glass-enhanced">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
                     {stat.title}
@@ -96,7 +96,7 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+        <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
@@ -131,7 +131,7 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
           <CardHeader>
             <CardTitle>System Overview</CardTitle>
           </CardHeader>

@@ -32,7 +32,7 @@ export function ApplicationInfo({ application }: ApplicationInfoProps) {
                 {/* Main Content - Takes 2 columns */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* Candidate Profile Card */}
-                    <Card className="overflow-hidden">
+                    <Card className="overflow-hidden glass-enhanced transition-all duration-300">
                         <CardHeader className="border-b bg-muted/30">
                             <CardTitle className="text-lg md:text-xl flex items-center gap-2">
                                 <UserIcon className="h-5 w-5 text-primary" />
@@ -143,7 +143,7 @@ export function ApplicationInfo({ application }: ApplicationInfoProps) {
                     </Card>
 
                     {candidateProfile?.summary && (
-                        <Card>
+                        <Card className="glass-enhanced transition-all duration-300">
                             <CardHeader className="border-b bg-muted/30">
                                 <CardTitle className="text-base sm:text-lg flex items-center gap-2">
                                     <FileText className="h-5 w-5 text-primary" />
@@ -159,7 +159,7 @@ export function ApplicationInfo({ application }: ApplicationInfoProps) {
                     )}
 
                     {candidateProfile?.licenseNumbers && candidateProfile.licenseNumbers.length > 0 && (
-                        <Card>
+                        <Card className="glass-enhanced transition-all duration-300">
                             <CardHeader className="border-b bg-muted/30">
                                 <CardTitle className="text-base sm:text-lg flex items-center gap-2">
                                     <Briefcase className="h-5 w-5 text-primary" />
@@ -179,7 +179,7 @@ export function ApplicationInfo({ application }: ApplicationInfoProps) {
                     )}
 
                     {candidateProfile?.socialLinks && Object.keys(candidateProfile.socialLinks).length > 0 && (
-                        <Card>
+                        <Card className="glass-enhanced transition-all duration-300">
                             <CardHeader className="border-b bg-muted/30">
                                 <CardTitle className="text-base sm:text-lg flex items-center gap-2">
                                     <LinkIcon className="h-5 w-5 text-primary" />
@@ -213,7 +213,7 @@ export function ApplicationInfo({ application }: ApplicationInfoProps) {
                     )}
 
                     {coverLetter && (
-                        <Card>
+                        <Card className="glass-enhanced transition-all duration-300">
                             <CardHeader className="border-b bg-muted/30">
                                 <CardTitle className="text-base sm:text-lg flex items-center gap-2">
                                     <FileText className="h-5 w-5 text-primary" />
@@ -228,7 +228,7 @@ export function ApplicationInfo({ application }: ApplicationInfoProps) {
                         </Card>
                     )}
 
-                    <Card>
+                    <Card className="glass-enhanced transition-all duration-300">
                         <CardHeader className="border-b bg-muted/30">
                             <CardTitle className="text-base sm:text-lg flex items-center gap-2">
                                 <FileText className="h-5 w-5 text-primary" />
@@ -266,7 +266,7 @@ export function ApplicationInfo({ application }: ApplicationInfoProps) {
                 {/* Sidebar - Job Details */}
                 <div className="lg:col-span-1 space-y-6">
                     {job && (
-                        <Card className="lg:sticky lg:top-24">
+                        <Card className="lg:sticky lg:top-24 glass-enhanced transition-all duration-300">
                             <CardHeader className="border-b bg-muted/30">
                                 <CardTitle className="text-base sm:text-lg flex items-center gap-2">
                                     <Building2 className="h-5 w-5 text-primary" />

@@ -42,7 +42,8 @@ export function AppShell({ children }: AppShellProps) {
   // Authenticated users on app routes -> full app layout
   if (user && isAppRoute) {
     return (
-      <div className="flex min-h-screen pb-16 lg:pb-0">
+      <div className="flex min-h-screen pb-16 lg:pb-0 bg-background relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-mesh opacity-40 pointer-events-none" />
         <Sidebar className="hidden lg:flex w-64 flex-col border-r fixed left-0 top-0 bottom-0 z-50" />
         <div className="flex-1 lg:pl-64 flex flex-col min-h-screen">
           <div className="lg:hidden">
@@ -81,7 +82,8 @@ export function AppShell({ children }: AppShellProps) {
 
   // Public routes (auth, home, etc.) -> public navigation layout
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-mesh opacity-40 pointer-events-none" />
       <Navigation />
       <main className="pt-16">
         {children}

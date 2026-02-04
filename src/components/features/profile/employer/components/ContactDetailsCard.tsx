@@ -11,7 +11,7 @@ export function ContactDetailsCard({ contactPerson, phone }: ContactDetailsCardP
     if (!hasAnyInfo) return null;
 
     return (
-        <Card>
+        <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
             <CardHeader>
                 <CardTitle>Contact Details</CardTitle>
                 <CardDescription>How to reach us</CardDescription>

@@ -105,7 +105,7 @@ export function HomePage() {
                             description: 'Find opportunities that align with your career goals and aspirations',
                         },
                     ].map((feature) => (
-                        <Card key={feature.title} className="border-2 hover:shadow-lg transition-shadow">
+                        <Card key={feature.title} className="border-2 hover:shadow-lg transition-all duration-300 glass-enhanced">
                             <CardHeader>
                                 <feature.icon className="h-12 w-12 text-primary mb-4" aria-hidden="true" />
                                 <CardTitle className="text-xl">{feature.title}</CardTitle>
@@ -166,7 +166,7 @@ export function HomePage() {
             <section className="container mx-auto px-4 py-20">
                 <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
                     {/* For Doctors */}
-                    <Card className="border-2 border-primary/20 hover:shadow-xl transition-shadow">
+                    <Card className="border-2 border-primary/20 hover:shadow-xl transition-all duration-300 glass-enhanced">
                         <CardHeader>
                             <Stethoscope className="h-12 w-12 text-primary mb-4" aria-hidden="true" />
                             <CardTitle className="text-2xl">For Healthcare Professionals</CardTitle>
@@ -198,7 +198,7 @@ export function HomePage() {
                     </Card>
 
                     {/* For Employers */}
-                    <Card className="border-2 border-primary/20 hover:shadow-xl transition-shadow">
+                    <Card className="border-2 border-primary/20 hover:shadow-xl transition-all duration-300 glass-enhanced">
                         <CardHeader>
                             <Building2 className="h-12 w-12 text-primary mb-4" aria-hidden="true" />
                             <CardTitle className="text-2xl">For Healthcare Employers</CardTitle>

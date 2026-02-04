@@ -12,7 +12,7 @@ export function AdminCandidatesSearchFilter({
   onSearchChange,
 }: AdminCandidatesSearchFilterProps) {
   return (
-    <Card>
+    <Card className="glass-enhanced transition-all duration-300">
       <CardHeader>
         <CardTitle>Filters</CardTitle>
       </CardHeader>

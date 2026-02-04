@@ -9,7 +9,7 @@ interface CompanyDescriptionCardProps {
 
 export function CompanyDescriptionCard({ description, onEditClick }: CompanyDescriptionCardProps) {
     return (
-        <Card>
+        <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
             <CardHeader>
                 <CardTitle>About the Company</CardTitle>
                 <CardDescription>Organization overview and culture</CardDescription>

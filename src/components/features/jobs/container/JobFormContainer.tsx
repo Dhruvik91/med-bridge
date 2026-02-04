@@ -33,6 +33,8 @@ import { NotAuthorizedUser } from '@/components/NotAuthorized';
 import { ProgressIndicator } from '../components/ProgressIndicator';
 import { CreateResourceDialog } from '../components/CreateResourceDialog';
 import { JobFormSkeleton } from '../components/JobFormSkeleton';
+import { BackButton } from '@/components/ui/back-button';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 
 const STEPS = [
     { id: 1, title: 'Essentials', description: 'Title, Type & Description' },
@@ -211,6 +213,9 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
     return (
         <div className="container mx-auto px-4 py-8 pb-24 lg:pb-8">
             <div className="max-w-4xl mx-auto">
+                <div className="mb-6">
+                    <BackButton fallbackUrl={FRONTEND_ROUTES.JOBS.MANAGE} />
+                </div>
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold mb-2">
                         {mode === 'create' ? 'Post a New Job' : 'Edit Job Posting'}
@@ -231,7 +236,7 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
                 <form onSubmit={(e) => e.preventDefault()}>
                     {/* Step 1: Essentials */}
                     {currentStep === 1 && (
-                        <Card>
+                        <Card className="glass-enhanced transition-all duration-300">
                             <CardHeader>
                                 <CardTitle>Job Essentials</CardTitle>
                                 <CardDescription>Provide the basic information about the job</CardDescription>
@@ -291,7 +296,7 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
 
                     {/* Step 2: Details */}
                     {currentStep === 2 && (
-                        <Card>
+                        <Card className="glass-enhanced transition-all duration-300">
                             <CardHeader>
                                 <CardTitle>Job Details</CardTitle>
                                 <CardDescription>Provide salary, requirements, and benefits</CardDescription>
@@ -444,7 +449,7 @@ Health insurance
                     {/* Step 3: Context */}
                     {currentStep === 3 && (
                         <div className="space-y-6">
-                            <Card>
+                            <Card className="glass-enhanced transition-all duration-300">
                                 <CardHeader>
                                     <CardTitle>Organization</CardTitle>
                                     <CardDescription>Select or create an organization</CardDescription>
@@ -477,7 +482,7 @@ Health insurance
                                 </CardContent>
                             </Card>
 
-                            <Card>
+                            <Card className="glass-enhanced transition-all duration-300">
                                 <CardHeader>
                                     <CardTitle>Location</CardTitle>
                                     <CardDescription>Select or create a location</CardDescription>
@@ -510,7 +515,7 @@ Health insurance
                                 </CardContent>
                             </Card>
 
-                            <Card>
+                            <Card className="glass-enhanced transition-all duration-300">
                                 <CardHeader>
                                     <CardTitle>Specialties</CardTitle>
                                     <CardDescription>Select or create specialties</CardDescription>
@@ -547,7 +552,7 @@ Health insurance
                                 </CardContent>
                             </Card>
 
-                            <Card>
+                            <Card className="glass-enhanced transition-all duration-300">
                                 <CardFooter className="flex flex-col sm:flex-row justify-between gap-4 pt-6">
                                     <Button variant="outline" onClick={handlePrevious} className="w-full sm:w-auto">
                                         <ArrowLeft className="mr-2 h-4 w-4" />

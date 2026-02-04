@@ -62,7 +62,7 @@ export function SavedJobsList({ savedJobs, isLoading }: SavedJobsListProps) {
     }, [carouselApi]);
 
     return (
-        <Card>
+        <Card className="glass-enhanced transition-all duration-300">
             <CardHeader className="pb-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>

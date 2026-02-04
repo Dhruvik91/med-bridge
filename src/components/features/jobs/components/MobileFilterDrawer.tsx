@@ -121,7 +121,7 @@ export const MobileFilterDrawer = ({
             </SheetTrigger>
             <SheetContent
                 side={isDesktop ? 'right' : 'top'}
-                className="h-auto max-h-[80vh] overflow-y-auto md:max-w-[50vw] lg:max-w-[40vw] xl:max-w-[20vw] w-full mx-auto my-0"
+                className="h-auto max-h-[80vh] overflow-y-auto md:max-w-[50vw] lg:max-w-[40vw] xl:max-w-[20vw] w-full mx-auto my-0 glass-enhanced"
             >
                 <SheetHeader>
                     <SheetTitle>Filter Jobs</SheetTitle>

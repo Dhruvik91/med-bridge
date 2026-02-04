@@ -49,7 +49,7 @@ export function ActiveJobsList({ jobs, applications, isLoading, getJobStatusColo
     }, [carouselApi]);
 
     return (
-        <Card>
+        <Card className="glass-enhanced transition-all duration-300">
             <CardHeader className="pb-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
@@ -67,7 +67,7 @@ export function ActiveJobsList({ jobs, applications, isLoading, getJobStatusColo
                                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
                             </Link>
                         </Button>
-                         <div className="flex items-center gap-1 md:hidden">
+                        <div className="flex items-center gap-1 md:hidden">
                             <Button
                                 type="button"
                                 size="icon"

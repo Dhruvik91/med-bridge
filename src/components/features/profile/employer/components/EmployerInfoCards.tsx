@@ -18,7 +18,7 @@ export function EmployerInfoCards({
 }: EmployerInfoCardsProps) {
     return (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
+            <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
                         Email
@@ -31,7 +31,7 @@ export function EmployerInfoCards({
             </Card>
 
             {phone && (
-                <Card>
+                <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground">
                             Phone
@@ -45,7 +45,7 @@ export function EmployerInfoCards({
             )}
 
             {contactPerson && (
-                <Card>
+                <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground">
                             Contact Person
@@ -59,7 +59,7 @@ export function EmployerInfoCards({
             )}
 
             {(city || country) && (
-                <Card>
+                <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground">
                             Location

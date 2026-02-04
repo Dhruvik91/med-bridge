@@ -37,7 +37,7 @@ export const JobCard = ({
 }: JobCardProps) => {
     if (variant === 'manage') {
         return (
-            <Card className="h-full min-h-[280px] flex flex-col hover:shadow-lg transition-shadow">
+            <Card className="flex flex-col hover-lift smooth-transition glass-enhanced hover:border-primary/50 group">
                 <CardHeader className="pb-3">
                     <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0 space-y-2">
@@ -148,7 +148,7 @@ export const JobCard = ({
 
     // Browse variant
     return (
-        <Card className="h-full min-h-[320px] flex flex-col hover:shadow-lg transition-shadow">
+        <Card className="h-full min-h-[320px] flex flex-col hover-lift smooth-transition glass-enhanced hover:border-primary/50 group">
             <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0 space-y-2">

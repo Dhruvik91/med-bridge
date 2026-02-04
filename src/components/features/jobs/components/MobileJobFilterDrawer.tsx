@@ -53,7 +53,7 @@ export const MobileJobFilterDrawer = ({
                     )}
                 </Button>
             </SheetTrigger>
-            <SheetContent side="top" className="h-auto max-h-[80vh] overflow-y-auto">
+            <SheetContent side="top" className="h-auto max-h-[80vh] overflow-y-auto glass-enhanced">
                 <SheetHeader>
                     <SheetTitle>Filter Jobs</SheetTitle>
                 </SheetHeader>

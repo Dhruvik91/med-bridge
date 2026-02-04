@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -187,7 +188,7 @@ export function Sidebar({ className, ...props }: SidebarProps) {
     }
 
     return (
-        <div className={cn("flex flex-col h-full bg-background border-r border-border", className)} {...props}>
+        <div className={cn("flex flex-col h-full bg-background border-r border-border glass-enhanced", className)} {...props}>
             <div className="">
                 <Link href={dashboardRoute} className="flex items-center justify-center">
                     <div className="relative h-24">
@@ -206,14 +207,21 @@ export function Sidebar({ className, ...props }: SidebarProps) {
                             key={item.href}
                             href={item.href}
                             className={cn(
-                                "flex items-center space-x-3 px-3 py-2 rounded-md transition-colors text-sm font-medium",
+                                "flex items-center space-x-3 px-3 py-2 rounded-md transition-all text-sm font-medium relative group tap-scale",
                                 isActive
-                                    ? "bg-primary/10 text-primary"
-                                    : "hover:bg-accent hover:text-accent-foreground"
+                                    ? "text-primary"
+                                    : "text-foreground/70 hover:bg-accent/50 hover:text-accent-foreground"
                             )}
                         >
-                            <Icon className="h-5 w-5" />
-                            <span>{item.label}</span>
+                            {isActive && (
+                                <motion.div
+                                    layoutId="sidebar-active"
+                                    className="absolute inset-0 bg-primary/10 rounded-md border-l-2 border-primary"
+                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                />
+                            )}
+                            <Icon className={cn("h-5 w-5 relative z-10", isActive && "text-primary")} />
+                            <span className="relative z-10">{item.label}</span>
                         </Link>
                     )
                 })}
@@ -222,7 +230,7 @@ export function Sidebar({ className, ...props }: SidebarProps) {
             <div className="p-4 border-t border-border">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="w-full justify-start px-2 hover:bg-accent h-auto py-2">
+                        <Button variant="ghost" className="w-full justify-start px-2 hover:bg-accent h-auto py-2 tap-scale">
                             <div className="flex items-center space-x-3 w-full">
                                 {isProfileLoading ? (
                                     <>

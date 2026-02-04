@@ -17,7 +17,7 @@ interface CandidateApplicationStatsProps {
 export function CandidateApplicationStats({ stats, className }: CandidateApplicationStatsProps) {
     return (
         <div className={cn("grid gap-4 grid-cols-2 md:grid-cols-6", className)}>
-            <Card>
+            <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                 <CardHeader className="p-4 pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">Total</CardTitle>
                 </CardHeader>
@@ -25,7 +25,7 @@ export function CandidateApplicationStats({ stats, className }: CandidateApplica
                     <div className="text-2xl font-bold">{stats.total}</div>
                 </CardContent>
             </Card>
-            <Card>
+            <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                 <CardHeader className="p-4 pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">Pending</CardTitle>
                 </CardHeader>
@@ -33,7 +33,7 @@ export function CandidateApplicationStats({ stats, className }: CandidateApplica
                     <div className="text-2xl font-bold">{stats.applied}</div>
                 </CardContent>
             </Card>
-            <Card>
+            <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                 <CardHeader className="p-4 pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">Viewed</CardTitle>
                 </CardHeader>
@@ -41,7 +41,7 @@ export function CandidateApplicationStats({ stats, className }: CandidateApplica
                     <div className="text-2xl font-bold">{stats.viewed}</div>
                 </CardContent>
             </Card>
-            <Card>
+            <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                 <CardHeader className="p-4 pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">Interview</CardTitle>
                 </CardHeader>
@@ -49,7 +49,7 @@ export function CandidateApplicationStats({ stats, className }: CandidateApplica
                     <div className="text-2xl font-bold">{stats.interview}</div>
                 </CardContent>
             </Card>
-            <Card>
+            <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                 <CardHeader className="p-4 pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">Hired</CardTitle>
                 </CardHeader>
@@ -57,7 +57,7 @@ export function CandidateApplicationStats({ stats, className }: CandidateApplica
                     <div className="text-2xl font-bold text-green-600">{stats.hired}</div>
                 </CardContent>
             </Card>
-            <Card>
+            <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                 <CardHeader className="p-4 pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">Rejected</CardTitle>
                 </CardHeader>

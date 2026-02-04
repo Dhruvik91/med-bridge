@@ -14,7 +14,7 @@ export function ProfessionalCredentialsCard({
     specialties
 }: ProfessionalCredentialsCardProps) {
     return (
-        <Card>
+        <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
             <CardHeader>
                 <CardTitle>Professional Credentials</CardTitle>
                 <CardDescription>License, certifications, and specialties</CardDescription>

@@ -33,7 +33,7 @@ export const JobFormSkeleton = () => {
                 </div>
 
                 {/* Form card skeleton */}
-                <Card>
+                <Card className="glass-enhanced transition-all duration-300">
                     <CardHeader>
                         <Skeleton className="h-7 w-48 mb-2" />
                         <Skeleton className="h-4 w-72" />

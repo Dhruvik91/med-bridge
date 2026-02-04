@@ -77,7 +77,7 @@ export const MobileApplicationFilterDrawer = ({
                     )}
                 </Button>
             </SheetTrigger>
-            <SheetContent side="top" className="h-auto max-h-[80vh] overflow-y-auto">
+            <SheetContent side="top" className="h-auto max-h-[80vh] overflow-y-auto glass-enhanced">
                 <SheetHeader>
                     <SheetTitle>Filter Applications</SheetTitle>
                 </SheetHeader>

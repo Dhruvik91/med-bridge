@@ -83,7 +83,7 @@ export function SignupContainer() {
                     </Link>
                 </div> */}
 
-                <Card className="shadow-lg">
+                <Card className="shadow-lg glass-enhanced transition-all duration-300 hover:shadow-xl">
                     <SignupHeader />
 
                     <CardContent className="space-y-4">
