@@ -26,6 +26,7 @@ import { ApplicationForm } from '../components/ApplicationForm';
 import { QuickActionsCard } from '../components/QuickActionsCard';
 import { EmployerInfoCard } from '../components/EmployerInfoCard';
 import { LocationInfoCard } from '../components/LocationInfoCard';
+import { BackButton } from '@/components/ui/back-button';
 
 // Zod schema for application form
 const applicationSchema = z.object({
@@ -181,6 +182,9 @@ export const JobDetail = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
+            <div className="mb-6">
+                <BackButton fallbackUrl={FRONTEND_ROUTES.JOBS.BASE} />
+            </div>
             <div className="grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-6">
                     <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">

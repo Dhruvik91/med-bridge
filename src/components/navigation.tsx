@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/providers/auth-provider'
 import { Button } from '@/components/ui/button'
@@ -59,7 +60,7 @@ export function Navigation() {
           {!user && pathname === '/' && (
             <div className="md:hidden flex items-center">
               <Link href={FRONTEND_ROUTES.AUTH.SIGNUP}>
-                <Button size="sm" className="h-8">Sign Up</Button>
+                <Button size="sm" className="h-8 tap-scale">Sign Up</Button>
               </Link>
             </div>
           )}
@@ -84,26 +85,47 @@ export function Navigation() {
                   {/* Dashboard - Available to all roles */}
                   <Link
                     href={getDashboardRoute(profile?.role || null)}
-                    className={getNavLinkClass(pathname === getDashboardRoute(profile?.role || null))}
+                    className={getNavLinkClass(pathname === getDashboardRoute(profile?.role || null)) + " relative"}
                   >
                     Dashboard
+                    {pathname === getDashboardRoute(profile?.role || null) && (
+                      <motion.div
+                        layoutId="nav-indicator"
+                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary"
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      />
+                    )}
                   </Link>
 
                   {/* Jobs - Available to all roles */}
                   <Link
                     href={FRONTEND_ROUTES.JOBS.BASE}
-                    className={getNavLinkClass(pathname === FRONTEND_ROUTES.JOBS.BASE)}
+                    className={getNavLinkClass(pathname === FRONTEND_ROUTES.JOBS.BASE) + " relative"}
                   >
                     Jobs
+                    {pathname === FRONTEND_ROUTES.JOBS.BASE && (
+                      <motion.div
+                        layoutId="nav-indicator"
+                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary"
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      />
+                    )}
                   </Link>
 
                   {/* Employer-specific navigation */}
                   {(profile?.role === UserRole.employer || profile?.role === UserRole.admin) && (
                     <Link
                       href={FRONTEND_ROUTES.JOBS.MANAGE}
-                      className={getNavLinkClass(pathname === FRONTEND_ROUTES.JOBS.MANAGE)}
+                      className={getNavLinkClass(pathname === FRONTEND_ROUTES.JOBS.MANAGE) + " relative"}
                     >
                       Manage Jobs
+                      {pathname === FRONTEND_ROUTES.JOBS.MANAGE && (
+                        <motion.div
+                          layoutId="nav-indicator"
+                          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary"
+                          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                        />
+                      )}
                     </Link>
                   )}
 
@@ -112,15 +134,29 @@ export function Navigation() {
                     <>
                       <Link
                         href={FRONTEND_ROUTES.APPLICATIONS.BASE}
-                        className={getNavLinkClass(pathname === FRONTEND_ROUTES.APPLICATIONS.BASE)}
+                        className={getNavLinkClass(pathname === FRONTEND_ROUTES.APPLICATIONS.BASE) + " relative"}
                       >
                         Applications
+                        {pathname === FRONTEND_ROUTES.APPLICATIONS.BASE && (
+                          <motion.div
+                            layoutId="nav-indicator"
+                            className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary"
+                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                          />
+                        )}
                       </Link>
                       <Link
                         href={FRONTEND_ROUTES.SAVED_JOBS}
-                        className={getNavLinkClass(pathname === FRONTEND_ROUTES.SAVED_JOBS)}
+                        className={getNavLinkClass(pathname === FRONTEND_ROUTES.SAVED_JOBS) + " relative"}
                       >
                         Saved Jobs
+                        {pathname === FRONTEND_ROUTES.SAVED_JOBS && (
+                          <motion.div
+                            layoutId="nav-indicator"
+                            className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary"
+                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                          />
+                        )}
                       </Link>
                     </>
                   )}
@@ -131,7 +167,7 @@ export function Navigation() {
                   {/* User Menu */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                      <Button variant="ghost" className="relative h-8 w-8 rounded-full tap-scale">
                         <Avatar className="h-8 w-8">
                           <AvatarImage src={(profile?.metadata as any)?.avatarUrl as string | undefined} alt={(profile?.metadata as any)?.name || user.email || ''} />
                           <AvatarFallback>
@@ -193,10 +229,10 @@ export function Navigation() {
               <div className="flex items-center justify-end w-full gap-4">
                 <div className="flex items-center space-x-2">
                   <Link href={FRONTEND_ROUTES.AUTH.LOGIN}>
-                    <Button variant="ghost">Sign In</Button>
+                    <Button variant="ghost" className="tap-scale">Sign In</Button>
                   </Link>
                   <Link href={FRONTEND_ROUTES.AUTH.SIGNUP}>
-                    <Button>Get Started</Button>
+                    <Button className="tap-scale">Get Started</Button>
                   </Link>
                 </div>
               </div>

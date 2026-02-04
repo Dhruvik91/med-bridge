@@ -33,6 +33,8 @@ import { NotAuthorizedUser } from '@/components/NotAuthorized';
 import { ProgressIndicator } from '../components/ProgressIndicator';
 import { CreateResourceDialog } from '../components/CreateResourceDialog';
 import { JobFormSkeleton } from '../components/JobFormSkeleton';
+import { BackButton } from '@/components/ui/back-button';
+import { FRONTEND_ROUTES } from '@/constants/constants';
 
 const STEPS = [
     { id: 1, title: 'Essentials', description: 'Title, Type & Description' },
@@ -211,6 +213,9 @@ export const JobFormContainer = ({ mode, existingJob }: JobFormContainerProps) =
     return (
         <div className="container mx-auto px-4 py-8 pb-24 lg:pb-8">
             <div className="max-w-4xl mx-auto">
+                <div className="mb-6">
+                    <BackButton fallbackUrl={FRONTEND_ROUTES.JOBS.MANAGE} />
+                </div>
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold mb-2">
                         {mode === 'create' ? 'Post a New Job' : 'Edit Job Posting'}

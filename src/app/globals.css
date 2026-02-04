@@ -236,6 +236,28 @@ body {
         rgba(16, 185, 129, 0.1) 75%,
         rgba(236, 72, 153, 0.1) 100%);
   }
+
+  /* Interaction Utilities */
+  .hover-lift {
+    @apply transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl;
+  }
+
+  .tap-scale {
+    @apply active:scale-95 transition-transform;
+  }
+
+  .smooth-transition {
+    @apply transition-all duration-300;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animate-in-fade {
+    @apply animate-in fade-in duration-500 ease-in-out;
+  }
+
+  .indicator {
+    @apply absolute bottom-0 left-0 h-1 bg-primary rounded-full;
+  }
 }
 
 /* Smooth scrolling for anchor links is already enabled on html above */

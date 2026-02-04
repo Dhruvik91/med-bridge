@@ -99,7 +99,7 @@ export function CandidateApplicationCard({ application }: CandidateApplicationCa
     };
 
     return (
-        <Card className="transition-all duration-300 hover:shadow-2xl hover:border-primary/50 overflow-hidden flex flex-col h-full glass-enhanced">
+        <Card className="hover-lift smooth-transition hover:border-primary/50 overflow-hidden flex flex-col h-full glass-enhanced">
             <CardHeader className="pb-3 px-4 pt-4">
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
