@@ -116,7 +116,7 @@ export function MobileBottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "relative flex flex-1 flex-col items-center justify-center gap-1 rounded-full px-2 py-1 text-xs font-medium transition-colors",
+                "relative flex flex-1 flex-col items-center justify-center gap-1 rounded-full px-2 py-1 text-[0.70rem] font-medium transition-colors",
                 active ? "text-primary" : "text-muted-foreground hover:text-foreground"
               )}
             >
