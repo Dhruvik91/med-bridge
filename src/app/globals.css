@@ -157,7 +157,7 @@ body {
   }
 
   .bg-blur-shape-1 {
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--ring)));
     width: 300px;
     height: 300px;
     top: 10%;
@@ -166,7 +166,7 @@ body {
   }
 
   .bg-blur-shape-2 {
-    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.8));
     width: 200px;
     height: 200px;
     top: 60%;
@@ -175,7 +175,7 @@ body {
   }
 
   .bg-blur-shape-3 {
-    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    background: linear-gradient(135deg, hsl(var(--ring)), hsl(var(--primary)));
     width: 250px;
     height: 250px;
     bottom: 20%;
@@ -184,7 +184,7 @@ body {
   }
 
   .bg-blur-shape-4 {
-    background: linear-gradient(135deg, #10b981, #06b6d4);
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.7));
     width: 180px;
     height: 180px;
     top: 30%;

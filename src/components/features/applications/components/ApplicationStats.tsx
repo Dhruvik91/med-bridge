@@ -62,7 +62,7 @@ export function ApplicationStats({ stats }: ApplicationStatsProps) {
                     <CardTitle className="text-sm font-medium text-muted-foreground">Offer</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold text-blue-600">{stats.offer}</div>
+                    <div className="text-2xl font-bold text-foreground">{stats.offer}</div>
                 </CardContent>
             </Card>
             <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
@@ -70,7 +70,7 @@ export function ApplicationStats({ stats }: ApplicationStatsProps) {
                     <CardTitle className="text-sm font-medium text-muted-foreground">Hired</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold text-green-600">{stats.hired}</div>
+                    <div className="text-2xl font-bold text-primary">{stats.hired}</div>
                 </CardContent>
             </Card>
             <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
@@ -78,7 +78,7 @@ export function ApplicationStats({ stats }: ApplicationStatsProps) {
                     <CardTitle className="text-sm font-medium text-muted-foreground">Rejected</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold text-red-600">{stats.rejected}</div>
+                    <div className="text-2xl font-bold text-destructive">{stats.rejected}</div>
                 </CardContent>
             </Card>
         </div>

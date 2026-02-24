@@ -92,13 +92,13 @@ export default function AdminJobsPage() {
         cell: ({ row }) => {
           const status = row.original.status;
           const statusColors = {
-            published: 'bg-green-100 text-green-800',
-            draft: 'bg-gray-100 text-gray-800',
-            closed: 'bg-red-100 text-red-800',
-            archived: 'bg-yellow-100 text-yellow-800',
+            published: 'bg-primary/10 text-foreground',
+            draft: 'bg-muted text-muted-foreground',
+            closed: 'bg-destructive/10 text-destructive',
+            archived: 'bg-accent text-accent-foreground',
           };
           return (
-            <Badge className={statusColors[status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800'}>
+            <Badge className={statusColors[status as keyof typeof statusColors] || 'bg-muted text-muted-foreground'}>
               {status}
             </Badge>
           );
@@ -208,7 +208,7 @@ export default function AdminJobsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 border rounded-md"
+              className="h-10 px-4 py-2 border border-input bg-background text-foreground rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <option value="">All Status</option>
               <option value="published">Published</option>

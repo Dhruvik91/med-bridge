@@ -6,8 +6,8 @@ export function ResetPasswordInvalidToken() {
     return (
         <div className="space-y-4">
             <div className="flex flex-col items-center justify-center py-6 text-center">
-                <div className="rounded-full bg-red-100 p-3 mb-4">
-                    <AlertCircle className="h-8 w-8 text-red-600" />
+                <div className="rounded-full bg-destructive/10 p-3 mb-4">
+                    <AlertCircle className="h-8 w-8 text-destructive" />
                 </div>
                 <h3 className="font-semibold text-lg mb-2">Invalid Link</h3>
                 <p className="text-muted-foreground text-sm">

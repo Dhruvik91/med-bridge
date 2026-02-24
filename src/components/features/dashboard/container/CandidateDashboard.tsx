@@ -72,17 +72,17 @@ export function CandidateDashboard() {
     const getStatusColor = (status: ApplicationStatus) => {
         switch (status) {
             case ApplicationStatus.hired:
-                return 'bg-green-500/10 text-green-700 dark:text-green-400';
+                return 'bg-primary/10 text-foreground';
             case ApplicationStatus.interview:
             case ApplicationStatus.shortlisted:
-                return 'bg-blue-500/10 text-blue-700 dark:text-blue-400';
+                return 'bg-secondary text-secondary-foreground';
             case ApplicationStatus.rejected:
             case ApplicationStatus.withdrawn:
-                return 'bg-red-500/10 text-red-700 dark:text-red-400';
+                return 'bg-destructive/10 text-destructive';
             case ApplicationStatus.viewed:
-                return 'bg-purple-500/10 text-purple-700 dark:text-purple-400';
+                return 'bg-accent text-accent-foreground';
             default:
-                return 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400';
+                return 'bg-muted text-muted-foreground';
         }
     };
 

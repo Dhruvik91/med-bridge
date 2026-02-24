@@ -7,14 +7,14 @@ interface ApplicationStatusBadgeProps {
 }
 
 const statusStyles: Record<ApplicationStatus, string> = {
-    [ApplicationStatus.applied]: 'bg-blue-100 text-blue-800 hover:bg-blue-200',
-    [ApplicationStatus.viewed]: 'bg-purple-100 text-purple-800 hover:bg-purple-200',
-    [ApplicationStatus.shortlisted]: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200',
-    [ApplicationStatus.interview]: 'bg-orange-100 text-orange-800 hover:bg-orange-200',
-    [ApplicationStatus.offer]: 'bg-green-100 text-green-800 hover:bg-green-200',
-    [ApplicationStatus.hired]: 'bg-green-600 text-white hover:bg-green-700',
-    [ApplicationStatus.rejected]: 'bg-red-100 text-red-800 hover:bg-red-200',
-    [ApplicationStatus.withdrawn]: 'bg-gray-100 text-gray-800 hover:bg-gray-200',
+    [ApplicationStatus.applied]: 'bg-primary/10 text-foreground hover:bg-primary/15',
+    [ApplicationStatus.viewed]: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+    [ApplicationStatus.shortlisted]: 'bg-accent text-accent-foreground hover:bg-accent/80',
+    [ApplicationStatus.interview]: 'bg-muted text-muted-foreground hover:bg-muted/80',
+    [ApplicationStatus.offer]: 'bg-primary/15 text-foreground hover:bg-primary/20',
+    [ApplicationStatus.hired]: 'bg-primary text-primary-foreground hover:bg-primary/90',
+    [ApplicationStatus.rejected]: 'bg-destructive/10 text-destructive hover:bg-destructive/15',
+    [ApplicationStatus.withdrawn]: 'bg-muted text-muted-foreground hover:bg-muted/80',
 };
 
 const statusLabels: Record<ApplicationStatus, string> = {

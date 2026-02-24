@@ -41,7 +41,7 @@ export function SavedJobCard({ savedJob }: SavedJobCardProps) {
                         </div>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 rounded-md px-2 py-1 w-fit">
-                        <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                        <span className="w-2 h-2 bg-primary/60 rounded-full"></span>
                         <span>Saved {new Date(savedJob.savedAt).toLocaleDateString()}</span>
                     </div>
                 </div>

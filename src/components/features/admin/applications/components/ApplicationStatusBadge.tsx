@@ -6,19 +6,19 @@ interface ApplicationStatusBadgeProps {
 }
 
 const STATUS_COLORS: Record<ApplicationStatus, string> = {
-  applied: 'bg-blue-100 text-blue-800',
-  viewed: 'bg-purple-100 text-purple-800',
-  shortlisted: 'bg-yellow-100 text-yellow-800',
-  interview: 'bg-orange-100 text-orange-800',
-  offer: 'bg-green-100 text-green-800',
-  hired: 'bg-teal-100 text-teal-800',
-  rejected: 'bg-red-100 text-red-800',
-  withdrawn: 'bg-gray-100 text-gray-800',
+  applied: 'bg-primary/10 text-foreground',
+  viewed: 'bg-secondary text-secondary-foreground',
+  shortlisted: 'bg-accent text-accent-foreground',
+  interview: 'bg-muted text-muted-foreground',
+  offer: 'bg-primary/15 text-foreground',
+  hired: 'bg-primary text-primary-foreground',
+  rejected: 'bg-destructive/10 text-destructive',
+  withdrawn: 'bg-muted text-muted-foreground',
 };
 
 export function ApplicationStatusBadge({ status }: ApplicationStatusBadgeProps) {
   return (
-    <Badge className={STATUS_COLORS[status] || 'bg-gray-100 text-gray-800'}>
+    <Badge className={STATUS_COLORS[status] || 'bg-muted text-muted-foreground'}>
       {status}
     </Badge>
   );

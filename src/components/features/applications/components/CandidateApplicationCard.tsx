@@ -71,17 +71,17 @@ export function CandidateApplicationCard({ application }: CandidateApplicationCa
         switch (status) {
             case ApplicationStatus.hired:
             case ApplicationStatus.offer:
-                return 'bg-green-500/10 text-green-700 dark:text-green-400 border-green-200';
+                return 'bg-primary/10 text-foreground border-border';
             case ApplicationStatus.interview:
             case ApplicationStatus.shortlisted:
-                return 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200';
+                return 'bg-secondary text-secondary-foreground border-border';
             case ApplicationStatus.rejected:
             case ApplicationStatus.withdrawn:
-                return 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-200';
+                return 'bg-destructive/10 text-destructive border-border';
             case ApplicationStatus.viewed:
-                return 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-200';
+                return 'bg-accent text-accent-foreground border-border';
             default:
-                return 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-200';
+                return 'bg-muted text-muted-foreground border-border';
         }
     };
 

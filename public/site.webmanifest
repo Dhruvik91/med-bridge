@@ -1,8 +1,8 @@
 {
     "name": "MedBridges",
     "short_name": "MedBridges",
-    "theme_color": "#0ea5e9",
-    "background_color": "#ffffff",
+    "theme_color": "hsl(195 79% 49%)",
+    "background_color": "white",
     "display": "standalone",
     "orientation": "portrait",
     "scope": "/",

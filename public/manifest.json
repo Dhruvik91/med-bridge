@@ -4,8 +4,8 @@
   "description": "Professional healthcare job marketplace connecting qualified doctors with hospitals and healthcare facilities.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0ea5e9",
+  "background_color": "white",
+  "theme_color": "hsl(195 79% 49%)",
   "orientation": "portrait-primary",
   "categories": [
     "medical",

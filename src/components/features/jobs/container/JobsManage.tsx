@@ -36,15 +36,15 @@ import { MobileJobFilterDrawer } from '../components/MobileJobFilterDrawer';
 const getStatusColor = (status: JobStatus) => {
     switch (status) {
         case JobStatus.published:
-            return 'bg-green-500/10 text-green-600 hover:bg-green-500/20';
+            return 'bg-primary/10 text-foreground hover:bg-primary/15';
         case JobStatus.draft:
-            return 'bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20';
+            return 'bg-accent text-accent-foreground hover:bg-accent/80';
         case JobStatus.closed:
-            return 'bg-red-500/10 text-red-600 hover:bg-red-500/20';
+            return 'bg-destructive/10 text-destructive hover:bg-destructive/15';
         case JobStatus.archived:
-            return 'bg-gray-500/10 text-gray-600 hover:bg-gray-500/20';
+            return 'bg-muted text-muted-foreground hover:bg-muted/80';
         default:
-            return 'bg-gray-500/10 text-gray-600 hover:bg-gray-500/20';
+            return 'bg-muted text-muted-foreground hover:bg-muted/80';
     }
 };
 

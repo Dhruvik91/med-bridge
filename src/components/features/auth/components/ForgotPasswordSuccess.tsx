@@ -6,8 +6,8 @@ export function ForgotPasswordSuccess() {
     return (
         <div className="space-y-4">
             <div className="flex flex-col items-center justify-center py-6 text-center">
-                <div className="rounded-full bg-green-100 p-3 mb-4">
-                    <CheckCircle className="h-8 w-8 text-green-600" />
+                <div className="rounded-full bg-primary/10 p-3 mb-4">
+                    <CheckCircle className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="font-semibold text-lg mb-2">Email Sent!</h3>
                 <p className="text-muted-foreground text-sm">

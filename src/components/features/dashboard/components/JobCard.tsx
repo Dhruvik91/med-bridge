@@ -35,18 +35,18 @@ export function JobCard({ job, applicationCount, newApplicationCount, getJobStat
                         </div>
                     )}
                     <div className="flex flex-wrap gap-4 text-sm">
-                        <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 px-3 py-1.5 rounded-full">
+                        <div className="flex items-center gap-2 bg-muted/30 text-foreground px-3 py-1.5 rounded-full">
                             <FileText className="h-4 w-4" aria-hidden="true" />
                             <span className="font-medium">{applicationCount}</span>
                             <span className="text-xs">apps</span>
                         </div>
-                        <div className="flex items-center gap-2 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-300 px-3 py-1.5 rounded-full">
+                        <div className="flex items-center gap-2 bg-muted/30 text-foreground px-3 py-1.5 rounded-full">
                             <Eye className="h-4 w-4" aria-hidden="true" />
                             <span className="font-medium">{job.viewCount || job.viewsCount || 0}</span>
                             <span className="text-xs">views</span>
                         </div>
                         {newApplicationCount > 0 && (
-                            <div className="flex items-center gap-2 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-300 px-3 py-1.5 rounded-full animate-pulse">
+                            <div className="flex items-center gap-2 bg-accent text-accent-foreground px-3 py-1.5 rounded-full animate-pulse">
                                 <TrendingUp className="h-4 w-4" aria-hidden="true" />
                                 <span className="font-medium">{newApplicationCount}</span>
                                 <span className="text-xs">new</span>

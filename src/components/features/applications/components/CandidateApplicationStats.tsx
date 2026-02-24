@@ -54,7 +54,7 @@ export function CandidateApplicationStats({ stats, className }: CandidateApplica
                     <CardTitle className="text-sm font-medium text-muted-foreground">Hired</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
-                    <div className="text-2xl font-bold text-green-600">{stats.hired}</div>
+                    <div className="text-2xl font-bold text-primary">{stats.hired}</div>
                 </CardContent>
             </Card>
             <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
@@ -62,7 +62,7 @@ export function CandidateApplicationStats({ stats, className }: CandidateApplica
                     <CardTitle className="text-sm font-medium text-muted-foreground">Rejected</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
-                    <div className="text-2xl font-bold text-red-600">{stats.rejected}</div>
+                    <div className="text-2xl font-bold text-destructive">{stats.rejected}</div>
                 </CardContent>
             </Card>
         </div>

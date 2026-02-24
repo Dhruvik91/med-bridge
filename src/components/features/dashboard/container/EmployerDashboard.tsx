@@ -21,13 +21,13 @@ import { NotAuthorizedUser } from '@/components/NotAuthorized';
 const getJobStatusColor = (status: JobStatus) => {
     switch (status) {
         case JobStatus.published:
-            return 'bg-green-500/10 text-green-700 dark:text-green-400';
+            return 'bg-primary/10 text-foreground';
         case JobStatus.draft:
-            return 'bg-gray-500/10 text-gray-700 dark:text-gray-400';
+            return 'bg-muted text-muted-foreground';
         case JobStatus.closed:
-            return 'bg-red-500/10 text-red-700 dark:text-red-400';
+            return 'bg-destructive/10 text-destructive';
         case JobStatus.archived:
-            return 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400';
+            return 'bg-accent text-accent-foreground';
         default:
             return '';
     }

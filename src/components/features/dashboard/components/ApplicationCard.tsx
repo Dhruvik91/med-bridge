@@ -47,7 +47,7 @@ export function ApplicationCard({ application, getStatusIcon, getStatusColor }: 
                         </Badge>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 rounded-md px-2 py-1 w-fit">
-                        <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                        <span className="w-2 h-2 bg-primary/60 rounded-full"></span>
                         <span>Applied {new Date(application.appliedAt).toLocaleDateString()}</span>
                     </div>
                 </div>

@@ -18,19 +18,19 @@ export const JobStats = ({ total, published, draft, closed }: JobStatsProps) => 
             </Card>
             <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                 <CardContent className="pt-6 pb-6">
-                    <div className="text-2xl md:text-3xl font-bold text-green-600">{published}</div>
+                    <div className="text-2xl md:text-3xl font-bold text-primary">{published}</div>
                     <p className="text-sm font-medium text-muted-foreground mt-1">Published</p>
                 </CardContent>
             </Card>
             <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                 <CardContent className="pt-6 pb-6">
-                    <div className="text-2xl md:text-3xl font-bold text-yellow-600">{draft}</div>
+                    <div className="text-2xl md:text-3xl font-bold text-foreground">{draft}</div>
                     <p className="text-sm font-medium text-muted-foreground mt-1">Drafts</p>
                 </CardContent>
             </Card>
             <Card className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                 <CardContent className="pt-6 pb-6">
-                    <div className="text-2xl md:text-3xl font-bold text-red-600">{closed}</div>
+                    <div className="text-2xl md:text-3xl font-bold text-destructive">{closed}</div>
                     <p className="text-sm font-medium text-muted-foreground mt-1">Closed</p>
                 </CardContent>
             </Card>

@@ -1,0 +1,497 @@
+🧠 MedBridges – AI IDE Engineering Governance
+
+This document defines mandatory engineering rules for all AI-generated and human-written code in the MedBridges frontend.
+
+No exceptions.
+Every pull request must comply.
+
+1️⃣ Core Engineering Principles
+1.1 Architectural Integrity
+
+The system MUST:
+
+Use Next.js 13+ App Router
+
+Default to Server Components
+
+Use Client Components only when required
+
+Follow domain-driven folder structure
+
+Use centralized services for API calls
+
+Maintain strict separation between:
+
+UI
+
+Hooks
+
+Services
+
+Types
+
+Constants
+
+2️⃣ Performance & Web Core Vitals (Target: 100 Score)
+🎯 Lighthouse Goals
+Metric	Target
+Performance	100
+Accessibility	100
+Best Practices	100
+SEO	100
+2.1 Core Web Vitals Requirements
+LCP (Largest Contentful Paint)
+
+Under 2.5 seconds
+
+Use:
+
+next/image
+
+Proper priority on hero images
+
+No blocking JS in head
+
+Avoid large hydration payloads
+
+CLS (Cumulative Layout Shift)
+
+Always define:
+
+Image width/height
+
+Aspect ratios
+
+No layout shift during loading
+
+Skeleton loaders must preserve layout height
+
+INP / Interaction Performance
+
+Avoid heavy client components
+
+Avoid excessive state in root components
+
+Memoize expensive components
+
+Use React Query for async caching
+
+3️⃣ Next.js Rules (App Router Strict Mode)
+3.1 Server Component First Policy
+
+Default to:
+
+export default function Page() {
+  return <div>Server Rendered</div>
+}
+
+Use 'use client' ONLY when:
+
+Using useState
+
+Using useEffect
+
+Using event handlers
+
+Using browser APIs
+
+Using React Query hooks
+
+3.2 Data Fetching Rules
+❌ Forbidden
+
+Fetching directly inside UI components
+
+Using axios inside components
+
+Repeating query keys
+
+Using response.data.data
+
+✅ Required
+
+All API calls go through:
+
+httpService
+
+services/*
+
+React Query must:
+
+Use stable query keys
+
+Use enabled when conditional
+
+Invalidate on mutation success
+
+4️⃣ Authentication & Security Rules
+4.1 Auth Rules
+
+Use httpOnly cookies
+
+Never use localStorage for tokens
+
+withCredentials: true must be enabled
+
+401 must redirect to login
+
+Role-based routing enforced in:
+
+middleware.ts
+
+4.2 Security Best Practices
+Mandatory:
+
+No secrets in frontend
+
+No sensitive logging
+
+Validate all forms with Zod
+
+Sanitize user content before rendering
+
+No dangerouslySetInnerHTML without sanitization
+
+Use CSP headers in production
+
+Enable:
+
+XSS protection
+
+Strict transport security (HTTPS)
+
+5️⃣ JavaScript / TypeScript Best Practices
+5.1 TypeScript Rules
+
+strict: true
+
+No any
+
+No implicit return types
+
+All DTOs in src/types
+
+No duplicate interface definitions
+
+5.2 Clean Code Rules
+
+No unused variables
+
+No console.log in production
+
+Use early returns
+
+Prefer pure functions
+
+Keep components under 300 lines
+
+Extract logic into hooks
+
+5.3 React Rules
+
+Avoid prop drilling → use context if deep
+
+Memoize heavy components
+
+Avoid anonymous functions inside JSX when avoidable
+
+Use stable keys in lists
+
+Never use array index as key (unless static)
+
+6️⃣ Styling & Design System Rules
+6.1 Tailwind Rules
+
+Use design tokens:
+
+bg-background
+
+text-foreground
+
+bg-primary
+
+Avoid hardcoded hex values
+
+Use cn() for class merging
+
+Avoid inline styles
+
+6.2 Fully Responsive System (Mandatory)
+
+Breakpoints must support:
+
+Device	Width
+Mobile	320px+
+Tablet	768px+
+Desktop	1024px+
+Large	1440px+
+Requirements:
+
+No horizontal scroll
+
+Grid must adapt
+
+Buttons touch-friendly (min 44px height)
+
+Navigation collapses properly
+
+Sidebar responsive
+
+Bottom navigation on mobile
+
+6.3 Frosted Glass Effect (Standardized)
+
+When using glass morphism:
+
+backdrop-blur-md
+bg-white/10
+border border-white/20
+shadow-xl
+
+Rules:
+
+Never overuse blur
+
+Ensure contrast ratio > WCAG AA
+
+Use glass only for:
+
+Cards
+
+Navbars
+
+Modals
+
+7️⃣ SEO & GEO Optimization Rules
+7.1 SEO (Must Score 100)
+Required:
+
+Use Metadata API
+
+Canonical URLs
+
+OpenGraph
+
+Twitter Cards
+
+Structured Data (JSON-LD)
+
+Semantic HTML
+
+Proper heading hierarchy (h1 → h6)
+
+Alt text on all images
+
+No duplicate titles
+
+7.2 GEO Optimization (Geographical SEO)
+
+For location-specific pages:
+
+Include:
+
+City name in title
+
+Region in description
+
+Schema.org LocalBusiness
+
+Use structured location data
+
+Add sitemap entries
+
+Optimize for:
+
+“Doctors in Ahmedabad”
+
+“Medical Jobs in Gujarat”
+
+Add hreflang if multilingual
+
+8️⃣ Accessibility (100 Score Required)
+
+WCAG AA minimum
+
+All inputs have labels
+
+Keyboard navigation works
+
+Focus visible
+
+Proper ARIA roles
+
+No color-only indicators
+
+Minimum contrast ratio 4.5:1
+
+9️⃣ PWA Requirements
+
+Must work offline
+
+Offline fallback route
+
+Install prompt UX
+
+Update prompt UX
+
+Cache:
+
+Static assets
+
+Fonts
+
+Images
+
+Avoid caching sensitive API data
+
+🔟 Animation Rules (Framer Motion)
+
+Subtle animations only
+
+Respect prefers-reduced-motion
+
+No layout shift animation
+
+Duration: 200–400ms
+
+Use hardware-accelerated transforms
+
+11️⃣ Forms & Validation
+
+All forms must use:
+
+react-hook-form
+
+zod
+
+Validation must:
+
+Run client-side
+
+Be revalidated server-side
+
+Errors must:
+
+Be human-readable
+
+Not expose backend internals
+
+12️⃣ Performance Anti-Patterns (Strictly Forbidden)
+
+❌ Massive client components
+❌ Global state misuse
+❌ Fetching same data multiple times
+❌ Blocking JS in layout
+❌ Rendering large JSON objects directly
+❌ Heavy animations on scroll without throttling
+❌ Using useEffect unnecessarily
+
+13️⃣ Code Review Checklist
+
+Before merging:
+
+ No any
+
+ No console logs
+
+ Lighthouse 100/100
+
+ Fully responsive tested
+
+ SEO metadata verified
+
+ No layout shift
+
+ All API calls centralized
+
+ Query invalidations correct
+
+ Types aligned with backend
+
+ Auth flows tested
+
+ Middleware logic verified
+
+ PWA offline tested
+
+14️⃣ Project Scaling Rules
+
+When adding new feature:
+
+Add API config entry
+
+Add service
+
+Add hook
+
+Add types
+
+Add route constant
+
+Add UI
+
+Add tests (if implemented)
+
+Verify Lighthouse
+
+Verify responsiveness
+
+15️⃣ Engineering Philosophy
+
+MedBridges frontend must be:
+
+🔐 Secure
+
+⚡ Fast
+
+📱 Fully responsive
+
+🌍 SEO & GEO optimized
+
+♿ Accessible
+
+🧠 Predictable
+
+🎨 Design-consistent
+
+📦 Maintainable
+
+🚀 Scalable
+
+🚨 Enforcement Policy
+
+Any AI-generated code that violates:
+
+Security rules
+
+Performance rules
+
+Type safety
+
+Architectural boundaries
+
+Must be rejected.
+
+✅ Definition of Done
+
+A feature is complete ONLY when:
+
+Web Core Vitals = 100
+
+SEO = 100
+
+Accessibility = 100
+
+No TypeScript errors
+
+No ESLint warnings
+
+Fully responsive
+
+No layout shift
+
+No auth regressions
+
+PWA verified
+
+Code matches architectural conventions
