@@ -106,7 +106,7 @@ export function MobileBottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border glass-enhanced md:hidden">
-      <div className="mx-auto flex max-w-md items-center justify-between px-4 py-2">
+      <div className="mx-auto flex max-w-md items-center justify-between px-4 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2">
         {items.map((item) => {
           const Icon = item.icon
           const active = pathname === item.href
@@ -115,9 +115,11 @@ export function MobileBottomNav() {
             <Link
               key={item.href}
               href={item.href}
+              aria-current={active ? "page" : undefined}
               className={cn(
-                "relative flex flex-1 flex-col items-center justify-center gap-1 rounded-full px-2 py-1 text-[0.70rem] font-medium transition-colors",
-                active ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                "relative flex flex-1 flex-col items-center justify-center gap-1 rounded-full px-2 py-2 min-h-[44px] text-[0.70rem] font-medium transition-colors",
+                "[-webkit-tap-highlight-color:transparent] active:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                active ? "text-primary" : "text-muted-foreground"
               )}
             >
               {active && (
@@ -127,7 +129,7 @@ export function MobileBottomNav() {
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
               )}
-              <Icon className={cn("relative z-10 h-5 w-5", active && "fill-primary/10")} />
+              <Icon className="relative z-10 h-5 w-5" />
               <span className="relative z-10">{item.label}</span>
             </Link>
           )
