@@ -86,6 +86,7 @@ export const FRONTEND_ROUTES = {
     CALLBACK: '/auth/callback',
     FORGOT_PASSWORD: '/auth/forgot-password',
     RESET_PASSWORD: '/auth/reset-password',
+    EMPLOYER: '/auth/employer/signup',
   },
   DASHBOARD: {
     BASE: '/dashboard',
