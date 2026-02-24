@@ -7,6 +7,8 @@ import { AuthProvider } from '@/providers/auth-provider'
 import { QueryProvider } from '@/providers/query-provider'
 import { AppShell } from '@/components/app-shell'
 import { GTMPageView } from '@/components/GTMPageView'
+import { PWAInstallPrompt } from '@/components/pwa-install-prompt'
+import { PWAUpdatePrompt } from '@/components/pwa-update-prompt'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -136,6 +138,8 @@ export default function RootLayout({
                 <GTMPageView />
                 {children}
               </AppShell>
+              <PWAInstallPrompt />
+              <PWAUpdatePrompt />
             </ThemeProvider>
           </AuthProvider>
         </QueryProvider>
