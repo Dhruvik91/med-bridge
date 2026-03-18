@@ -162,55 +162,64 @@ export function ProfessionalDetailsStep({ register, errors, watch, specialties, 
 
                     <div className="space-y-1">
                         <span className="text-xs text-muted-foreground">Other social links</span>
-                        <div className="flex gap-2">
+                        <div className="flex flex-col sm:flex-row gap-2">
                             <Input
                                 placeholder="Label (e.g. Portfolio)"
                                 id="socialLabelTemp"
                                 value={newLinkLabel}
                                 onChange={(e) => setNewLinkLabel(e.target.value)}
+                                className="flex-1"
                             />
-                            <Input
-                                placeholder="https://..."
-                                id="socialUrlTemp"
-                                value={newLinkUrl}
-                                onChange={(e) => setNewLinkUrl(e.target.value)}
-                            />
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="icon"
-                                onClick={() => {
-                                    const label = newLinkLabel.trim();
-                                    const url = newLinkUrl.trim();
-                                    if (!label || !url) return;
-                                    const next = { ...socialLinks };
-                                    next[label] = url;
-                                    onSocialLinksChange(next);
-                                    setNewLinkLabel('');
-                                    setNewLinkUrl('');
-                                }}
-                            >
-                                <Plus className="h-4 w-4" />
-                            </Button>
+                            <div className="flex gap-2 flex-1">
+                                <Input
+                                    placeholder="https://..."
+                                    id="socialUrlTemp"
+                                    value={newLinkUrl}
+                                    onChange={(e) => setNewLinkUrl(e.target.value)}
+                                    className="flex-1"
+                                />
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-10 w-10 shrink-0"
+                                    onClick={() => {
+                                        const label = newLinkLabel.trim();
+                                        const url = newLinkUrl.trim();
+                                        if (!label || !url) return;
+                                        const next = { ...socialLinks };
+                                        next[label] = url;
+                                        onSocialLinksChange(next);
+                                        setNewLinkLabel('');
+                                        setNewLinkUrl('');
+                                    }}
+                                    aria-label="Add social link"
+                                >
+                                    <Plus className="h-5 w-5" />
+                                </Button>
+                            </div>
                         </div>
                     </div>
 
                     {Object.keys(socialLinks).length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">
                             {Object.entries(socialLinks).map(([key, value]) => (
-                                <Badge key={key} variant="secondary" className="text-xs flex items-center gap-1">
+                                <Badge key={key} variant="secondary" className="pl-3 pr-1 py-1 text-xs flex items-center gap-1">
                                     <span>{key}</span>
-                                    <button
+                                    <Button
                                         type="button"
-                                        className="ml-1 hover:text-destructive"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-7 w-7 rounded-full hover:text-destructive p-0 ml-1"
                                         onClick={() => {
                                             const next = { ...socialLinks };
                                             delete next[key];
                                             onSocialLinksChange(next);
                                         }}
+                                        aria-label={`Remove ${key} link`}
                                     >
-                                        <X className="h-3 w-3" />
-                                    </button>
+                                        <X className="h-3.5 w-3.5" />
+                                    </Button>
                                 </Badge>
                             ))}
                         </div>
@@ -230,16 +239,18 @@ export function ProfessionalDetailsStep({ register, errors, watch, specialties, 
                 {selectedSpecialties.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-2">
                         {selectedSpecialties.map((spec) => (
-                            <Badge key={spec.id} variant="secondary" className="text-sm">
+                            <Badge key={spec.id} variant="secondary" className="pl-3 pr-1 py-1 text-sm">
                                 {spec.name}
-                                <button
+                                <Button
                                     type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 rounded-full hover:text-destructive p-0 ml-1"
                                     onClick={() => onRemoveSpecialty(spec.id)}
-                                    className="ml-2 hover:text-destructive"
                                     aria-label={`Remove ${spec.name}`}
                                 >
-                                    <X className="h-3 w-3" />
-                                </button>
+                                    <X className="h-4 w-4" />
+                                </Button>
                             </Badge>
                         ))}
                     </div>

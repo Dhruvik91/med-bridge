@@ -110,7 +110,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebSite",
               "name": "MedBridges",
-              "alternateName": ["Med Bridges", "MedBridge"],
+              "alternateName": ["Med Bridges", "MedBridges"],
               "url": "https://medbridges.xyz"
             })
           }}

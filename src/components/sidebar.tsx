@@ -190,7 +190,7 @@ export function Sidebar({ className, ...props }: SidebarProps) {
     return (
         <div className={cn("flex flex-col h-full bg-background border-r border-border glass-enhanced", className)} {...props}>
             <div className="">
-                <Link href={dashboardRoute} className="flex items-center justify-center">
+                <Link href={dashboardRoute} className="flex items-center justify-center" aria-label="Go to Dashboard">
                     <div className="relative h-24">
                         <CompanyLogo />
                     </div>
@@ -230,7 +230,7 @@ export function Sidebar({ className, ...props }: SidebarProps) {
             <div className="p-4 border-t border-border">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="w-full justify-start px-2 hover:bg-accent h-auto py-2 tap-scale">
+                        <Button variant="ghost" className="w-full justify-start px-2 hover:bg-accent h-auto py-3 tap-scale" aria-label="Open user menu">
                             <div className="flex items-center space-x-3 w-full">
                                 {isProfileLoading ? (
                                     <>
@@ -242,9 +242,9 @@ export function Sidebar({ className, ...props }: SidebarProps) {
                                     </>
                                 ) : (
                                     <>
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarImage src={avatarUrl || (profile?.metadata as any)?.avatarUrl} />
-                                            <AvatarFallback>
+                                        <Avatar className="h-9 w-9">
+                                            <AvatarImage src={avatarUrl || (profile?.metadata as any)?.avatarUrl} alt={displayName || 'User'} />
+                                            <AvatarFallback aria-label="User avatar fallback">
                                                 {(displayName || (profile?.metadata as any)?.name || user.email || '')
                                                     .charAt(0)
                                                     .toUpperCase()}

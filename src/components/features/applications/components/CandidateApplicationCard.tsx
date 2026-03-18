@@ -124,8 +124,8 @@ export function CandidateApplicationCard({ application }: CandidateApplicationCa
                     {canWithdraw && (
                         <AlertDialog>
                             <AlertDialogTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-destructive hover:bg-destructive/10 shrink-0" disabled={isWithdrawing}>
-                                    {isWithdrawing ? <Loader2 className="h-4 w-4 animate-spin" /> : <XCircle className="h-4 w-4" />}
+                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full text-destructive hover:bg-destructive/10 shrink-0" disabled={isWithdrawing} aria-label="Withdraw application">
+                                    {isWithdrawing ? <Loader2 className="h-5 w-5 animate-spin" /> : <XCircle className="h-5 w-5" />}
                                 </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent className="max-w-[92vw] sm:max-w-[425px] rounded-2xl border-none shadow-2xl">
@@ -175,7 +175,7 @@ export function CandidateApplicationCard({ application }: CandidateApplicationCa
             </CardContent>
 
             <CardFooter className="px-4 pb-4 pt-3 border-t border-border/40 bg-muted/10">
-                <Button asChild size="sm" variant="default" className="w-full rounded-xl gap-2 shadow-sm">
+                <Button asChild variant="default" className="w-full h-11 rounded-xl gap-2 shadow-sm tap-scale">
                     <Link href={`/jobs/${application.jobId}`}>
                         <span>View Job Details</span>
                         <ArrowRight className="h-4 w-4" />

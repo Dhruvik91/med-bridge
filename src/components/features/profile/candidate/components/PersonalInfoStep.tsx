@@ -100,7 +100,7 @@ export function PersonalInfoStep({ register, errors, setValue, watch }: Personal
                             setValue('dateOfBirth', iso, { shouldValidate: true });
                         }}
                     >
-                        <SelectTrigger>
+                        <SelectTrigger className="h-11">
                             <SelectValue placeholder="Month" />
                         </SelectTrigger>
                         <SelectContent>
@@ -125,7 +125,7 @@ export function PersonalInfoStep({ register, errors, setValue, watch }: Personal
                             setValue('dateOfBirth', iso, { shouldValidate: true });
                         }}
                     >
-                        <SelectTrigger>
+                        <SelectTrigger className="h-11">
                             <SelectValue placeholder="Year" />
                         </SelectTrigger>
                         <SelectContent>
@@ -150,7 +150,7 @@ export function PersonalInfoStep({ register, errors, setValue, watch }: Personal
                             setValue('dateOfBirth', iso, { shouldValidate: true });
                         }}
                     >
-                        <SelectTrigger>
+                        <SelectTrigger className="h-11">
                             <SelectValue placeholder="Day" />
                         </SelectTrigger>
                         <SelectContent>
@@ -170,7 +170,7 @@ export function PersonalInfoStep({ register, errors, setValue, watch }: Personal
                 <Select
                     onValueChange={(value) => setValue('gender', value as Gender)}
                 >
-                    <SelectTrigger id="gender">
+                    <SelectTrigger id="gender" className="h-11">
                         <SelectValue placeholder="Select gender" />
                     </SelectTrigger>
                     <SelectContent>

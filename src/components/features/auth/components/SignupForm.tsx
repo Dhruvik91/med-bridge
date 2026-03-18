@@ -69,10 +69,12 @@ export function SignupForm({ form, onSubmit, isLoading }: SignupFormProps) {
                         aria-invalid={!!errors.password}
                         aria-describedby={errors.password ? 'password-error' : undefined}
                     />
-                    <button
+                    <Button
                         type="button"
+                        variant="ghost"
+                        size="icon"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+                        className="absolute right-0 top-0 h-full w-10 text-muted-foreground hover:text-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
                         aria-label={showPassword ? "Hide password" : "Show password"}
                     >
                         {showPassword ? (
@@ -80,7 +82,7 @@ export function SignupForm({ form, onSubmit, isLoading }: SignupFormProps) {
                         ) : (
                             <Eye className="h-4 w-4" aria-hidden="true" />
                         )}
-                    </button>
+                    </Button>
                 </div>
                 {errors.password && (
                     <p id="password-error" className="text-sm text-destructive" role="alert">
@@ -102,10 +104,12 @@ export function SignupForm({ form, onSubmit, isLoading }: SignupFormProps) {
                         aria-invalid={!!errors.confirmPassword}
                         aria-describedby={errors.confirmPassword ? 'confirm-password-error' : undefined}
                     />
-                    <button
+                    <Button
                         type="button"
+                        variant="ghost"
+                        size="icon"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+                        className="absolute right-0 top-0 h-full w-10 text-muted-foreground hover:text-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
                         aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                     >
                         {showConfirmPassword ? (
@@ -113,7 +117,7 @@ export function SignupForm({ form, onSubmit, isLoading }: SignupFormProps) {
                         ) : (
                             <Eye className="h-4 w-4" aria-hidden="true" />
                         )}
-                    </button>
+                    </Button>
                 </div>
                 {errors.confirmPassword && (
                     <p id="confirm-password-error" className="text-sm text-destructive" role="alert">

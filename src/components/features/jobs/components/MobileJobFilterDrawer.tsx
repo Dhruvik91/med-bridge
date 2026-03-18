@@ -41,12 +41,12 @@ export const MobileJobFilterDrawer = ({
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-                <Button size="sm" className="relative">
-                    <SlidersHorizontal className="h-4 w-4" />
+                <Button size="sm" className="relative h-10 w-10 p-0" aria-label="Open filter drawer">
+                    <SlidersHorizontal className="h-5 w-5" />
                     {activeFilterCount > 0 && (
                         <Badge
                             variant="default"
-                            className="ml-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                            className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-[10px]"
                         >
                             {activeFilterCount}
                         </Badge>
@@ -99,7 +99,8 @@ export const MobileJobFilterDrawer = ({
                     <div className="flex gap-3 pt-4">
                         <Button
                             onClick={handleApplyFilters}
-                            className="flex-1"
+                            className="flex-1 h-11"
+                            aria-label="Apply current filters"
                         >
                             Apply Filters
                         </Button>
@@ -110,7 +111,8 @@ export const MobileJobFilterDrawer = ({
                                     onClearFilters();
                                     setOpen(false);
                                 }}
-                                className="flex-1"
+                                className="flex-1 h-11"
+                                aria-label="Clear all filters"
                             >
                                 Clear All
                             </Button>

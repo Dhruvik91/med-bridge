@@ -1,4 +1,11 @@
+import { Metadata } from 'next';
 import { DoctorProfileEdit } from '@/components/features/profile/candidate/container/DoctorProfileEdit';
+
+export const metadata: Metadata = {
+  title: 'Edit Doctor Profile | Med-Bridge',
+  description: 'Update your professional details and preferences.',
+};
+
 import { BackButton } from '@/components/ui/back-button';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 

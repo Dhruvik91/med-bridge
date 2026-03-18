@@ -248,18 +248,20 @@ export function DoctorProfileComplete() {
                             variant="outline"
                             onClick={prevStep}
                             disabled={currentStep === 0}
+                            className="h-11 px-6 tap-scale"
                         >
                             Previous
                         </Button>
 
                         {currentStep < steps.length - 1 ? (
-                            <Button type="button" onClick={nextStep}>
+                            <Button type="button" onClick={nextStep} className="h-11 px-8 tap-scale">
                                 Next
                             </Button>
                         ) : (
                             <Button
                                 type="submit"
                                 disabled={createProfileMutation.isPending}
+                                className="h-11 px-8 tap-scale"
                             >
                                 {createProfileMutation.isPending ? (
                                     <>

@@ -142,8 +142,8 @@ export function ApplicationCard({ application, job, candidate, onStatusChange }:
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-muted shrink-0">
-                                <MoreVertical className="h-4 w-4" />
+                            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:bg-muted shrink-0" aria-label="Application actions">
+                                <MoreVertical className="h-5 w-5" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-56 rounded-xl p-1.5 shadow-xl border-border/50">
@@ -280,7 +280,7 @@ export function ApplicationCard({ application, job, candidate, onStatusChange }:
                         value={application.status}
                         onValueChange={(value) => onStatusChange(application.id, value as ApplicationStatus)}
                     >
-                        <SelectTrigger className="w-full h-10 bg-background border-border/60 hover:border-primary/50 transition-all rounded-xl shadow-sm">
+                        <SelectTrigger className="w-full h-11 bg-background border-border/60 hover:border-primary/50 transition-all rounded-xl shadow-sm" aria-label="Update application status">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="rounded-xl border-border/50 shadow-xl p-1">

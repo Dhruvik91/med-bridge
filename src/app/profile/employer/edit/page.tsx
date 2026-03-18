@@ -1,4 +1,11 @@
+import { Metadata } from 'next';
 import { EmployerProfileEdit } from '@/components/features/profile/employer/container/EmployerProfileEdit';
+
+export const metadata: Metadata = {
+  title: 'Edit Employer Profile | Med-Bridge',
+  description: 'Update your organization details and contact information.',
+};
+
 import { BackButton } from '@/components/ui/back-button';
 import { FRONTEND_ROUTES } from '@/constants/constants';
 

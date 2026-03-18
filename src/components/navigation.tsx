@@ -50,7 +50,7 @@ export function Navigation() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href={logoHref}>
+          <Link href={logoHref} aria-label="MedBridges Home">
             <div className="relative h-24 w-40">
               <CompanyLogo />
             </div>
@@ -59,8 +59,8 @@ export function Navigation() {
           {/* Mobile Sign Up Button (Only on Home Page when not logged in) */}
           {!user && pathname === '/' && (
             <div className="md:hidden flex items-center">
-              <Link href={FRONTEND_ROUTES.AUTH.SIGNUP}>
-                <Button size="sm" className="h-8 tap-scale">Sign Up</Button>
+              <Link href={FRONTEND_ROUTES.AUTH.SIGNUP} aria-label="Sign Up">
+                <Button size="sm" className="h-10 px-4 tap-scale">Sign Up</Button>
               </Link>
             </div>
           )}
@@ -167,10 +167,10 @@ export function Navigation() {
                   {/* User Menu */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="relative h-8 w-8 rounded-full tap-scale">
-                        <Avatar className="h-8 w-8">
+                      <Button variant="ghost" className="relative h-11 w-11 rounded-full tap-scale" aria-label="Open User Menu">
+                        <Avatar className="h-9 w-9">
                           <AvatarImage src={(profile?.metadata as any)?.avatarUrl as string | undefined} alt={(profile?.metadata as any)?.name || user.email || ''} />
-                          <AvatarFallback>
+                          <AvatarFallback aria-label="User profile picture fallback">
                             {(profile?.metadata as any)?.name?.charAt(0) || user.email?.charAt(0) || 'U'}
                           </AvatarFallback>
                         </Avatar>

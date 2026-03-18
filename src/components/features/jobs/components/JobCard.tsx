@@ -64,8 +64,8 @@ export const JobCard = ({
                         </div>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
-                                    <MoreVertical className="h-4 w-4" />
+                                <Button variant="ghost" size="icon" className="h-10 w-10 shrink-0" aria-label="Job actions menu">
+                                    <MoreVertical className="h-5 w-5" />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
@@ -203,12 +203,12 @@ export const JobCard = ({
                     </div>
                 </div>
 
-                <div className="flex gap-2 pt-4">
-                    <Button asChild className="flex-1 md:flex-none">
+                <div className="flex flex-wrap gap-2 pt-4">
+                    <Button asChild className="flex-1 md:flex-none h-11">
                         <Link href={`${FRONTEND_ROUTES.JOBS.BASE}/${job.id}`}>View Details</Link>
                     </Button>
                     {userRole === UserRole.candidate && (
-                        <Button asChild variant="outline" className="flex-1 md:flex-none">
+                        <Button asChild variant="outline" className="flex-1 md:flex-none h-11">
                             <Link href={`${FRONTEND_ROUTES.JOBS.BASE}/${job.id}#apply`}>Quick Apply</Link>
                         </Button>
                     )}

@@ -1,6 +1,13 @@
+import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
 import { ResetPasswordContainer } from '@/components/features/auth/container/ResetPasswordContainer';
+
+export const metadata: Metadata = {
+  title: 'Reset Password | Med-Bridge',
+  description: 'Create a new password for your Med-Bridge account.',
+};
+
 
 export default function ResetPasswordPage() {
   return (
