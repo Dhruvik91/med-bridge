@@ -130,8 +130,8 @@ export default function RootLayout({
           <AuthProvider>
             <ThemeProvider
               attribute="class"
-              defaultTheme="dark"
-              enableSystem
+              defaultTheme="system"
+              enableSystem={true}
               disableTransitionOnChange={false}
             >
               <AppShell>

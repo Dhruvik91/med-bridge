@@ -15,7 +15,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Briefcase, Plus, CheckCircle, FileText, XCircle, Archive, Eye } from 'lucide-react';
+import { Briefcase, Plus, CheckCircle, FileText, XCircle, Archive, Eye, Trash2 } from 'lucide-react';
 import { useGetMe } from '@/hooks/get/useGetMe';
 import { useGetEmployerProfile } from '@/hooks/get/useGetEmployerProfile';
 import { useInfiniteJobsByEmployer } from '@/hooks/get/useInfiniteJobsByEmployer';
@@ -293,23 +293,32 @@ export const JobsManage = () => {
 
                     {/* Delete Confirmation Dialog */}
                     <AlertDialog open={!!jobToDelete} onOpenChange={() => setJobToDelete(null)}>
-                        <AlertDialogContent className="max-w-md">
-                            <AlertDialogHeader className="space-y-3">
-                                <AlertDialogTitle className="text-lg font-semibold">Delete Job Posting?</AlertDialogTitle>
-                                <AlertDialogDescription className="text-sm leading-relaxed">
-                                    This action cannot be undone. This will permanently delete the job posting and all
-                                    associated data including applications and analytics.
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter className="gap-2 sm:gap-3">
-                                <AlertDialogCancel className="font-medium">Cancel</AlertDialogCancel>
+                        <AlertDialogContent className="max-w-[400px] p-0 overflow-hidden border-none shadow-2xl">
+                            <div className="p-6 pt-8 flex flex-col items-center text-center">
+                                <div className="h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
+                                    <Trash2 className="h-6 w-6 text-destructive" />
+                                </div>
+                                <AlertDialogHeader className="space-y-2">
+                                    <AlertDialogTitle className="text-xl font-bold tracking-tight">
+                                        Delete Job Posting?
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription className="text-sm text-muted-foreground leading-relaxed px-2">
+                                        This action cannot be undone. This will permanently delete the job posting and all
+                                        associated data.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                            </div>
+                            <div className="p-4 bg-muted/30 border-t border-border flex flex-col gap-2">
                                 <AlertDialogAction
                                     onClick={() => jobToDelete && handleDeleteJob(jobToDelete)}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-medium"
+                                    className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 h-11 font-semibold tap-scale"
                                 >
                                     Delete Job
                                 </AlertDialogAction>
-                            </AlertDialogFooter>
+                                <AlertDialogCancel className="w-full h-11 font-medium bg-background border-border/50 hover:bg-accent tap-scale outline-none ring-0 focus:ring-0">
+                                    Cancel
+                                </AlertDialogCancel>
+                            </div>
                         </AlertDialogContent>
                     </AlertDialog>
                 </div>

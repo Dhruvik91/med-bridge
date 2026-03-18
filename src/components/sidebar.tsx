@@ -227,61 +227,63 @@ export function Sidebar({ className, ...props }: SidebarProps) {
                 })}
             </div>
 
-            <div className="p-4 border-t border-border">
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="w-full justify-start px-2 hover:bg-accent h-auto py-3 tap-scale" aria-label="Open user menu">
-                            <div className="flex items-center space-x-3 w-full">
-                                {isProfileLoading ? (
-                                    <>
-                                        <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
-                                        <div className="flex flex-col items-start text-left overflow-hidden flex-1 space-y-1">
-                                            <div className="h-4 w-24 bg-muted rounded animate-pulse" />
-                                            <div className="h-3 w-32 bg-muted rounded animate-pulse" />
-                                        </div>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Avatar className="h-9 w-9">
-                                            <AvatarImage src={avatarUrl || (profile?.metadata as any)?.avatarUrl} alt={displayName || 'User'} />
-                                            <AvatarFallback aria-label="User avatar fallback">
-                                                {(displayName || (profile?.metadata as any)?.name || user.email || '')
-                                                    .charAt(0)
-                                                    .toUpperCase()}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex flex-col items-start text-left overflow-hidden flex-1">
-                                            <span className="text-sm font-medium truncate w-full">
-                                                {displayName || (profile?.metadata as any)?.name || 'User'}
-                                            </span>
-                                            <span className="text-xs text-muted-foreground truncate w-full">{user.email}</span>
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56" align="end" forceMount>
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                            <Link href={FRONTEND_ROUTES.PROFILE.BASE} className="cursor-pointer">
-                                <User className="mr-2 h-4 w-4" />
-                                <span>Profile</span>
-                            </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                            <a href={`mailto:${COMPANY_EMAIL}`} className="cursor-pointer w-full">
-                                <Mail className="mr-2 h-4 w-4" />
-                                <span>Feedback</span>
-                            </a>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={handleSignOutClick} className="cursor-pointer text-destructive focus:text-destructive">
-                            <LogOut className="mr-2 h-4 w-4" />
-                            <span>Sign out</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+            <div className="p-4 border-t border-border flex items-center gap-2">
+                <div className="flex-1 min-w-0">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="w-full justify-start px-2 hover:bg-accent h-auto py-3 tap-scale" aria-label="Open user menu">
+                                <div className="flex items-center space-x-3 w-full">
+                                    {isProfileLoading ? (
+                                        <>
+                                            <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
+                                            <div className="flex flex-col items-start text-left overflow-hidden flex-1 space-y-1">
+                                                <div className="h-4 w-24 bg-muted rounded animate-pulse" />
+                                                <div className="h-3 w-32 bg-muted rounded animate-pulse" />
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Avatar className="h-9 w-9">
+                                                <AvatarImage src={avatarUrl || (profile?.metadata as any)?.avatarUrl} alt={displayName || 'User'} />
+                                                <AvatarFallback aria-label="User avatar fallback">
+                                                    {(displayName || (profile?.metadata as any)?.name || user.email || '')
+                                                        .charAt(0)
+                                                        .toUpperCase()}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <div className="flex flex-col items-start text-left overflow-hidden flex-1">
+                                                <span className="text-sm font-medium truncate w-full">
+                                                    {displayName || (profile?.metadata as any)?.name || 'User'}
+                                                </span>
+                                                <span className="text-xs text-muted-foreground truncate w-full">{user.email}</span>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-56" align="end" forceMount>
+                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem asChild>
+                                <Link href={FRONTEND_ROUTES.PROFILE.BASE} className="cursor-pointer">
+                                    <User className="mr-2 h-4 w-4" />
+                                    <span>Profile</span>
+                                </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <a href={`mailto:${COMPANY_EMAIL}`} className="cursor-pointer w-full">
+                                    <Mail className="mr-2 h-4 w-4" />
+                                    <span>Feedback</span>
+                                </a>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={handleSignOutClick} className="cursor-pointer text-destructive focus:text-destructive">
+                                <LogOut className="mr-2 h-4 w-4" />
+                                <span>Sign out</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </div>
 
             <SignOutConfirmationModal
@@ -289,6 +291,6 @@ export function Sidebar({ className, ...props }: SidebarProps) {
                 onClose={() => setIsSignOutModalOpen(false)}
                 onConfirm={handleConfirmSignOut}
             />
-        </div>
+        </div >
     )
 }

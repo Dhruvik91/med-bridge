@@ -128,19 +128,31 @@ export function CandidateApplicationCard({ application }: CandidateApplicationCa
                                     {isWithdrawing ? <Loader2 className="h-5 w-5 animate-spin" /> : <XCircle className="h-5 w-5" />}
                                 </Button>
                             </AlertDialogTrigger>
-                            <AlertDialogContent className="max-w-[92vw] sm:max-w-[425px] rounded-2xl border-none shadow-2xl">
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle className="text-xl font-bold text-destructive">Withdraw Application?</AlertDialogTitle>
-                                    <AlertDialogDescription className="text-muted-foreground">
-                                        This action cannot be undone. You will need to re-apply if you change your mind later.
-                                    </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter className="mt-6 gap-2">
-                                    <AlertDialogCancel className="rounded-xl border-muted-foreground/20">Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={handleWithdraw} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl">
-                                        Withdraw
+                            <AlertDialogContent className="max-w-[400px] p-0 overflow-hidden border-none shadow-2xl">
+                                <div className="p-6 pt-8 flex flex-col items-center text-center">
+                                    <div className="h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
+                                        <XCircle className="h-6 w-6 text-destructive" />
+                                    </div>
+                                    <AlertDialogHeader className="space-y-2">
+                                        <AlertDialogTitle className="text-xl font-bold tracking-tight">
+                                            Withdraw Application?
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription className="text-sm text-muted-foreground leading-relaxed px-2">
+                                            This action cannot be undone. You will need to re-apply if you change your mind later.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                </div>
+                                <div className="p-4 bg-muted/30 border-t border-border flex flex-col gap-2">
+                                    <AlertDialogAction
+                                        onClick={handleWithdraw}
+                                        className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 h-11 font-semibold tap-scale"
+                                    >
+                                        Withdraw Application
                                     </AlertDialogAction>
-                                </AlertDialogFooter>
+                                    <AlertDialogCancel className="w-full h-11 font-medium bg-background border-border/50 hover:bg-accent tap-scale outline-none ring-0 focus:ring-0">
+                                        Cancel
+                                    </AlertDialogCancel>
+                                </div>
                             </AlertDialogContent>
                         </AlertDialog>
                     )}

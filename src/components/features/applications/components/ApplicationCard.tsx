@@ -186,17 +186,31 @@ export function ApplicationCard({ application, job, candidate, onStatusChange }:
                                         <span>{application.isArchived ? 'Archived' : 'Archive Application'}</span>
                                     </DropdownMenuItem>
                                 </AlertDialogTrigger>
-                                <AlertDialogContent className="max-w-[92vw] sm:max-w-[425px] rounded-2xl border-none shadow-2xl">
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle className="text-xl font-bold">Archive Application?</AlertDialogTitle>
-                                        <AlertDialogDescription className="text-muted-foreground">
-                                            This will move the application to the archive. You can still view it later.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter className="mt-6 gap-2">
-                                        <AlertDialogCancel className="rounded-xl border-muted-foreground/20">Cancel</AlertDialogCancel>
-                                        <AlertDialogAction onClick={handleArchive} className="rounded-xl">Archive</AlertDialogAction>
-                                    </AlertDialogFooter>
+                                <AlertDialogContent className="max-w-[400px] p-0 overflow-hidden border-none shadow-2xl">
+                                    <div className="p-6 pt-8 flex flex-col items-center text-center">
+                                        <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                                            <Archive className="h-6 w-6 text-primary" />
+                                        </div>
+                                        <AlertDialogHeader className="space-y-2">
+                                            <AlertDialogTitle className="text-xl font-bold tracking-tight">
+                                                Archive Application?
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription className="text-sm text-muted-foreground leading-relaxed px-2">
+                                                This will move the application to the archive. You can still view it later.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                    </div>
+                                    <div className="p-4 bg-muted/30 border-t border-border flex flex-col gap-2">
+                                        <AlertDialogAction
+                                            onClick={handleArchive}
+                                            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 h-11 font-semibold tap-scale"
+                                        >
+                                            Archive Application
+                                        </AlertDialogAction>
+                                        <AlertDialogCancel className="w-full h-11 font-medium bg-background border-border/50 hover:bg-accent tap-scale outline-none ring-0 focus:ring-0">
+                                            Cancel
+                                        </AlertDialogCancel>
+                                    </div>
                                 </AlertDialogContent>
                             </AlertDialog>
 
@@ -211,22 +225,31 @@ export function ApplicationCard({ application, job, candidate, onStatusChange }:
                                         <span>Delete Application</span>
                                     </DropdownMenuItem>
                                 </AlertDialogTrigger>
-                                <AlertDialogContent className="max-w-[92vw] sm:max-w-[425px] rounded-2xl border-none shadow-2xl">
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle className="text-xl font-bold text-destructive">Delete Application?</AlertDialogTitle>
-                                        <AlertDialogDescription className="text-muted-foreground">
-                                            This action is permanent and cannot be undone. All associated data will be lost.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter className="mt-6 gap-2">
-                                        <AlertDialogCancel className="rounded-xl border-muted-foreground/20">Cancel</AlertDialogCancel>
+                                <AlertDialogContent className="max-w-[400px] p-0 overflow-hidden border-none shadow-2xl">
+                                    <div className="p-6 pt-8 flex flex-col items-center text-center">
+                                        <div className="h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
+                                            <Trash2 className="h-6 w-6 text-destructive" />
+                                        </div>
+                                        <AlertDialogHeader className="space-y-2">
+                                            <AlertDialogTitle className="text-xl font-bold tracking-tight">
+                                                Delete Application?
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription className="text-sm text-muted-foreground leading-relaxed px-2">
+                                                This action is permanent and cannot be undone. All associated data will be lost.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                    </div>
+                                    <div className="p-4 bg-muted/30 border-t border-border flex flex-col gap-2">
                                         <AlertDialogAction
                                             onClick={handleDelete}
-                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
+                                            className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 h-11 font-semibold tap-scale"
                                         >
                                             Delete Permanently
                                         </AlertDialogAction>
-                                    </AlertDialogFooter>
+                                        <AlertDialogCancel className="w-full h-11 font-medium bg-background border-border/50 hover:bg-accent tap-scale outline-none ring-0 focus:ring-0">
+                                            Cancel
+                                        </AlertDialogCancel>
+                                    </div>
                                 </AlertDialogContent>
                             </AlertDialog>
                         </DropdownMenuContent>

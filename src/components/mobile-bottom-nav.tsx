@@ -37,12 +37,7 @@ const getCandidateNavItems = (): NavItem[] => [
     href: FRONTEND_ROUTES.SAVED_JOBS,
     label: "Saved",
     icon: BookmarkCheck,
-  },
-  {
-    href: FRONTEND_ROUTES.PROFILE.BASE,
-    label: "Profile",
-    icon: User,
-  },
+  }
 ]
 
 const getEmployerNavItems = (): NavItem[] => [
@@ -65,12 +60,7 @@ const getEmployerNavItems = (): NavItem[] => [
     href: FRONTEND_ROUTES.JOBS.MANAGE,
     label: "Manage",
     icon: Briefcase,
-  },
-  {
-    href: FRONTEND_ROUTES.PROFILE.BASE,
-    label: "Profile",
-    icon: Building2,
-  },
+  }
 ]
 
 export function MobileBottomNav() {

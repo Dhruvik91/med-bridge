@@ -27,7 +27,7 @@ const APP_ROUTES_PREFIXES = [
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname()
   const { user, loading } = useAuth()
-  const { theme } = useTheme()
+  const { resolvedTheme } = useTheme()
 
   const isAppRoute = APP_ROUTES_PREFIXES.some((prefix) => pathname?.startsWith(prefix))
 
@@ -62,7 +62,7 @@ export function AppShell({ children }: AppShellProps) {
             pauseOnFocusLoss
             draggable
             pauseOnHover
-            theme={theme === 'dark' ? 'dark' : 'light'}
+            theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
           />
         </div>
         <MobileBottomNav />
@@ -98,7 +98,7 @@ export function AppShell({ children }: AppShellProps) {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme={theme === 'dark' ? 'dark' : 'light'}
+        theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
       />
       <div className="p-8 border-t border-border text-center text-sm text-muted-foreground">
         <p>&copy; {new Date().getFullYear()} MedBridges. All rights reserved. Healthcare Job Marketplace.</p>
