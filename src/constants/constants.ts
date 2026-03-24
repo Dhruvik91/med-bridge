@@ -64,6 +64,61 @@ export const API_CONFIG = {
       jobs: "/admin/jobs",
       applications: "/admin/applications",
     },
+    pillars: {
+      base: "/pillars",
+    },
+    jobRoles: {
+      base: "/job-roles",
+      byPillar: "/job-roles/pillar",
+    },
+    candidateProfiles: {
+      base: "/candidate-profiles",
+      byUser: "/candidate-profiles/user",
+    },
+    candidateRoles: {
+      base: "/candidate-roles",
+      byCandidate: "/candidate-roles/candidate",
+    },
+    candidatePreferences: {
+      base: "/candidate-preferences",
+      byCandidate: "/candidate-preferences/candidate",
+    },
+    clinicalProfiles: {
+      base: "/clinical-profiles",
+      byCandidateRole: "/clinical-profiles/candidate-role",
+    },
+    financeProfiles: {
+      base: "/finance-profiles",
+      byCandidateRole: "/finance-profiles/candidate-role",
+    },
+    hrProfiles: {
+      base: "/hr-profiles",
+      byCandidateRole: "/hr-profiles/candidate-role",
+    },
+    itProfiles: {
+      base: "/it-profiles",
+      byCandidateRole: "/it-profiles/candidate-role",
+    },
+    legalProfiles: {
+      base: "/legal-profiles",
+      byCandidateRole: "/legal-profiles/candidate-role",
+    },
+    marketingProfiles: {
+      base: "/marketing-profiles",
+      byCandidateRole: "/marketing-profiles/candidate-role",
+    },
+    operationsProfiles: {
+      base: "/operations-profiles",
+      byCandidateRole: "/operations-profiles/candidate-role",
+    },
+    qualityProfiles: {
+      base: "/quality-profiles",
+      byCandidateRole: "/quality-profiles/candidate-role",
+    },
+    supplyChainProfiles: {
+      base: "/supply-chain-profiles",
+      byCandidateRole: "/supply-chain-profiles/candidate-role",
+    },
   },
 };
 
@@ -78,8 +133,17 @@ export const FRONTEND_ROUTES = {
   APPLICATIONS: {
     BASE: '/applications',
     MANAGE: '/applications/manage',
+    TRACK: '/applications/track',
   },
   SAVED_JOBS: '/saved-jobs',
+  FEED: '/feed',
+  ONBOARDING: {
+    CANDIDATE: '/onboarding/candidate',
+    EMPLOYER: '/onboarding/employer',
+  },
+  EMPLOYER: {
+    APPLICATIONS: '/employer/applications',
+  },
   AUTH: {
     LOGIN: '/auth/login',
     SIGNUP: '/auth/signup',

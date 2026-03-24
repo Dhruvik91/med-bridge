@@ -239,7 +239,7 @@ export interface Attachment {
 export interface SignupDto {
   email: string;
   password: string;
-  role: UserRole;
+  userType: UserRole;
 }
 
 export interface LoginDto {
@@ -398,3 +398,345 @@ export interface CreateAttachmentDto {
   fileSize?: number;
   mimeType?: string;
 }
+
+// New Entities for Enhanced System
+
+export interface Pillar {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+  jobRoles?: JobRole[];
+}
+
+export interface JobRole {
+  id: string;
+  pillarId: string;
+  name: string;
+  slug: string;
+  description?: string;
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+  pillar?: Pillar;
+}
+
+export interface CandidateProfile {
+  id: string;
+  userId: string;
+  firstName: string;
+  lastName: string;
+  phone?: string | null;
+  dateOfBirth?: string | null;
+  gender?: Gender | null;
+  bio?: string | null;
+  currentLocationId?: string | null;
+  yearsOfExperience?: number | null;
+  preferredWorkType?: string | null;
+  avatarUrl?: string | null;
+  resumeUrl?: string | null;
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+  user?: User;
+  currentLocation?: Location;
+  candidateRoles?: CandidateRole[];
+}
+
+export interface CandidateRole {
+  id: string;
+  candidateId: string;
+  jobRoleId: string;
+  isPrimary: boolean;
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+  candidate?: CandidateProfile;
+  jobRole?: JobRole;
+  clinicalProfile?: ClinicalProfile;
+  financeProfile?: FinanceProfile;
+  hrProfile?: HRProfile;
+  itProfile?: ITProfile;
+  legalProfile?: LegalProfile;
+  marketingProfile?: MarketingProfile;
+  operationsProfile?: OperationsProfile;
+  qualityProfile?: QualityProfile;
+  supplyChainProfile?: SupplyChainProfile;
+}
+
+export interface CandidatePreference {
+  id: string;
+  candidateId: string;
+  preferredLocations?: string[];
+  preferredRoles?: string[];
+  expectedSalaryMin?: string | null;
+  expectedSalaryMax?: string | null;
+  preferredJobTypes?: string[];
+  willingToRelocate?: boolean;
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+}
+
+// Department-Specific Profiles
+
+export interface ClinicalProfile {
+  id: string;
+  candidateRoleId: string;
+  licenseNumber?: string | null;
+  registrationCouncil?: string | null;
+  experienceYears?: number | null;
+  consultationType?: string[];
+  shiftPreference?: string | null;
+  availableDays?: string[];
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+  candidateRole?: CandidateRole;
+}
+
+export interface FinanceProfile {
+  id: string;
+  candidateRoleId: string;
+  certifications?: string[];
+  accountingTools?: string[];
+  experienceYears?: number | null;
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+  candidateRole?: CandidateRole;
+}
+
+export interface HRProfile {
+  id: string;
+  candidateRoleId: string;
+  toolsUsed?: string[];
+  hiringExperienceYears?: number | null;
+  industriesHandled?: string[];
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+  candidateRole?: CandidateRole;
+}
+
+export interface ITProfile {
+  id: string;
+  candidateRoleId: string;
+  techStack?: string[];
+  certifications?: string[];
+  experienceYears?: number | null;
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+  candidateRole?: CandidateRole;
+}
+
+export interface LegalProfile {
+  id: string;
+  candidateRoleId: string;
+  complianceExperience?: string | null;
+  certifications?: string[];
+  experienceYears?: number | null;
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+  candidateRole?: CandidateRole;
+}
+
+export interface MarketingProfile {
+  id: string;
+  candidateRoleId: string;
+  channels?: string[];
+  campaignExperience?: string | null;
+  experienceYears?: number | null;
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+  candidateRole?: CandidateRole;
+}
+
+export interface OperationsProfile {
+  id: string;
+  candidateRoleId: string;
+  hospitalSizeHandled?: string | null;
+  processExpertise?: string[];
+  experienceYears?: number | null;
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+  candidateRole?: CandidateRole;
+}
+
+export interface QualityProfile {
+  id: string;
+  candidateRoleId: string;
+  accreditationExperience?: string[];
+  auditExperienceYears?: number | null;
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+  candidateRole?: CandidateRole;
+}
+
+export interface SupplyChainProfile {
+  id: string;
+  candidateRoleId: string;
+  inventorySystems?: string[];
+  vendorManagementExperience?: number | null;
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+  candidateRole?: CandidateRole;
+}
+
+// DTOs for New Entities
+
+export interface CreatePillarDto {
+  name: string;
+  description?: string;
+}
+
+export interface UpdatePillarDto extends Partial<CreatePillarDto> {}
+
+export interface CreateJobRoleDto {
+  pillarId: string;
+  name: string;
+  description?: string;
+}
+
+export interface UpdateJobRoleDto extends Partial<CreateJobRoleDto> {}
+
+export interface CreateCandidateProfileDto {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  dateOfBirth?: string;
+  gender?: Gender;
+  bio?: string;
+  currentLocationId?: string;
+  yearsOfExperience?: number;
+  preferredWorkType?: string;
+  avatarUrl?: string;
+  resumeUrl?: string;
+}
+
+export interface UpdateCandidateProfileDto extends Partial<CreateCandidateProfileDto> {}
+
+export interface CreateCandidateRoleDto {
+  candidateId: string;
+  jobRoleId: string;
+  isPrimary?: boolean;
+}
+
+export interface UpdateCandidateRoleDto extends Partial<CreateCandidateRoleDto> {}
+
+export interface CreateCandidatePreferenceDto {
+  candidateId: string;
+  preferredLocations?: string[];
+  preferredRoles?: string[];
+  expectedSalaryMin?: string;
+  expectedSalaryMax?: string;
+  preferredJobTypes?: string[];
+  willingToRelocate?: boolean;
+}
+
+export interface UpdateCandidatePreferenceDto extends Partial<CreateCandidatePreferenceDto> {}
+
+export interface CreateClinicalProfileDto {
+  candidateRoleId: string;
+  licenseNumber?: string;
+  registrationCouncil?: string;
+  experienceYears?: number;
+  consultationType?: string[];
+  shiftPreference?: string;
+  availableDays?: string[];
+}
+
+export interface UpdateClinicalProfileDto extends Partial<CreateClinicalProfileDto> {}
+
+export interface CreateFinanceProfileDto {
+  candidateRoleId: string;
+  certifications?: string[];
+  accountingTools?: string[];
+  experienceYears?: number;
+}
+
+export interface UpdateFinanceProfileDto extends Partial<CreateFinanceProfileDto> {}
+
+export interface CreateHRProfileDto {
+  candidateRoleId: string;
+  toolsUsed?: string[];
+  hiringExperienceYears?: number;
+  industriesHandled?: string[];
+}
+
+export interface UpdateHRProfileDto extends Partial<CreateHRProfileDto> {}
+
+export interface CreateITProfileDto {
+  candidateRoleId: string;
+  techStack?: string[];
+  certifications?: string[];
+  experienceYears?: number;
+}
+
+export interface UpdateITProfileDto extends Partial<CreateITProfileDto> {}
+
+export interface CreateLegalProfileDto {
+  candidateRoleId: string;
+  complianceExperience?: string;
+  certifications?: string[];
+  experienceYears?: number;
+}
+
+export interface UpdateLegalProfileDto extends Partial<CreateLegalProfileDto> {}
+
+export interface CreateMarketingProfileDto {
+  candidateRoleId: string;
+  channels?: string[];
+  campaignExperience?: string;
+  experienceYears?: number;
+}
+
+export interface UpdateMarketingProfileDto extends Partial<CreateMarketingProfileDto> {}
+
+export interface CreateOperationsProfileDto {
+  candidateRoleId: string;
+  hospitalSizeHandled?: string;
+  processExpertise?: string[];
+  experienceYears?: number;
+}
+
+export interface UpdateOperationsProfileDto extends Partial<CreateOperationsProfileDto> {}
+
+export interface CreateQualityProfileDto {
+  candidateRoleId: string;
+  accreditationExperience?: string[];
+  auditExperienceYears?: number;
+}
+
+export interface UpdateQualityProfileDto extends Partial<CreateQualityProfileDto> {}
+
+export interface CreateSupplyChainProfileDto {
+  candidateRoleId: string;
+  inventorySystems?: string[];
+  vendorManagementExperience?: number;
+}
+
+export interface UpdateSupplyChainProfileDto extends Partial<CreateSupplyChainProfileDto> {}

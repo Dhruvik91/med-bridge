@@ -171,7 +171,7 @@ export function AuthProvider({ children }: { children: React.ReactNode; }) {
       const { data } = await httpService.post<AuthResponse>(API_CONFIG.path.userAuth.signup, {
         email,
         password,
-        role,
+        userType: role,
       });
 
       const mapped = mapBackendUser(data.user);
