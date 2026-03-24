@@ -11,7 +11,7 @@ import { UserRole } from '@/types';
 type AuthUser = {
   id: string;
   email: string;
-  role: UserRole;
+  userType: UserRole;
   isActive: boolean;
   isVerified: boolean;
 };
@@ -19,7 +19,7 @@ type AuthUser = {
 type UserProfile = {
   id: string;
   email: string;
-  role: UserRole;
+  userType: UserRole;
   isActive: boolean;
   isVerified: boolean;
   createdAt: string;
@@ -31,7 +31,7 @@ type UserProfile = {
 type BackendUser = {
   id: string;
   email: string;
-  role: UserRole;
+  userType: UserRole;
   isActive: boolean;
   isVerified: boolean;
   createdAt: string;
@@ -62,7 +62,7 @@ function mapBackendUser(user: BackendUser): { authUser: AuthUser; profile: UserP
   const authUser: AuthUser = {
     id: user.id,
     email: user.email,
-    role: user.role,
+    userType: user.userType,
     isActive: user.isActive,
     isVerified: user.isVerified,
   };
@@ -70,7 +70,7 @@ function mapBackendUser(user: BackendUser): { authUser: AuthUser; profile: UserP
   const profile: UserProfile = {
     id: user.id,
     email: user.email,
-    role: user.role,
+    userType: user.userType,
     isActive: user.isActive,
     isVerified: user.isVerified,
     createdAt: user.createdAt,
@@ -116,7 +116,7 @@ export function AuthProvider({ children }: { children: React.ReactNode; }) {
         url.searchParams.delete('token');
         window.history.replaceState({}, '', url.toString());
         const userData = await loadUser();
-        const dashboardRoute = getDashboardRoute(userData?.role || null);
+        const dashboardRoute = getDashboardRoute(userData?.userType || null);
         router.replace(dashboardRoute);
         return;
       }
@@ -137,7 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode; }) {
       // Allow access to forgot-password and reset-password even when authenticated
       const authRoutesToRedirect = [FRONTEND_ROUTES.HOME, FRONTEND_ROUTES.AUTH.LOGIN, FRONTEND_ROUTES.AUTH.SIGNUP];
       if (userData && authRoutesToRedirect.includes(pathname)) {
-        const dashboardRoute = getDashboardRoute(userData.role);
+        const dashboardRoute = getDashboardRoute(userData.userType);
         router.replace(dashboardRoute);
         return;
       }
@@ -158,7 +158,7 @@ export function AuthProvider({ children }: { children: React.ReactNode; }) {
       setProfile(mapped.profile);
 
       // Redirect to appropriate dashboard after successful login
-      const dashboardRoute = getDashboardRoute(mapped.authUser.role);
+      const dashboardRoute = getDashboardRoute(mapped.authUser.userType);
       router.push(dashboardRoute);
     } catch (err) {
       console.error('Login failed:', err);

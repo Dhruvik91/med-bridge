@@ -179,8 +179,8 @@ export function DoctorProfileEdit() {
         return <div className="flex justify-center items-center min-h-screen"><Loader2 className="animate-spin" /></div>;
     }
 
-    if (!user || user.role !== UserRole.candidate) {
-        return <NotAuthorizedUser userType={user?.role} />;
+    if (!user || user.userType !== UserRole.candidate) {
+        return <NotAuthorizedUser userType={user?.userType} />;
     }
 
 

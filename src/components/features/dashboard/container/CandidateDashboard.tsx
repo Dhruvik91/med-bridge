@@ -95,7 +95,7 @@ export function CandidateDashboard() {
     }
 
     // Access control
-    if (!user || user.role !== UserRole.candidate) {
+    if (!user || user.userType !== UserRole.candidate) {
         return (
             <Alert variant="destructive" className="container mx-auto my-8">
                 <AlertDescription>

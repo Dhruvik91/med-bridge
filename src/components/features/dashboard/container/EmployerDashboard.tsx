@@ -73,9 +73,9 @@ export function EmployerDashboard() {
         return <LoadingSkeleton />;
     }
 
-    if (!user || user.role !== UserRole.employer) {
+    if (!user || user.userType !== UserRole.employer) {
         return (
-            <NotAuthorizedUser userType={user?.role || ''} />
+            <NotAuthorizedUser userType={user?.userType || ''} />
         );
     }
 

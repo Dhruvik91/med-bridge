@@ -202,7 +202,7 @@ export const JobDetail = () => {
                                 onShare={handleShare}
                                 isSaving={saveJobMutation.isPending}
                                 getJobTypeLabel={getJobTypeLabel}
-                                role={user?.role}
+                                role={user?.userType}
                             />
                         </CardHeader>
 
@@ -221,7 +221,7 @@ export const JobDetail = () => {
                         </CardContent>
                     </Card>
 
-                    {user && user.role === UserRole.candidate && (
+                    {user && user.userType === UserRole.candidate && (
                         <Card id="apply" className="glass-enhanced transition-all duration-300 hover:shadow-xl">
                             <CardHeader>
                                 <CardTitle>Apply for this position</CardTitle>
@@ -246,7 +246,7 @@ export const JobDetail = () => {
                 </div>
 
                 <div className="space-y-6">
-                    {(!user || user.role === UserRole.candidate) && (
+                    {(!user || user.userType === UserRole.candidate) && (
                         <QuickActionsCard
                             hasApplied={hasApplied}
                             isSaved={isSaved}

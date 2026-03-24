@@ -140,13 +140,13 @@ export function Sidebar({ className, ...props }: SidebarProps) {
 
     // Fetch profile data based on user role
     const { data: doctorProfile, isLoading: isDoctorProfileLoading } = useGetDoctorProfile(
-        user?.role === UserRole.candidate ? user.id : ''
+        user?.userType === UserRole.candidate ? user.id : ''
     )
 
     // For employer profile, we need to check if we should fetch it
-    const shouldFetchEmployerProfile = user?.role === UserRole.employer
+    const shouldFetchEmployerProfile = user?.userType === UserRole.employer
     const { data: employerProfile, isLoading: isEmployerProfileLoading } = useGetEmployerProfile(
-        shouldFetchEmployerProfile ? { ...user, isEmailVerified: true, isGoogleSignup: false, createdAt: '', updatedAt: '' } : undefined
+        shouldFetchEmployerProfile && profile ? profile : undefined
     )
 
     if (loading || !user) return null
@@ -157,20 +157,20 @@ export function Sidebar({ className, ...props }: SidebarProps) {
 
     if (isProfileCompletionPage) return null
 
-    const items = getNavItems(user.role)
-    const dashboardRoute = getDashboardRoute(profile?.role || null)
+    const items = getNavItems(user.userType)
+    const dashboardRoute = getDashboardRoute(profile?.userType || null)
 
     // Determine profile data based on role
     const isProfileLoading = isDoctorProfileLoading || isEmployerProfileLoading
-    const avatarUrl = user.role === UserRole.candidate
+    const avatarUrl = user.userType === UserRole.candidate
         ? doctorProfile?.avatarUrl
-        : user.role === UserRole.employer
+        : user.userType === UserRole.employer
             ? employerProfile?.logoUrl
             : null
 
-    const displayName = user.role === UserRole.candidate
+    const displayName = user.userType === UserRole.candidate
         ? (doctorProfile?.displayName || doctorProfile?.fullName)
-        : user.role === UserRole.employer
+        : user.userType === UserRole.employer
             ? employerProfile?.name
             : null
 

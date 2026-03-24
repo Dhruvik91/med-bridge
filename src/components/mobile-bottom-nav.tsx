@@ -79,7 +79,7 @@ export function MobileBottomNav() {
 
   // Determine navigation items based on user role
   const getNavItems = () => {
-    const role = user.role
+    const role = user.userType
 
     // Map both role systems: doctor/hospital and candidate/employer
     if (role === UserRole.candidate) {

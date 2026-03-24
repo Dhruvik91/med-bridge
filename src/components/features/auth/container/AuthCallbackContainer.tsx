@@ -40,7 +40,7 @@ export function AuthCallbackContainer() {
             });
 
             // Redirect to role-specific dashboard
-            const dashboardRoute = getDashboardRoute(user.role);
+            const dashboardRoute = getDashboardRoute(user.userType);
             router.push(dashboardRoute);
         }
 

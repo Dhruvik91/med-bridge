@@ -99,9 +99,9 @@ export function Applications() {
         );
     }
 
-    if (!user || user.role !== UserRole.candidate) {
+    if (!user || user.userType !== UserRole.candidate) {
         return (
-            <NotAuthorizedUser userType={user?.role} />
+            <NotAuthorizedUser userType={user?.userType} />
         );
     }
 

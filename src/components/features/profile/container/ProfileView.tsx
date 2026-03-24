@@ -79,7 +79,7 @@ export function ProfileView() {
     }
 
     // Doctor/Candidate Profile View
-    if (user.role === UserRole.candidate) {
+    if (user.userType === UserRole.candidate) {
         if (!doctorProfile) {
             return (
                 <NoProfileAlert
@@ -157,7 +157,7 @@ export function ProfileView() {
     }
 
     // Employer Profile View
-    if (user.role === UserRole.employer) {
+    if (user.userType === UserRole.employer) {
         if (!employerProfile) {
             return (
                 <NoProfileAlert

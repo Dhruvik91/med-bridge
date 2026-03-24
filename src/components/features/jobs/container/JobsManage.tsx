@@ -84,7 +84,7 @@ export const JobsManage = () => {
 
     // Redirect non-employers
     useEffect(() => {
-        if (user && user.role !== UserRole.employer) {
+        if (user && user.userType !== UserRole.employer) {
             router.push(FRONTEND_ROUTES.JOBS.BASE);
         }
     }, [user, router]);
@@ -144,8 +144,8 @@ export const JobsManage = () => {
         return <JobsManageSkeleton />;
     }
 
-    if (user.role !== UserRole.employer) {
-        return <NotAuthorizedUser userType={user.role} />;
+    if (user.userType !== UserRole.employer) {
+        return <NotAuthorizedUser userType={user.userType} />;
     }
 
     const showClearButton = !!(searchQuery || statusFilter !== 'all');
@@ -261,7 +261,7 @@ export const JobsManage = () => {
                                     <JobCard
                                         key={job.id}
                                         job={job}
-                                        userRole={user?.role}
+                                        userRole={user?.userType}
                                         variant="manage"
                                         formatSalary={formatSalary}
                                         getJobTypeLabel={(type: string) => getJobTypeLabel(type as any)}

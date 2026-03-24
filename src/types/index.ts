@@ -42,9 +42,9 @@ export enum Gender {
 export interface User {
   id: string;
   email: string;
-  role: UserRole;
-  isEmailVerified: boolean;
-  isGoogleSignup: boolean;
+  userType: UserRole;
+  isVerified: boolean;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -255,13 +255,14 @@ export interface AuthResponse {
 export interface CreateUserDto {
   email: string;
   password: string;
-  role: UserRole;
+  userType: UserRole;
 }
 
 export interface UpdateUserDto {
   email?: string;
-  role?: UserRole;
-  isEmailVerified?: boolean;
+  userType?: UserRole;
+  isVerified?: boolean;
+  isActive?: boolean;
 }
 
 export interface CreateDoctorProfileDto {

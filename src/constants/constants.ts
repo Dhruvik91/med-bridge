@@ -3,7 +3,7 @@ export const API_CONFIG = {
   path: {
     userAuth: {
       login: "/user-auth/login",
-      signup: "/user-auth/signup",
+      signup: "/user-auth/register",
       googleLogin: "/user-auth/google",
       me: "/user-auth/me",
       logout: "/user-auth/logout",
@@ -16,12 +16,12 @@ export const API_CONFIG = {
       candidateApplications: "/applications/candidate",
     },
     doctorProfiles: {
-      base: "/doctor-profiles",
-      byUser: "/doctor-profiles/user",
+      base: "/doctor-profile",
+      byUser: "/doctor-profile/user",
     },
     employerProfiles: {
-      base: "/employer-profiles",
-      byUser: "/employer-profiles/user",
+      base: "/employer-profile",
+      byUser: "/employer-profile/user",
     },
     jobNotes: {
       base: "/job-notes",

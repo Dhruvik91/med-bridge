@@ -102,7 +102,7 @@ export function EmployerProfileEdit() {
         );
     }
 
-    if (!user || user.role !== UserRole.employer) {
+    if (!user || user.userType !== UserRole.employer) {
         return (
             <div className="container mx-auto px-4 py-4 md:py-8 space-y-4 md:space-y-8">
                 <div>
